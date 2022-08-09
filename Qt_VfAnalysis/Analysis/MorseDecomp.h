@@ -11,10 +11,10 @@ Created and Modified by Guoning Chen
 #define __MORSEDECOMP_H__
 
 #include <stack>
-#include <openGL_lib/glew.h>
-#include <openGL_lib/glut.h>
 #include <conio.h>
 
+#include "GL/glew.h"
+#include "GL/glut.h"
 #include "VField.h"
 #include "Others/common_routines.h"
 

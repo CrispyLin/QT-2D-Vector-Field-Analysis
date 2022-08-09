@@ -21,6 +21,7 @@ SOURCES += \
     BuildGeom/Geometry.cpp \
     Analysis/CalSepAttpPts.cpp \
     ConleyIndex.cpp \
+    Contour_2D.cpp \
     FileLoader/PlyLoader.cpp \
     FileLoader/vfply_io.cpp \
     Numerical.cpp \
@@ -57,8 +58,8 @@ HEADERS += \
     MainWindow.h \
     OpenGLWindow.h \
     Predefined.h \
-    openGL_lib/glew.h \
-    openGL_lib/glut.h
+    GL/glew.h \
+    GL/glut.h
 
 FORMS += \
     MainWindow.ui

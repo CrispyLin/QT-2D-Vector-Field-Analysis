@@ -1,13 +1,25 @@
 #include "OpenGLWindow.h"
 // this file serves as IBFVDlg.cpp, GLView.cpp
+#include <QDir>
 
 
-// VARIABLES
+// GLOBAL VARIABLES
 const char filePath [] = "../Qt_VfAnalysis/datasets/simple_fld2.ply";
 
 const int win_height=800;
 const int win_width=800;
 
+/*------------------------------------------------------------*/
+//some global variables for ibfv
+double SCALE = 3.0;
+int     iframe = 0;
+int     Npat   = 64;        // Modified at 02/10/2010
+int     alpha  = (0.06*255);  // modified for a smear out LIC texture for better visualization (TVCG revision 11/22/2010)
+double  sa;
+double  tmax   = NPIX/(SCALE*NPN);
+double  dmax   = 1.8/NPIX;
+int npn = NPN;
+int npix = 800;
 
 int Cal_Regions=0;
 int ndisplay_trajs;
@@ -28,7 +40,7 @@ extern ECG_Graph *ecg;
 OpenGLWindow::OpenGLWindow(QWidget *parent) : QOpenGLWidget(parent)
 {
     qInfo() << "OpenGLWindow Default Constructor called";
-
+    qDebug() << QDir::currentPath();
 
 }
 
@@ -133,34 +145,34 @@ int OpenGLWindow::InitGL( )
 
 void OpenGLWindow::init_flags()
 {
-    MoveOrStop = 0;
-    ShowFixedPtOn = 0;
-    ShowSeparatricesOn = 0;
-    ShowSCCsOn = 0;
-    ShowPeriodicOrbitsOn = 0;
-    EvenStreamlinePlacement = 0;
-    ShowColorVFMagOn = 0;
+    this->MoveOrStop = 0;
+    this->ShowFixedPtOn = 0;
+    this->ShowSeparatricesOn = 0;
+    this->ShowSCCsOn = 0;
+    this->ShowPeriodicOrbitsOn = 0;
+    this->EvenStreamlinePlacement = 0;
+    this->ShowColorVFMagOn = 0;
 
-    zoom_factor = 1;
+    this->zoom_factor = 1;
 
 
-    ShowMorseConn=0;
-    ShowTriangleConn=0;
-    morseC=0;
-    triC=0;
-    sccC=0;
+    this->ShowMorseConn=0;
+    this->ShowTriangleConn=0;
+    this->morseC=0;
+    this->triC=0;
+    this->sccC=0;
 
-    ShowEdgeSamplesOn=false;
-    ShowTriMappingOn = false;
-    selected_triangle = -1;  // 02/10/2010
+    this->ShowEdgeSamplesOn=false;
+    this->ShowTriMappingOn = false;
+    this->selected_triangle = -1;  // 02/10/2010
 
-    ShowBackward=0;//0=forward, 1=backward
-    sampling_edge=0;
+    this->ShowBackward=0;//0=forward, 1=backward
+    this->sampling_edge=0;
 
-    ShowConnectionRegion=0;
+    this->ShowConnectionRegion=0;
 
-    ShowBoundary=1;
+    this->ShowBoundary=1;
 
-    FlipNormalOn = false;
-    IBFVOff = false;
+    this->FlipNormalOn = false;
+    this->IBFVOff = false;
 }

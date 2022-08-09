@@ -1,7 +1,8 @@
 #pragma once
 #ifndef OPENGLWINDOW_H
 #define OPENGLWINDOW_H
-#include "openGL_lib/glew.h" // include glew.h first is necessary
+
+#include "GL/glew.h"
 
 #include <mainwindow.h>
 #include <QOpenGLWidget>
@@ -10,6 +11,7 @@
 #include <QDebug>
 #include <QColor>
 
+#include "Predefined.h"
 #include "BuildGeom/Geometry.h"
 #include "Analysis/MorseDecomp.h"
 #include "VField.h"
@@ -19,12 +21,33 @@ class OpenGLWindow : public QOpenGLWidget, public QOpenGLFunctions
     Q_OBJECT
 public:
     // public member variables
-    int MoveOrStop ;
+    int MoveOrStop;
+    int ShowFixedPtOn;
+    int ShowSeparatricesOn;
+    int ShowSCCsOn;
+    int ShowPeriodicOrbitsOn;
+    int EvenStreamlinePlacement;
+    int ShowColorVFMagOn;
+    int ShowMorseConn;
+    int ShowTriangleConn;
+    int morseC;
+    int triC;
+    int sccC;
+    bool ShowEdgeSamplesOn;
+    bool ShowTriMappingOn;
+    int selected_triangle;
+    int ShowBackward;
+    int sampling_edge;
+    int ShowConnectionRegion;
+    int ShowBoundary;
+    bool FlipNormalOn;
+    bool IBFVOff;
 
     icVector3 rot_center;
     double zoom_factor;
     float rotmat[4][4]; //storing rotation parameters
     float ObjXmat[16]; //Storing current modelview transformation
+
 
     // public member functions
     MainWindow* mainWindow = nullptr;

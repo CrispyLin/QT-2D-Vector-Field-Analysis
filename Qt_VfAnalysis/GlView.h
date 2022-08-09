@@ -2,8 +2,8 @@
 #ifndef GLVIEW_H
 #define GLVIEW_H
 
-#include "openGL_lib/glew.h"
-#include "openGL_lib/glut.h"
+#include "GL/glew.h"
+#include "GL/glut.h"
 
 #include "ExternalDependencies/icVector.h"
 #include "Analysis/MorseDecomp.h"

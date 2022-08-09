@@ -6,6 +6,7 @@ copyright @2007
 */
 
 #include "BuildGeom/Geometry.h"
+#include "Graph2D.h"
 
 static PlyFile *in_ply;
 
@@ -20,8 +21,8 @@ Polyhedron *object = nullptr; // used as extern variable in other files
 unsigned char orientation;  // 0=ccw, 1=cw
 
 
-//#include "Graph2D.h"
-//std::vector<Contour_Graph> isolines;
+
+std::vector<Contour_Graph> isolines;
 
 Corner **extend_Link(Corner **corner, int ncorners)
 {
@@ -714,8 +715,8 @@ Polyhedron::assign_color_VFmagnitude2()
     */
     int num_contours = 20;
 
-    //isolines.clear();
-    //isolines.resize(num_contours);
+    isolines.clear();
+    isolines.resize(num_contours);
 
 #ifdef EQFIELD
     double interval = (max_vfmagnitude-min_vfmagnitude)/(num_contours-1);
@@ -723,16 +724,13 @@ Polyhedron::assign_color_VFmagnitude2()
     {
         double cur_val = /*0.001+*/min_vfmagnitude+(i-.5)*interval;
 
-        //isolines[i].extract_iso_contour_from_distance_field(cur_val);
+        isolines[i].extract_iso_contour_from_distance_field(cur_val);
     }
 #endif
 }
 
-//TODO
-#define NPIX  /*512*/800
-double  dmax   = 1.8/NPIX;  //parameter related to the IBFV method
 
-//double  dmax   = 0.8*SCALE/NPIX;
+extern double dmax;  //parameter related to the IBFV method
 
 void Polyhedron::normalize_Field()
 {

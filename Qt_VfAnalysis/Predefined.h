@@ -77,5 +77,10 @@ const double ROTATESTEP = 10.;   //The scaler step control for rotation
 const int InitSaddleRegionLength = 100;  ////tracing n's triangles for each direction
 
 
+#define	NPN 64
+#define NMESH  100
+#define DM  ((double) (1.0/(NMESH-1.0)))
+#define NPIX  /*512*/800 // number of pixels
+
 #endif /* __PREDEFINED_H__ */
 
