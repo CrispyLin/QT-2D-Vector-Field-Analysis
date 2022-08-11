@@ -1,6 +1,6 @@
 QT       += core gui openglwidgets
 
-greaterThan(QT_MAJOR_VERSION, 6): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
@@ -22,9 +22,11 @@ SOURCES += \
     Analysis/CalSepAttpPts.cpp \
     ConleyIndex.cpp \
     Contour_2D.cpp \
+    EdgeSamplePts.cpp \
     FileLoader/PlyLoader.cpp \
     FileLoader/vfply_io.cpp \
     Numerical.cpp \
+    Others/TraceBall.cpp \
     Others/common_routines.cpp \
     RegionTauMap.cpp \
     StreamlineCalculate/EvenStreamlines.cpp \
@@ -47,8 +49,10 @@ HEADERS += \
     ExternalDependencies/nrutil_nr.h \
     FileLoader/PlyLoader.h \
     FileLoader/vfply_io.h \
+    GL_LIB/glut.h \
     Graph2D.h \
     Numerical.h \
+    Others/TraceBall.h \
     Others/common_routines.h \
     RegionTauMap.h \
     Resource.h \
@@ -58,8 +62,7 @@ HEADERS += \
     MainWindow.h \
     OpenGLWindow.h \
     Predefined.h \
-    GL/glew.h \
-    GL/glut.h
+    GL_LIB/glew.h
 
 FORMS += \
     MainWindow.ui

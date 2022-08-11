@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-#include "GL/glew.h"
+#include "GL_LIB/glew.h"
 #include "ExternalDependencies/icMatrix.h"
 #include "ExternalDependencies/icVector.h"
 

@@ -1231,4 +1231,6 @@ public:
 
 };  //end of Mesh class
 
+void  HsvRgb( float hsv[3], float rgb[3] );
+
 #endif /* __GEOMETRY_H__ */

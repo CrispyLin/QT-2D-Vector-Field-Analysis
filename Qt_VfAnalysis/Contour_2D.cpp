@@ -4,8 +4,7 @@
 #include "FileLoader/PlyLoader.h"
 #include "Graph2D.h"
 
-#include "GL/glew.h"
-#include "GL/glut.h"
+#include "GL_LIB/glew.h"
 
 
 extern Polyhedron *object;

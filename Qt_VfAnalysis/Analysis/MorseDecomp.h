@@ -13,8 +13,8 @@ Created and Modified by Guoning Chen
 #include <stack>
 #include <conio.h>
 
-#include "GL/glew.h"
-#include "GL/glut.h"
+#include "GL_LIB/glew.h"
+
 #include "VField.h"
 #include "Others/common_routines.h"
 

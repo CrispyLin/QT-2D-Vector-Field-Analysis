@@ -6,7 +6,6 @@
 #include <stddef.h>
 #include <malloc.h>
 #include <string.h>
-#include <stdlib.h>
 #include <QDebug>
 
 #define PLY_ASCII      1        /* ascii PLY file */

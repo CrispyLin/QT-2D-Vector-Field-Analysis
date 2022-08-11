@@ -8,8 +8,8 @@ Created and Modified by Guoning Chen
     */
 
 #pragma once
-#include "GL/glew.h"
-#include "GL/glut.h"
+#include "GL_LIB/glew.h"
+#include <stdlib.h>
 #include "ExternalDependencies/icVector.h"
 
 class CGraphView

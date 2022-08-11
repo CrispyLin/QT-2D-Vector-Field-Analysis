@@ -7,12 +7,13 @@ Vector field related data structures
 Created and modified by Guoning Chen
 copyright @2007
 */
+#include <QDebug>
+#include <stack>
+#include <conio.h>
 
 #include "BuildGeom/Geometry.h"
 #include "ConleyIndex.h"
 #include "Others/common_routines.h"
-#include <QDebug>
-#include <stack>
 
 
 using namespace std;
@@ -568,7 +569,7 @@ public:
             sprintf(var, "%s", "enodes");
 
             //write_mem_error(rout, var, 1);
-            //exit(-1);
+            exit(-1);
 
             enodes = temp;
             return false;
@@ -754,7 +755,7 @@ public:
             sprintf(var, "%s", "edges");
 
             //write_mem_error(rout, var, 1);
-            //exit(-1);
+            exit(-1);
 
             edges = temp;
             return false;
@@ -1972,7 +1973,7 @@ public:
 typedef struct Seed{
     double pos[3];                  //the coordinates of the seed point
     int triangle;                      //the triangle contains the seed point
-    unsigned char state;                           //0梐ctive;1梚nactive; 2梒an not growing
+    unsigned char state;
 }Seed; // end of Seed structure
 
 class SeedList{

@@ -5,11 +5,8 @@ SCComponent
 Created and Modified by Guoning Chen
 copyright @2007
 */
-#include <conio.h>
 
-#include "MorseDecomp.h"
 #include "Analysis/PeriodicOrbitExtraction.h"
-#include "Others/common_routines.h"
 
 
 extern MorseDecomp *morse_decomp;

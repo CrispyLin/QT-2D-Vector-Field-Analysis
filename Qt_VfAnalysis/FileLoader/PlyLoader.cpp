@@ -1,5 +1,5 @@
 #include "FileLoader/PlyLoader.h"
-
+#include <stdio.h>
 char *type_names[] = {
                       (char*) "invalid",
                       (char*)"int8", (char*)"int16", (char*)"int32", (char*)"uint8", (char*)"uint16", (char*)"uint32", (char*)"float32", (char*)"float64",
@@ -1194,7 +1194,7 @@ Entry:
     /* look for appropriate element */
     elem = find_element (plyfile, elem_name);
     if (elem == NULL) {
-        //fprintf(stderr,"element_layout_ply: can't find element '%s'\n",elem_name);
+        fprintf(stderr,"element_layout_ply: can't find element '%s'\n",elem_name);
         exit (-1);
     }
 
@@ -1286,7 +1286,7 @@ Entry:
     /* look for appropriate element */
     elem = find_element (plyfile, elem_name);
     if (elem == NULL) {
-        //fprintf(stderr,"element_count_ply: can't find element '%s'\n",elem_name);
+        fprintf(stderr,"element_count_ply: can't find element '%s'\n",elem_name);
         exit (-1);
     }
 
@@ -1313,16 +1313,16 @@ Entry:
 
     switch (plyfile->file_type) {
     case PLY_ASCII:
-        //fprintf (fp, "format ascii 1.0\n");
+        fprintf (fp, "format ascii 1.0\n");
         break;
     case PLY_BINARY_BE:
-        //fprintf (fp, "format binary_big_endian 1.0\n");
+        fprintf (fp, "format binary_big_endian 1.0\n");
         break;
     case PLY_BINARY_LE:
-        //fprintf (fp, "format binary_little_endian 1.0\n");
+        fprintf (fp, "format binary_little_endian 1.0\n");
         break;
     default:
-        //fprintf (stderr, "ply_header_complete: bad file type = %d\n", plyfile->file_type);
+        fprintf (stderr, "ply_header_complete: bad file type = %d\n", plyfile->file_type);
         exit (-1);
     }
 

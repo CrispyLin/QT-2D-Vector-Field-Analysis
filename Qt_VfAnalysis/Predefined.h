@@ -22,14 +22,6 @@ enum Elementtype{
     REGULAR
 };
 
-/*current color scheme  08/25/05
-source: pure green (0, 1, 0)
-repeller: light green (0, 1, 0.7)
-sink:   pure red (1, 0, 0)
-attractor:  orange (1, 0.5, 0)
-saddle: pure blue (0, 0, 1)
-center: light red (1, 0, 1)
-*/
 
 ///////////////////////////////////////////////////
 enum which_point{
@@ -75,12 +67,6 @@ const double SCALESTEP = 15.;   //The scaler step control for scale
 const double ROTATESTEP = 10.;   //The scaler step control for rotation
 
 const int InitSaddleRegionLength = 100;  ////tracing n's triangles for each direction
-
-
-#define	NPN 64
-#define NMESH  100
-#define DM  ((double) (1.0/(NMESH-1.0)))
-#define NPIX  /*512*/800 // number of pixels
 
 #endif /* __PREDEFINED_H__ */
 

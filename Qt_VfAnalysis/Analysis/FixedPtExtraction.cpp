@@ -7,7 +7,6 @@ Created and Modified by Guoning Chen
 
 
 #include "VField.h"
-
 #include "Numerical.h"
 
 #define FILEDEBUG

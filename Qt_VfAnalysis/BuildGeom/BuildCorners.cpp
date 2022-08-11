@@ -6,7 +6,6 @@ Created and Modified by Guoning Chen
         copyright @2007
     */
 
-#include <conio.h>
 #include "VField.h"
 
 extern Polyhedron *object;
@@ -218,40 +217,6 @@ double Polyhedron::get_Angle(Corner *c)
 /*
 An implementation of quick sort algorithm
 */
-//void QuickSort(int array[], int left, int right)
-//{
-//        if(left>=right)
-//        return;
-//
-//        int i = left;
-//        int j = right+1;
-//        int t = array[left];//left most element is the pivot element
-//
-//        while(1)
-//        {
-//                //elements to the left of t should be less than t and elements to the right of t should be greater than t
-//                do
-//                {
-//                        i++;
-//                }while(i<=right && array[i]<t);
-//                do
-//                {
-//                        j--;
-//                }while(array[j]>t);
-//                if(i>j)//if the indices cross
-//                        break;
-//                int temp = array[i];
-//                array[i] = array[j];
-//                array[j] = temp;
-//        }
-//        //swap the pivot element and array[j]
-//        int temp = array[left];
-//        array[left] = array[j];
-//        array[j] = temp;
-//
-//        QuickSort(array,left,j-1);
-//        QuickSort(array,j+1,right);
-//}
 
 
 void QuickSortforCorner(int corner[], int min_v[], int max_v[], int left, int right)

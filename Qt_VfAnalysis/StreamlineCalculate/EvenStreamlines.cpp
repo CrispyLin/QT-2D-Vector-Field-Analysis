@@ -233,7 +233,7 @@ void EvenStreamlinePlace::place_streamlines(int flag)
 
                     //write_mem_error(rout, var, 1);
                     delete seedpts;
-                    //exit(-1);
+                    exit(-1);
 
                     /*release the seed point list*/
                     return;

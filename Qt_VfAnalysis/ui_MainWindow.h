@@ -162,7 +162,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(2283, 882);
+        MainWindow->resize(2427, 874);
         MainWindow->setMinimumSize(QSize(0, 0));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
@@ -237,7 +237,7 @@ public:
 
         layoutWidget1 = new QWidget(centralwidget);
         layoutWidget1->setObjectName(QString::fromUtf8("layoutWidget1"));
-        layoutWidget1->setGeometry(QRect(1350, 30, 911, 811));
+        layoutWidget1->setGeometry(QRect(1350, 30, 1041, 811));
         horizontalLayout_24 = new QHBoxLayout(layoutWidget1);
         horizontalLayout_24->setObjectName(QString::fromUtf8("horizontalLayout_24"));
         horizontalLayout_24->setContentsMargins(0, 0, 0, 0);
