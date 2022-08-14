@@ -537,12 +537,14 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
     //GLfloat diffuse[] = { 1., 0.6, 0, 1.0};
     GLfloat diffuse[] = { 0.8, .8, 1., 1.0 };
     GLfloat specular[] = { 0.8, 0.8, 1.0, 1.0 };
-    int shiny = 100;
 
-
+    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    output_tex_to_file(f_tex, "f_tex");
     glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    output_tex_to_file(f_tex, "f_tex");
+    exit(0);
 
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_LIGHTING);
@@ -610,7 +612,6 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
 
 
     glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-    //output_tex_to_file(f_tex, "f_tex_2nd");
 
     if(MoveOrStop == 0)
     {
