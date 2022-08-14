@@ -130,19 +130,11 @@ void OpenGLWindow::initializeGL(){
     mcg->init_MCG(); // init MCG
 
     //IBFV visualization initialization
-    //this->makePatterns();
-    //this->DrawGLScene(GL_RENDER);
-    //this->ReCalTexcoord();
-
-    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-    output_tex_to_file(f_tex, "f_tex");
+    this->makePatterns();
+    this->DrawGLScene(GL_RENDER);
+    this->ReCalTexcoord();
 
 
-    glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-    output_tex_to_file(f_tex, "f_tex_2nd");
     qInfo() << "init gl Error: " << glGetError();
     qInfo() << "OpenGLWindow has been initialized";
 }
@@ -547,16 +539,10 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
     GLfloat specular[] = { 0.8, 0.8, 1.0, 1.0 };
     int shiny = 100;
 
-    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-    output_tex_to_file(f_tex, "f_tex");
-
 
     glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-    output_tex_to_file(f_tex, "f_tex_2nd");
-    exit(1);
 
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_LIGHTING);
@@ -569,9 +555,6 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     ////////////////////////////////////////////////
     //glDrawBuffer(GL_BACK);
-
-    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-    output_tex_to_file(f_tex, "f_tex");
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, f_tex);

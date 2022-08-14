@@ -1,1 +1,4 @@
 debug
+.qtc_clangd
+release
+Makefile
