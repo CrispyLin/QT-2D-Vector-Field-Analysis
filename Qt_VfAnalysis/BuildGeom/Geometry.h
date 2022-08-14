@@ -15,8 +15,8 @@ copyright @2007
 #include "ExternalDependencies/icMatrix.h"
 #include "Point.h"
 #include "Predefined.h"
-#include "FileLoader/PlyLoader.h"
 #include "FileLoader/vfply_io.h"
+#include "FileLoader/PlyLoader.h"
 #include "VField.h"
 
 extern char *elem_names[];
@@ -24,54 +24,57 @@ extern char *elem_names[];
 extern PlyProperty vert_props[];
 
 extern PlyProperty face_props[];
+
+
 /* forward declarations */
 
 class Edge;
 class Corner;
 class Triangle;
 class Trajectory;
+
 /* the vertex structure for 3D surface vector field */
 class Vertex{
 public:
-    bool angle_deficit;         //1—has angle deficit; 0—no
-    bool visited;    //use to calculate the geodesic distance (3D)
-    bool OnBoundary;         //flag to mark whether the vertex is a boundary vertex
+    bool angle_deficit = false;         //1—has angle deficit; 0—no
+    bool visited = false;    //use to calculate the geodesic distance (3D)
+    bool OnBoundary = false;         //flag to mark whether the vertex is a boundary vertex
 
-    unsigned char nedges;
-    unsigned char ncorners;
-    unsigned char ntris;
-    int index;                  //the index of the vertex
+    unsigned char nedges = -1;
+    unsigned char ncorners = -1;
+    unsigned char ntris = -1;
+    int index = -1;                  //the index of the vertex
     int max_tris;
-    int imgtri;            //for tau-map guided Morse decomposition  08/30/2007
+    int imgtri = 0;            //for tau-map guided Morse decomposition  08/30/2007
 
-    Edge **edges;             //the edges incident to the vertex
-    Triangle **tris;           //the triangles sharing the vertex
-    Corner **corners;       //the corners sharing the vertex
+    Edge **edges = nullptr;             //the edges incident to the vertex
+    Triangle **tris = nullptr;           //the triangles sharing the vertex
+    Corner **corners = nullptr;       //the corners sharing the vertex
     /* other information needs to be store */
 
-    float mag_rgb[3];
-    double x, y, z;             //the coordinates of the vertex
-    double t_angle;           //the angle of the vector value in tangential local frame
-    double distance;          //Geodesic distance (for 3D surface)
+    float mag_rgb[3] = {0, 0, 0};
+    double x = 0., y = 0., z = 0.;             //the coordinates of the vertex
+    double t_angle = 0.;           //the angle of the vector value in tangential local frame
+    double distance = 0.;          //Geodesic distance (for 3D surface)
     icVector3 g_vec;
     icVector3 t_vec;          //the vector tangential to the tangent plane of the vertex (3D )
-                                //for 2D plane, we use icVector2
+        //for 2D plane, we use icVector2
     icVector3 T, B, normal;       //the local coordinate frame defined according to the tangent plane (for 3D only)
     icVector2 texture_coord;  //texture coordinates for flow-like texture mapping
     icVector2 back_Tex;
 
-    double img_tau[3];          //for tau-map guided Morse decomposition  08/30/2007
+    double img_tau[3] = {0., 0., 0.};          //for tau-map guided Morse decomposition  08/30/2007
 
-    bool in_out_let;            // mark the vertex if it is in the part of the inlet and outlet
+    bool in_out_let = false;            // mark the vertex if it is in the part of the inlet and outlet
     icVector3 raw_vec;
 
     /*
        We still need to store its original vector magnitude for extracting the iso-contours 06/13/2011
     */
-    float vf_mag;
+    float vf_mag = 0.;
 
-    float total_rot_sum;  // to record the total rotation of an integral curve starting from this vertex
-    float ave_sum;
+    float total_rot_sum = 0.;  // to record the total rotation of an integral curve starting from this vertex
+    float ave_sum = 0.;
     /*
        The sample associated with it  07/06/2010
     */
@@ -81,16 +84,16 @@ public:
 
     Vertex(double, double, double, double, double, double);
     Vertex(double ix, double iy, double iz,
-               double vx, double vy, double vz, int i);
+           double vx, double vy, double vz, int i);
     ~Vertex();
 };   //end of class Vertex
 
 
 class VertexList{
 public:
-    Vertex **verts;
-    int nverts;
-    int curMaxNumVerts;
+    Vertex **verts = nullptr;
+    int nverts = 0;
+    int curMaxNumVerts = 0;
 
     VertexList(int initsize = 1000) //construction
     {
@@ -115,7 +118,7 @@ public:
     {
         if(isFull ())
             if(!extend(100))
-                    return false;             //if not enough memory available, return false
+                return false;             //if not enough memory available, return false
         verts[nverts] = v;
         nverts++;
         return true;
@@ -203,7 +206,7 @@ public:
     }
 
     inline bool isEmpty()  //judge whether the list is empty
-        {
+    {
         if(nverts == 0)   return true;
         return false;
     }
@@ -219,7 +222,7 @@ public:
     {
         Vertex **temp = verts;
         verts = (Vertex **) malloc(sizeof(Vertex *) * (curMaxNumVerts + step));
-        if( verts == nullptr)
+        if( verts == NULL)
         {
             //fail
             verts = temp;
@@ -259,66 +262,72 @@ public:
 }; //end of VertexList class
 
 
+
+
+
+
+
+
 typedef struct SampleListInTriangle{
-    int which_traj;
-    int which_sample;
+    int which_traj = -1;
+    int which_sample = -1;
 }SampleListInTriangle;
 
 
 /** Triangle for 3D surface **/
 class Triangle{
 public:
-    bool orient;
-    bool visited;                       //for SCC searching
+    bool orient = false;
+    bool visited = false;                       //for SCC searching
     //bool inDesignCell;
-    unsigned char num_dir_vecs; //number of local vectors
-    unsigned char nverts;       //number of vertices
-    int index;                         //index of the triangle
+    unsigned char num_dir_vecs = 0; //number of local vectors
+    unsigned char nverts = 0;       //number of vertices
+    int index = -1;                         //index of the triangle
     /* variables for analysis */
-    int singularityID;            //the singularity id inside the triangle if exists
-    int num_samplepts;
+    int singularityID = -1;            //the singularity id inside the triangle if exists
+    int num_samplepts = -1;
 
     Vertex *verts[3];             //the pointers to the three vertices
     Edge *edges[3];              //the pointers to the three edges
     icVector3 LX, LY;           //the local frame defined in the triangle
     icVector3 normal;           //the normal of the triangle
     icVector2 *dir_vec;         //the local vector values at the three vertices
-    double x1, x2, y2;          //the local coordinates of the three vertices under Lx, Ly
-    double area;
+    double x1 = 0., x2 = 0., y2= 0.;          //the local coordinates of the three vertices under Lx, Ly
+    double area = 0.;
     icMatrix2x2 Jacobian;    //the Jacobian of the field inside the triangle
-    int local_index;	//index for local refinement morse set 12/03/2009 by Qingqing
-    bool cur_morse;// in currently refining morse set
+    int local_index = -1;	//index for local refinement morse set 12/03/2009 by Qingqing
+    bool cur_morse = false;// in currently refining morse set
 
-    bool in_img;
+    bool in_img = false;
 
-    bool has_zero_vec;         // added by guoning 03/09/2010
+    bool has_zero_vec = false;         // added by guoning 03/09/2010
 
-    double used_tau;         // the tau value that is used to track the image of this triangle
+    double used_tau = false;         // the tau value that is used to track the image of this triangle
 
-    bool is_part_of_MCG;     // true -- if the triangle is somehow included in a Morse set or connection region, false otherwise
-    bool diff_ECG_MCG;
+    bool is_part_of_MCG = false;     // true -- if the triangle is somehow included in a Morse set or connection region, false otherwise
+    bool diff_ECG_MCG = false;
 
-    unsigned char counter;
+    unsigned char counter = 0;
 
-    double euler_step;
+    double euler_step = 0.;
 
     //
     unsigned char MS_type;   // set the label of the triangle based on the type of the Morse set that it belongs to
-                             // 0 - non-MS; 1 - source-like; 2 - sink-like; 3 - saddle-like
+        // 0 - non-MS; 1 - source-like; 2 - sink-like; 3 - saddle-like
 
     /*
        The sample associated with it 07/06/2010
     */
     tauPt3 tauPt_f, tauPt_b;
 
-    SampleListInTriangle *samplepts; /*for even placement of streamlines*/
+    SampleListInTriangle *samplepts = nullptr; /*for even placement of streamlines*/
 
     /* variables for design*/
 
-    void *other_props;
+    void *other_props = nullptr;
 
     /*Qingqing Add July 20,2009*/
-    bool exclude;
+    bool exclude = false;
     /*Qingqing Add July 20,2009*/
 
 
@@ -426,9 +435,9 @@ public:
 
     void reset_sampleList()
     {
-        if(samplepts != nullptr)
+        if(samplepts != NULL)
             free(samplepts);
-        samplepts = nullptr;
+        samplepts = NULL;
         num_samplepts = 0;
     }
 
@@ -439,12 +448,12 @@ public:
 
 class TriangleList{
 public:
-    Triangle **tris;
-    int ntris;
+    Triangle **tris = nullptr;
+    int ntris = 0;
     int curMaxNumTris;
 
     //Triangle **singulartris;
-    int nsingulartris;
+    int nsingulartris = 0;
     //int curMaxNumSingularTris;
 
     // The similar list operations as VertexList
@@ -455,7 +464,7 @@ public:
         curMaxNumTris = initsize;
         ntris = 0;
 
-        //singulartris = nullptr;
+        //singulartris = NULL;
         nsingulartris = 0;
         //curMaxNumSingularTris = 0;
     }
@@ -476,7 +485,7 @@ public:
     {
         if(isFull ())
             if(!extend(100))
-                    return false;             //if not enough memory available, return false
+                return false;             //if not enough memory available, return false
         tris[ntris] = t;
         ntris++;
         return true;
@@ -544,7 +553,7 @@ public:
     {
         Triangle **temp = tris;
         tris = (Triangle **) malloc(sizeof(Triangle *) * (curMaxNumTris + step));
-        if( tris == nullptr)
+        if( tris == NULL)
         {
             //fail
             tris = temp;
@@ -578,29 +587,40 @@ public:
 }; //end of TriangleList class
 
 
+
+
+
+
+
+//Do we need a point type data structure just like icVector2 and icVector3?
+//struct Point{
+//double x, y, z;
+//unsigned char type;
+//};
+
 /** Edge **/
 class Edge{
 public:
 
     /*Member variables*/
-    bool visited;
-    bool OnBoundary;
-    bool valid;
-    bool find_attp, find_sep;
-    unsigned char ntris;
-    unsigned char att_visit, sep_visit;    //0 -- alive; 1--visited/dead;  2--too close/pending  07/23/06
-    unsigned char num_intersections;	/**----- For recording the intersections -----**/
-    int index;                       //the index of the edge
-    int triangle;             //for which triangle whose Jacobian is calculated to approximate the Jacobian of the edge
+    bool visited = false;
+    bool OnBoundary = false;
+    bool valid = false;
+    bool find_attp = false, find_sep = false;
+    unsigned char ntris = 0;
+    unsigned char att_visit = 0, sep_visit = 0;    //0 -- alive; 1--visited/dead;  2--too close/pending  07/23/06
+    unsigned char num_intersections = 0;	/**----- For recording the intersections -----**/
+    int index = -1;                       //the index of the edge
+    int triangle = 0;             //for which triangle whose Jacobian is calculated to approximate the Jacobian of the edge
     Vertex *verts[2];           //the two ending points of the edge
-    Triangle **tris;           //the two triangles sharing the edge
-    Point3Dd *attp, *sep;        //the coordinates of the possible attachment and separation //points, if attp or sep are not equal to nullptr, it means we //find the attachment point or separation point. These are only for 3D surface, on plane, we can use icVector2
-    bool boundary;               //boundary of morse set 12/04/2009 added by Qingqing
+    Triangle **tris = nullptr;           //the two triangles sharing the edge
+    Point3Dd *attp = nullptr, *sep = nullptr;        //the coordinates of the possible attachment and separation //points, if attp or sep are not equal to NULL, it means we //find the attachment point or separation point. These are only for 3D surface, on plane, we can use icVector2
+    bool boundary = false;               //boundary of morse set 12/04/2009 added by Qingqing
     /*----- To store the special points on the edge (two at most) ----*/
     /***---- For finding the separation and attachment points ----***/
 
 
-    double length;               //the length of the edge(optional)
+    double length = -1;               //the length of the edge(optional)
     icVector2 normal_2d;
     icVector3 intersections[2];  //we store only the recent two intersections
     icVector2 evec[2];
@@ -610,13 +630,13 @@ public:
     /*
        Middle point ID for extracting the iso-contour of the vector field magnitude field
     */
-    int MidPointID;
+    int MidPointID = -1;
 
     /* Function to calculate the attachment or separation point */
 
     void cal_neighborhood_with_vectors(int faceid, double alpha[3],
-                                double sincx, double sincy,
-                                icVector2 Coord[3], icVector2 vec[3]);
+                                       double sincx, double sincy,
+                                       icVector2 Coord[3], icVector2 vec[3]);
     void cal_Jacobian_edge(int edge_tri);
     void cal_eigenvals_edge();
 
@@ -631,7 +651,7 @@ public:
     bool approx_tangent(double seg_length, icVector3 new_intersect);
     bool is_good_intersections(int triangle, int scc_index);
     int *get_disc_coarse(double p[3], int triangle,
-             int *NearbyTriangles, int &num_triangles);
+                         int *NearbyTriangles, int &num_triangles);
 
     /*
     Judge the type of the edge
@@ -639,9 +659,9 @@ public:
     bool is_mixed_edge(int triangle);
     bool is_exit_edge(int);
     void get_vecs_withangledeficit(Vertex *v1, Vertex *v2, Triangle *face,
-                             int deficit_index, icVector2 vec[2]);
+                                   int deficit_index, icVector2 vec[2]);
     void get_vecs_withangledeficit_2(Vertex *v1, Vertex *v2, Triangle *face,
-                             int deficit_index, icVector2 vec[2]);
+                                     int deficit_index, icVector2 vec[2]);
     void get_vecs_at_edge_endingpts(Edge *cur_edge, int triangle, icVector2 vec[2]);
 
     /*
@@ -655,6 +675,8 @@ public:
     bool is_pure_entrance_edge(int tri);
 
 }; //end of Edge class
+
+
 
 
 class EdgeList{
@@ -673,7 +695,7 @@ public:
 
     ~EdgeList()
     {
-        if(edges == nullptr)
+        if(edges == NULL)
             return;
 
         int i;
@@ -759,7 +781,7 @@ public:
     {
         Edge **temp = edges;
         edges = (Edge **) malloc(sizeof(Edge *) * (curMaxNumEdges + step));
-        if( edges == nullptr)
+        if( edges == NULL)
         {
             //fail
             edges = temp;
@@ -770,7 +792,7 @@ public:
         for(i = 0; i < curMaxNumEdges; i++)
             edges[i] = temp[i];
         for(i = curMaxNumEdges; i < curMaxNumEdges+step; i++)
-            edges[i] = nullptr;
+            edges[i] = NULL;
 
         curMaxNumEdges += step;
         free(temp);
@@ -784,6 +806,14 @@ public:
 
 
 }; //end of EdgeList class
+
+
+
+
+
+
+
+
 
 
 /** Corner **/
@@ -809,6 +839,11 @@ public:
 
     double get_Angle();
 };
+
+//(For each corner, do we really need to store its n, p??
+
+
+
 
 
 class CornerList{
@@ -910,7 +945,7 @@ public:
     {
         Corner **temp = corners;
         corners = (Corner **) malloc(sizeof(Corner *) * (curMaxNumCorners + step));
-        if( temp == nullptr)
+        if( temp == NULL)
         {
             //fail
             corners = temp;
@@ -923,7 +958,7 @@ public:
             corners[i] = temp[i];
 
         for(i = curMaxNumCorners; i < curMaxNumCorners+step; i++)
-            corners[i] = nullptr;
+            corners[i] = NULL;
 
         curMaxNumCorners += step;
         free(temp);
@@ -939,6 +974,8 @@ public:
     //void build_Corners();    //build the corner table
 
 }; // end of CornerList class
+
+
 
 
 class ECG_Node;
@@ -972,6 +1009,7 @@ public:
 }; // end of Singularity class
 
 
+
 class SingularityList{
 public:
     Singularity **slist;
@@ -991,7 +1029,7 @@ public:
     {
         if(isFull ())
             if(!extend(100))
-                    return false;             //if not enough memory available, return false
+                return false;             //if not enough memory available, return false
         slist[nsingularities] = s;
         nsingularities++;
         return true;
@@ -1043,7 +1081,7 @@ public:
     }
 
     inline bool isEmpty()  //judge whether the list is empty
-        {
+    {
         if(nsingularities == 0)   return true;
         return false;
     }
@@ -1059,7 +1097,7 @@ public:
     {
         Singularity **temp = slist;
         slist = (Singularity **) malloc(sizeof(Singularity *) * (curMaxNumSingularities + step));
-        if( temp == nullptr)
+        if( temp == NULL)
         {
             //fail
             slist = temp;
@@ -1088,7 +1126,7 @@ public:
 }; //end of singularityList class
 
 
-/*
+
 /** Polyhedron **/
 class Polyhedron{
 public:
@@ -1098,28 +1136,27 @@ public:
     CornerList clist;          //the corner list
     SingularityList slist;     //the singularity list
     icVector3 center;
-    int orient;                //0--counter clockwise; 1--clockwise
-    bool with_vec;
+    int orient = -1;                //0--counter clockwise; 1--clockwise
+    bool with_vec = false;
 
-    double radius;
-    double area;
-    double shortest_edgelength;
+    double radius = -1.;
+    double area = -1.;
+    double shortest_edgelength = -1.;
 
-    PlyOtherProp *vert_other,*face_other;
+    PlyOtherProp *vert_other = nullptr,*face_other = nullptr;
 
-
+    CPlyLoader myplyloader;    //for ply file loading
     icVector3 rot_center;
 
-    PlyLoader myplyloader;    //for ply file loading
+    int *singular_tri = nullptr;
+    int nfixedpts = 0;
 
-    int *singular_tri;
-    int nfixedpts;
-
-
-    double min_vfmagnitude, max_vfmagnitude, mean_vfmagnitude, min_VecLenVisualized, max_VecLenVisualized;
+    /*for visualize the vector field magnitude 08/15/07*/
+    double min_vfmagnitude = 0., max_vfmagnitude = 0., mean_vfmagnitude = 0.,
+        min_VecLenVisualized = 0., max_VecLenVisualized = 0.;
 
 public:
-
+    /* Other functions may be useful to mesh manipulation */
 
     Polyhedron();
 
@@ -1168,58 +1205,58 @@ public:
 
     void cal_TexCoord(void);
 
-
+    /* Some common routines used by several fundamental funtionalities */
     void get_2D_Barycentric_Facters(int faceid, double a, double b, double alpha[3]);
     icVector2 get_Vector_At_Point(int faceid, double vk[3], double alpha[3], double a, double b);
     icVector2 get_A_2D_Point(int faceid, double alpha[3]);
     void local_To_Global(int faceid, icVector2 locpos, icVector3 &glpos);
     bool is_Valid_Alpha(double alpha[]);
 
-
+    /* functions for fixed point extraction */
     void capture_Singularities(); //capture all the singularities in the mesh
     void compute_FixedPts();
     void get_FixedPt_Coord(int TriangleID, int switch_flag,
-                      double vx[3], double vy[3],
-                      icVector2& VM, icVector2 &WQM,
-                      icVector2 tempV1, icVector2 tempV2,
-                      double Q[2], double M[2]);
+                           double vx[3], double vy[3],
+                           icVector2& VM, icVector2 &WQM,
+                           icVector2 tempV1, icVector2 tempV2,
+                           double Q[2], double M[2]);
     void get_M_onRS(double R[2], double S[2],
-                double Q[2], double M[2],
-                icVector2 &VM, icVector2 &WQM,
-                icVector2 Vr, icVector2 Vs);
+                    double Q[2], double M[2],
+                    icVector2 &VM, icVector2 &WQM,
+                    icVector2 Vr, icVector2 Vs);
     void cal_SingularCoord_without_angledeficit(double px[3], double py[3],
-                                          double vx[3], double vy[3],
-                                          double locl_p[2]);
+                                                double vx[3], double vy[3],
+                                                double locl_p[2]);
     int get_Type_of_FixedPt(int TriangleID, double alpha[3]);
     void get_Neighbor_Triangle_Vectors(int faceid, double alpha[3],
-                                double sincx, double sincy,
-                                icVector2 Coord[3], icVector2 vec[3]);
+                                       double sincx, double sincy,
+                                       icVector2 Coord[3], icVector2 vec[3]);
     void add_To_SingularityList(int Triangle_ID, icVector3 gPos, double local_x, double local_y);
 
 
-
+    /*calculate the separatrices*/
     void cal_separatrices();
 
-
+    /*calculate the Jacobian of all triangles*/
     void cal_all_tri_Jacobians();
 
 
-
+    /* Other functions for vector field analysis and editing */
     void detect_PeriodicOrbit();   //call limit cycle detector
 
     void simplify_VectorField();  //automatic simplification, need to call the function from vector field simplifier
 
-
+    /* Other functionalities that can be included */
     //void subdive_Mesh();
     //void remeshing();
     //void deforme_Mesh();
     void smooth_VectorField();
     void smooth_Surface();
 
-
+    /*  mark the in/out-lets of the model  */
     void mark_in_outlets();
 
-
+    /* Testing vector field */
     void XAxisVF(void);
 
     void write_ply(FILE *file);
@@ -1227,7 +1264,7 @@ public:
     friend class Trajectory;
     friend class PeriodicOrbit_Detector;
 
-    float min_rot_sum, max_rot_sum;
+    float min_rot_sum = 0., max_rot_sum = 0.;
 
 };  //end of Mesh class
 

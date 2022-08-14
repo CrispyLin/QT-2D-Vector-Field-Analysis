@@ -190,15 +190,15 @@ public:
 */
 typedef struct tauPt3
 {
-    double x, y, z;
-    int which_tri;
-    double tau;
+    double x = 0., y = 0., z = 0.;
+    int which_tri = -1;
+    double tau = 0.;
 }tauPt3;
 
 class TauParticle_List{
 public:
-    tauPt3 **particles;
-    int num;
+    tauPt3 **particles = nullptr;
+    int num = 0;
     int curMax;
 
     TauParticle_List(int initsize = 1000)
@@ -305,12 +305,6 @@ public:
         num = 0;
     }
 
-
-    //void display();
-
-    //void display_sel_edges(int,int,int);
-
-    //void create_display_list();
 
 };
 

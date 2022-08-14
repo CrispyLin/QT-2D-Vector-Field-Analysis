@@ -15,8 +15,10 @@ Created and modified by Guoning Chen
 #include "Edit/RotateReflectField.h"
 #include "GlView.h"
 #include "CGraphView.h"
-
 #include "MainWindow.h"
+
+extern const int DebugOn;
+
 //#include "common_routines.h"
 class EvenStreamlinePlace
 {

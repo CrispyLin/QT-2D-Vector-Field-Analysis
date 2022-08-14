@@ -1,28 +1,28 @@
 #include "FileLoader/PlyLoader.h"
 #include <stdio.h>
-char *type_names[] = {
-                      (char*) "invalid",
+
+char *type_names[] = {  /* names of scalar types */
+    (char*)"invalid",
                       (char*)"int8", (char*)"int16", (char*)"int32", (char*)"uint8", (char*)"uint16", (char*)"uint32", (char*)"float32", (char*)"float64",
                       };
 
-char *old_type_names[] = {
-                          (char*)"invalid",
-                          (char*)"char", (char*)"short", (char*)"int", (char*)"uchar", (char*)"ushort", (char*)"uint", (char*)"float", (char*)"double",
-                          };
+char *old_type_names[] = {  /* old names of types for backward compatability */
+                              (char*)"invalid",
+                              (char*)"char", (char*)"short", (char*)"int", (char*)"uchar", (char*)"ushort", (char*)"uint", (char*)"float", (char*)"double",
+                            };
 
 int ply_type_size[] = {
     0, 1, 2, 4, 1, 2, 4, 4, 8
 };
 
-static char *my_alloc(int size, int lnum, const char fname[32])
+static char *my_alloc(int size, int lnum, char *fname)
 {
     char *ptr;
 
     ptr = (char *) malloc (size);
 
     if (ptr == 0) {
-        //fprintf(stderr, "Memory allocation bombed on line %d in %s\n", lnum, fname);
-        qDebug() << "Memory allocation bombed on line " << lnum << "in " << fname;
+        fprintf(stderr, "Memory allocation bombed on line %d in %s\n", lnum, fname);
     }
 
     return (ptr);
@@ -31,20 +31,19 @@ static char *my_alloc(int size, int lnum, const char fname[32])
 
 /* memory allocation */
 
-#define myalloc(mem_size) my_alloc((mem_size), __LINE__, __FILE__)
+#define myalloc(mem_size) my_alloc((mem_size), __LINE__, (char*)__FILE__)
 
 
 
-PlyLoader::PlyLoader(void)
+CPlyLoader::CPlyLoader(void)
 {
 }
 
-PlyLoader::~PlyLoader(void)
+CPlyLoader::~CPlyLoader(void)
 {
 }
 
-
-char *PlyLoader::setup_element_read_ply (PlyFile *ply, int index, int *elem_count)
+char *CPlyLoader::setup_element_read_ply (PlyFile *ply, int index, int *elem_count)
 {
     PlyElement *elem;
 
@@ -63,8 +62,9 @@ char *PlyLoader::setup_element_read_ply (PlyFile *ply, int index, int *elem_coun
     return (elem->name);
 }
 
-int PlyLoader::equal_strings(char *s1, char *s2)
+int CPlyLoader::equal_strings(char *s1, char *s2)
 {
+
     while (*s1 && *s2)
         if (*s1++ != *s2++)
             return (0);
@@ -76,7 +76,7 @@ int PlyLoader::equal_strings(char *s1, char *s2)
 }
 
 
-PlyProperty *PlyLoader::find_property(PlyElement *elem, char *prop_name, int *index)
+PlyProperty *CPlyLoader::find_property(PlyElement *elem, char *prop_name, int *index)
 {
     int i;
 
@@ -91,7 +91,7 @@ PlyProperty *PlyLoader::find_property(PlyElement *elem, char *prop_name, int *in
 }
 
 
-void PlyLoader::setup_property_ply(
+void CPlyLoader::setup_property_ply(
     PlyFile *plyfile,
     PlyProperty *prop
     )
@@ -120,7 +120,7 @@ void PlyLoader::setup_property_ply(
 
 }
 
-void PlyLoader::setup_other_props(PlyFile *plyfile, PlyElement *elem)
+void CPlyLoader::setup_other_props(PlyFile *plyfile, PlyElement *elem)
 {
     int i;
     PlyProperty *prop;
@@ -185,7 +185,7 @@ void PlyLoader::setup_other_props(PlyFile *plyfile, PlyElement *elem)
 }
 
 
-PlyOtherProp *PlyLoader::get_other_properties_ply(
+PlyOtherProp *CPlyLoader::get_other_properties_ply(
     PlyFile *plyfile,
     int offset
     )
@@ -196,7 +196,7 @@ PlyOtherProp *PlyLoader::get_other_properties_ply(
     return (other);
 }
 
-PlyOtherProp *PlyLoader::get_other_properties(
+PlyOtherProp *CPlyLoader::get_other_properties(
     PlyFile *plyfile,
     PlyElement *elem,
     int offset
@@ -219,7 +219,14 @@ PlyOtherProp *PlyLoader::get_other_properties(
     /* create structure for describing other_props */
     other = (PlyOtherProp *) myalloc (sizeof (PlyOtherProp));
     other->name = strdup (elem->name);
-
+#if 0
+  if (elem->other_offset == NO_OTHER_PROPS) {
+    other->size = 0;
+    other->props = NULL;
+    other->nprops = 0;
+    return (other);
+  }
+#endif
     other->size = elem->other_size;
     other->props = (PlyProperty **) myalloc (sizeof(PlyProperty) * elem->nprops);
 
@@ -245,7 +252,7 @@ PlyOtherProp *PlyLoader::get_other_properties(
 }
 
 
-void PlyLoader::get_element_ply (PlyFile *plyfile, void *elem_ptr)
+void CPlyLoader::get_element_ply (PlyFile *plyfile, void *elem_ptr)
 {
     if (plyfile->file_type == PLY_ASCII)
         ascii_get_element (plyfile, (char *) elem_ptr);
@@ -253,7 +260,7 @@ void PlyLoader::get_element_ply (PlyFile *plyfile, void *elem_ptr)
         binary_get_element (plyfile, (char *) elem_ptr);
 }
 
-void PlyLoader::ascii_get_element(PlyFile *plyfile, char *elem_ptr)
+void CPlyLoader::ascii_get_element(PlyFile *plyfile, char *elem_ptr)
 {
     int i,j,k;
     PlyElement *elem;
@@ -380,7 +387,7 @@ void PlyLoader::ascii_get_element(PlyFile *plyfile, char *elem_ptr)
 }
 
 
-char **PlyLoader::get_words(FILE *fp, int *nwords, char **orig_line)
+char **CPlyLoader::get_words(FILE *fp, int *nwords, char **orig_line)
 {
 #define BIG_STRING 4096
     int i,j;
@@ -479,7 +486,7 @@ char **PlyLoader::get_words(FILE *fp, int *nwords, char **orig_line)
 }
 
 
-void PlyLoader::get_ascii_item(
+void CPlyLoader::get_ascii_item(
     char *word,
     int type,
     int *int_val,
@@ -517,7 +524,7 @@ void PlyLoader::get_ascii_item(
     }
 }
 
-void PlyLoader::store_item (
+void CPlyLoader::store_item (
     char *item,
     int type,
     int int_val,
@@ -572,7 +579,7 @@ void PlyLoader::store_item (
 }
 
 
-void  PlyLoader::binary_get_element(PlyFile *plyfile, char *elem_ptr)
+void  CPlyLoader::binary_get_element(PlyFile *plyfile, char *elem_ptr)
 {
     int i,j,k;
     PlyElement *elem;
@@ -685,7 +692,7 @@ void  PlyLoader::binary_get_element(PlyFile *plyfile, char *elem_ptr)
 }
 
 
-void PlyLoader::get_binary_item(
+void CPlyLoader::get_binary_item(
     FILE *fp,
     int type,
     int *int_val,
@@ -753,7 +760,7 @@ void PlyLoader::get_binary_item(
     }
 }
 
-PlyOtherElems *PlyLoader::get_other_element_ply (PlyFile *plyfile)
+PlyOtherElems *CPlyLoader::get_other_element_ply (PlyFile *plyfile)
 {
     int i;
     PlyElement *elem;
@@ -810,7 +817,7 @@ PlyOtherElems *PlyLoader::get_other_element_ply (PlyFile *plyfile)
 }
 
 
-void PlyLoader::ply_get_element(PlyFile *plyfile, void *elem_ptr)
+void CPlyLoader::ply_get_element(PlyFile *plyfile, void *elem_ptr)
 {
     if (plyfile->file_type == PLY_ASCII)
         ascii_get_element (plyfile, (char *) elem_ptr);
@@ -819,7 +826,7 @@ void PlyLoader::ply_get_element(PlyFile *plyfile, void *elem_ptr)
 }
 
 
-PlyOtherProp *PlyLoader::ply_get_other_properties(
+PlyOtherProp *CPlyLoader::ply_get_other_properties(
     PlyFile *plyfile,
     char *elem_name,
     int offset
@@ -841,22 +848,25 @@ PlyOtherProp *PlyLoader::ply_get_other_properties(
 }
 
 
-void PlyLoader::close_ply(PlyFile *plyfile)
+void CPlyLoader::close_ply(PlyFile *plyfile)
 {
     fclose (plyfile->fp);
 }
 
-PlyFile *PlyLoader::read_ply(FILE *fp)
+PlyFile *CPlyLoader::read_ply(FILE *fp)
 {
+    printf("Polyhedron!!");
     PlyFile *ply;
     int num_elems;
     char **elem_names;
+
     ply = ply_read (fp, &num_elems, &elem_names);
-    return ply;
+
+    return (ply);
 }
 
 
-PlyFile *PlyLoader::ply_read(FILE *fp, int *nelems, char ***elem_names)
+PlyFile *CPlyLoader::ply_read(FILE *fp, int *nelems, char ***elem_names)
 {
     int i,j;
     PlyFile *plyfile;
@@ -868,10 +878,11 @@ PlyFile *PlyLoader::ply_read(FILE *fp, int *nelems, char ***elem_names)
     char *orig_line;
 
     /* check for NULL file pointer */
-    if (fp == nullptr)
-        return (nullptr);
+    if (fp == NULL)
+        return (NULL);
 
     /* create record for this object */
+
     plyfile = (PlyFile *) myalloc (sizeof (PlyFile));
     plyfile->num_elem_types = 0;
     plyfile->comments = NULL;
@@ -886,7 +897,7 @@ PlyFile *PlyLoader::ply_read(FILE *fp, int *nelems, char ***elem_names)
 
     words = get_words (plyfile->fp, &nwords, &orig_line);
     if (!words || !equal_strings (words[0], (char*)"ply"))
-        return nullptr;
+        return (NULL);
 
     while (words) {
 
@@ -945,11 +956,11 @@ PlyFile *PlyLoader::ply_read(FILE *fp, int *nelems, char ***elem_names)
 
     /* return a pointer to the file's information */
 
-    return plyfile;
+    return (plyfile);
 }
 
 
-void PlyLoader::copy_property(PlyProperty *dest, PlyProperty *src)
+void CPlyLoader::copy_property(PlyProperty *dest, PlyProperty *src)
 {
     dest->name = strdup (src->name);
     dest->external_type = src->external_type;
@@ -962,7 +973,7 @@ void PlyLoader::copy_property(PlyProperty *dest, PlyProperty *src)
     dest->count_offset = src->count_offset;
 }
 
-PlyElement *PlyLoader::find_element(PlyFile *plyfile, char *element)
+PlyElement *CPlyLoader::find_element(PlyFile *plyfile, char *element)
 {
     int i;
 
@@ -974,7 +985,7 @@ PlyElement *PlyLoader::find_element(PlyFile *plyfile, char *element)
 }
 
 
-void PlyLoader::add_element (PlyFile *plyfile, char **words, int nwords)
+void CPlyLoader::add_element (PlyFile *plyfile, char **words, int nwords)
 {
     PlyElement *elem;
 
@@ -997,7 +1008,7 @@ void PlyLoader::add_element (PlyFile *plyfile, char **words, int nwords)
 }
 
 
-void PlyLoader::add_property (PlyFile *plyfile, char **words, int nwords)
+void CPlyLoader::add_property (PlyFile *plyfile, char **words, int nwords)
 {
     int prop_type;
     int count_type;
@@ -1041,7 +1052,7 @@ void PlyLoader::add_property (PlyFile *plyfile, char **words, int nwords)
 }
 
 
-void PlyLoader::add_comment (PlyFile *plyfile, char *line)
+void CPlyLoader::add_comment (PlyFile *plyfile, char *line)
 {
     int i;
 
@@ -1054,7 +1065,7 @@ void PlyLoader::add_comment (PlyFile *plyfile, char *line)
 }
 
 
-void PlyLoader::append_comment_ply(PlyFile *ply, char *comment)
+void CPlyLoader::append_comment_ply(PlyFile *ply, char *comment)
 {
     /* (re)allocate space for new comment */
     if (ply->num_comments == 0)
@@ -1069,7 +1080,7 @@ void PlyLoader::append_comment_ply(PlyFile *ply, char *comment)
 }
 
 
-void PlyLoader::add_obj_info (PlyFile *plyfile, char *line)
+void CPlyLoader::add_obj_info (PlyFile *plyfile, char *line)
 {
     int i;
 
@@ -1083,7 +1094,7 @@ void PlyLoader::add_obj_info (PlyFile *plyfile, char *line)
 }
 
 
-void PlyLoader::append_obj_info_ply(PlyFile *ply, char *obj_info)
+void CPlyLoader::append_obj_info_ply(PlyFile *ply, char *obj_info)
 {
     /* (re)allocate space for new info */
     if (ply->num_obj_info == 0)
@@ -1097,7 +1108,7 @@ void PlyLoader::append_obj_info_ply(PlyFile *ply, char *obj_info)
     ply->num_obj_info++;
 }
 
-int PlyLoader::get_prop_type(char *type_name)
+int CPlyLoader::get_prop_type(char *type_name)
 {
     int i;
 
@@ -1128,7 +1139,7 @@ Entry:
                        returns a file identifier, used to refer to this file, or NULL if error
                                             ******************************************************************************/
 
-                                        PlyFile *PlyLoader::open_for_writing_ply(
+                                        PlyFile *CPlyLoader::open_for_writing_ply(
                                             const char *filename,
                                             int nelems,
                                             char **elem_names,
@@ -1146,12 +1157,12 @@ Entry:
     name = (char *) myalloc (sizeof (char) * (strlen (filename) + 5));
     strcpy (name, filename);
     if (strlen (name) < 4 ||
-        strcmp (name + strlen (name) - 4, (char*)".ply") != 0)
-        strcat (name, (char*)".ply");
+        strcmp (name + strlen (name) - 4, ".ply") != 0)
+        strcat (name, ".ply");
 
     /* open the file for writing */
 
-    fp = fopen (name, (char*)"w");
+    fp = fopen (name, "w");
     if (fp == NULL) {
         return (NULL);
     }
@@ -1179,7 +1190,7 @@ Entry:
             prop_list - list of properties
                   ******************************************************************************/
 
-              void PlyLoader::element_layout_ply(
+              void CPlyLoader::element_layout_ply(
                   PlyFile *plyfile,
                   char *elem_name,
                   int nelems,
@@ -1224,7 +1235,7 @@ Entry:
             prop      - the new property
                   ******************************************************************************/
 
-              void PlyLoader::ply_describe_property(
+              void CPlyLoader::ply_describe_property(
                   PlyFile *plyfile,
                   char *elem_name,
                   PlyProperty *prop
@@ -1236,7 +1247,8 @@ Entry:
     /* look for appropriate element */
     elem = find_element (plyfile, elem_name);
     if (elem == NULL) {
-        //fprintf(stderr, "ply_describe_property: can't find element '%s'\n", elem_name);
+        fprintf(stderr, "ply_describe_property: can't find element '%s'\n",
+                elem_name);
         return;
     }
 
@@ -1273,7 +1285,7 @@ Entry:
             nelems    - number of elements of this type to be written
                   ******************************************************************************/
 
-              void PlyLoader::element_count_ply(
+              void CPlyLoader::element_count_ply(
                   PlyFile *plyfile,
                   char *elem_name,
                   int nelems
@@ -1302,14 +1314,14 @@ Entry:
         plyfile - file identifier
                   ******************************************************************************/
 
-              void PlyLoader::header_complete_ply(PlyFile *plyfile)
+              void CPlyLoader::header_complete_ply(PlyFile *plyfile)
 {
     int i,j;
     FILE *fp = plyfile->fp;
     PlyElement *elem;
     PlyProperty *prop;
 
-    //fprintf (fp, "ply\n");
+    fprintf (fp, "ply\n");
 
     switch (plyfile->file_type) {
     case PLY_ASCII:
@@ -1322,52 +1334,51 @@ Entry:
         fprintf (fp, "format binary_little_endian 1.0\n");
         break;
     default:
-        fprintf (stderr, "ply_header_complete: bad file type = %d\n", plyfile->file_type);
+        fprintf (stderr, "ply_header_complete: bad file type = %d\n",
+                plyfile->file_type);
         exit (-1);
     }
 
     /* write out the comments */
 
     for (i = 0; i < plyfile->num_comments; i++)
-        //fprintf (fp, "comment %s\n", plyfile->comments[i]);
+        fprintf (fp, "comment %s\n", plyfile->comments[i]);
 
     /* write out object information */
 
     for (i = 0; i < plyfile->num_obj_info; i++)
-        //fprintf (fp, "obj_info %s\n", plyfile->obj_info[i]);
+        fprintf (fp, "obj_info %s\n", plyfile->obj_info[i]);
 
     /* write out information about each element */
 
     for (i = 0; i < plyfile->num_elem_types; i++) {
 
         elem = plyfile->elems[i];
-        //fprintf (fp, "element %s %d\n", elem->name, elem->num);
+        fprintf (fp, "element %s %d\n", elem->name, elem->num);
 
         /* write out each property */
         for (j = 0; j < elem->nprops; j++) {
             prop = elem->props[j];
             if (prop->is_list == PLY_LIST) {
-                //fprintf (fp, "property list ");
+                fprintf (fp, "property list ");
                 write_scalar_type (fp, prop->count_external);
-                //fprintf (fp, " ");
+                fprintf (fp, " ");
                 write_scalar_type (fp, prop->external_type);
-                //fprintf (fp, " %s\n", prop->name);
+                fprintf (fp, " %s\n", prop->name);
             }
             else if (prop->is_list == PLY_STRING) {
-                //fprintf (fp, "property string");
-                //fprintf (fp, " %s\n", prop->name);
+                fprintf (fp, "property string");
+                fprintf (fp, " %s\n", prop->name);
             }
             else {
-                //fprintf (fp, "property ");
-                qDebug() << "property ";
+                fprintf (fp, "property ");
                 write_scalar_type (fp, prop->external_type);
-                //fprintf (fp, " %s\n", prop->name);
+                fprintf (fp, " %s\n", prop->name);
             }
         }
     }
 
-    //fprintf (fp, "end_header\n");
-    qDebug()<< "end_header\n";
+    fprintf (fp, "end_header\n");
 }
 
 
@@ -1380,14 +1391,13 @@ Entry:
             elem_name - name of element we're talking about
                   ******************************************************************************/
 
-              void PlyLoader::put_element_setup_ply(PlyFile *plyfile, char *elem_name)
+              void CPlyLoader::put_element_setup_ply(PlyFile *plyfile, char *elem_name)
 {
     PlyElement *elem;
 
     elem = find_element (plyfile, elem_name);
     if (elem == NULL) {
-        //fprintf(stderr, "put_element_setup_ply: can't find element '%s'\n", elem_name);
-        qDebug() << "put_element_setup_ply: can't find element " << elem_name;
+        fprintf(stderr, "put_element_setup_ply: can't find element '%s'\n", elem_name);
         exit (-1);
     }
 
@@ -1405,7 +1415,7 @@ Entry:
             elem_ptr - pointer to the element
                   ******************************************************************************/
 
-              void PlyLoader::put_element_ply(PlyFile *plyfile, void *elem_ptr)
+              void CPlyLoader::put_element_ply(PlyFile *plyfile, void *elem_ptr)
 {
     int i,j,k;
     FILE *fp = plyfile->fp;
@@ -1463,8 +1473,7 @@ Entry:
                 char **str;
                 item = elem_data + prop->offset;
                 str = (char **) item;
-                //fprintf (fp, "\"%s\"", *str);
-                qDebug() << "\""<< *str << "\"";
+                fprintf (fp, "\"%s\"", *str);
             }
             else {                                  /* scalar */
                 item = elem_data + prop->offset;
@@ -1475,8 +1484,7 @@ Entry:
             }
         }
 
-        //fprintf (fp, "\n");
-        qDebug() << "\n";
+        fprintf (fp, "\n");
     }
     else {
 
@@ -1535,7 +1543,7 @@ Entry:
 }
 
 
-PlyFile *PlyLoader::ply_write(
+PlyFile *CPlyLoader::ply_write(
     FILE *fp,
     int nelems,
     char **elem_names,
@@ -1587,7 +1595,7 @@ Entry:
             type       - data type to write out
                   ******************************************************************************/
 
-              void PlyLoader::write_binary_item(
+              void CPlyLoader::write_binary_item(
                   FILE *fp,
                   int int_val,
                   unsigned int uint_val,
@@ -1632,8 +1640,7 @@ Entry:
         fwrite (&double_val, 8, 1, fp);
         break;
     default:
-        //fprintf (stderr, "write_binary_item: bad type = %d\n", type);
-        qDebug() << "write_binary_item: bad type = " << type;
+        fprintf (stderr, "write_binary_item: bad type = %d\n", type);
         exit (-1);
     }
 }
@@ -1650,7 +1657,7 @@ Entry:
             type       - data type to write out
                   ******************************************************************************/
 
-              void PlyLoader::write_ascii_item(
+              void CPlyLoader::write_ascii_item(
                   FILE *fp,
                   int int_val,
                   unsigned int uint_val,
@@ -1662,23 +1669,19 @@ Entry:
     case Int8:
     case Int16:
     case Int32:
-        //fprintf (fp, "%d ", int_val);
-        qDebug() << int_val;
+        fprintf (fp, "%d ", int_val);
         break;
     case Uint8:
     case Uint16:
     case Uint32:
-        //fprintf (fp, "%u ", uint_val);
-        qDebug() << uint_val;
+        fprintf (fp, "%u ", uint_val);
         break;
     case Float32:
     case Float64:
-        //fprintf (fp, "%g ", double_val);
-        qDebug() << double_val;
+        fprintf (fp, "%g ", double_val);
         break;
     default:
-        //fprintf (stderr, "write_ascii_item: bad type = %d\n", type);
-        qDebug() << "write_ascii_item: bad type = " << type;
+        fprintf (stderr, "write_ascii_item: bad type = %d\n", type);
         exit (-1);
     }
 }
@@ -1698,7 +1701,7 @@ Entry:
                            double_val - double-precision floating point value
                                  ******************************************************************************/
 
-                             void PlyLoader::get_stored_item(
+                             void CPlyLoader::get_stored_item(
                                  void *ptr,
                                  int type,
                                  int *int_val,
@@ -1748,23 +1751,21 @@ Entry:
         *uint_val = *double_val;
         break;
     default:
-        //fprintf (stderr, "get_stored_item: bad type = %d\n", type);
-        qDebug() << "get_stored_item: bad type = " << type;
+        fprintf (stderr, "get_stored_item: bad type = %d\n", type);
         exit (-1);
     }
 }
 
-void PlyLoader::write_scalar_type (FILE *fp, int code)
+void CPlyLoader::write_scalar_type (FILE *fp, int code)
 {
     /* make sure this is a valid code */
 
     if (code <= StartType || code >= EndType) {
-        //fprintf (stderr, "write_scalar_type: bad data code = %d\n", code);
-        qDebug() << "write_scalar_type: bad data code = " << code;
+        fprintf (stderr, "write_scalar_type: bad data code = %d\n", code);
         exit (-1);
     }
 
     /* write the code to a file */
 
-    //fprintf (fp, "%s", type_names[code]);
+    fprintf (fp, "%s", type_names[code]);
 }

@@ -12,6 +12,11 @@ Extend the number of the edge incident to a specific vertex
 The function extend one space each time
 ***************************************************************/
 
+/***************************************************************
+Extend the number of the edge incident to a specific vertex
+The function extend one space each time
+***************************************************************/
+
 int *extend_link(int *edge_link, int Num_edges)
 {
     int *temp = edge_link;
@@ -213,7 +218,6 @@ void rightMultiply16(double old_rotmat[16], double rot_mat[16])
     glMultMatrixd ((double*)rot_mat);
     glGetDoublev(GL_MODELVIEW_MATRIX, (double *)old_rotmat);
     glPopMatrix();
-
 }
 
 
@@ -484,6 +488,7 @@ T * copy_array(T *source, T *dest, int num)
         dest[i] = source[i];
     }
 }
+
 
 
 

@@ -23,6 +23,7 @@ extern class Trajectory;
 extern class TriangleList;
 extern class EdgeList;
 
+
 class PeriodicOrbit{
 public:
     unsigned char nnodes;
@@ -31,45 +32,45 @@ public:
     //int   trajID;                                     //the index of trajectory storing the closed orbit
     int *cellcycle;									  //store the triangle cell cycle
     int  ntris;
-    Trajectory* traj = nullptr;                                 //the closed streamline
+    Trajectory *traj;                                 //the closed streamline
         //we may consider to put it to the separatrix list!
 
     /*-------for ECG-graph --------if I can find a way to build the graph during analysis, we can safely remove these variables */
-    int   *connected_fixedpts = nullptr;                         //the list of singularities directly connect with it
+    int   *connected_fixedpts;                         //the list of singularities directly connect with it
     int   num_connect_fixedpts;                          //the number of singularities in the list
-    int   *connected_POs = nullptr;                  //the list of other limit cycles directly connect //with it
+    int   *connected_POs;                  //the list of other limit cycles directly connect //with it
     int   num_connect_POs;                //the number of limit cycles in the list
     int   node_index;                                 //the index of corresponding node in C-graph
-    ECG_Node **nodes = nullptr;                                 //the list of nodes connecting with the singularity in ECG
+    ECG_Node **nodes;                                 //the list of nodes connecting with the singularity in ECG
 
     icVector3  handle_center;                         //the global coordinates of the handle
 
     /*---- Member functions---*/
     PeriodicOrbit()
     {
-        cellcycle = nullptr;
+        cellcycle = NULL;
         ntris = 0;
-        traj = nullptr;
-        nodes = nullptr;
+        traj = NULL;
+        nodes = NULL;
     }
 
     ~PeriodicOrbit()
     {
-        if(cellcycle!=nullptr)
+        if(cellcycle!=NULL)
             delete [] cellcycle;
-        if(traj!=nullptr)
+        if(traj!=NULL)
             delete traj;
-        if(nodes!=nullptr)
+        if(nodes!=NULL)
             delete [] nodes;
     }
 
     inline void reset()
     {
-        if(cellcycle!=nullptr)
+        if(cellcycle!=NULL)
             delete [] cellcycle;
-        if(traj!=nullptr)
+        if(traj!=NULL)
             delete traj;
-        if(nodes!=nullptr)
+        if(nodes!=NULL)
             delete [] nodes;
         ntris = 0;
         nnodes = 0;
@@ -82,12 +83,9 @@ public:
 }; // end of LimitCycle class
 
 
-
-
-
 class PeriodicOrbitList{
 public:
-    PeriodicOrbit **polist = nullptr;
+    PeriodicOrbit **polist;
     int nporbits;
     int curMaxNumPOrbits;
 
@@ -99,7 +97,7 @@ public:
         curMaxNumPOrbits = initsize;
         nporbits = 0;
 
-        if(polist == nullptr)
+        if(polist == NULL)
         {
             char rout[256], var[256];
             sprintf(rout, "%s", "PeriodicOrbitList Constructor");
@@ -111,16 +109,16 @@ public:
         }
 
         for(int i = 0; i < initsize; i++)
-            polist[i] = nullptr;
+            polist[i] = NULL;
     }
 
     ~PeriodicOrbitList()
     {
-        if(polist != nullptr)
+        if(polist != NULL)
         {
             for(int i = 0; i < curMaxNumPOrbits; i++)
             {
-                if(polist[i] != nullptr)
+                if(polist[i] != NULL)
                     delete polist[i];
             }
         }
@@ -128,11 +126,11 @@ public:
 
     inline void reset_all_porbits()
     {
-        if(polist != nullptr)
+        if(polist != NULL)
         {
             for(int i = 0; i < curMaxNumPOrbits; i++)
             {
-                if(polist[i] != nullptr)
+                if(polist[i] != NULL)
                     polist[i]->reset();
             }
         }
@@ -215,7 +213,7 @@ public:
 
         PeriodicOrbit **temp = polist;
         polist = (PeriodicOrbit **) malloc(sizeof(PeriodicOrbit *) * (curMaxNumPOrbits + step));
-        if( polist == nullptr)
+        if( polist == NULL)
         {
             //fail
             polist = temp;
@@ -236,7 +234,7 @@ public:
             polist[i] = temp[i];
 
         for(i = curMaxNumPOrbits; i < curMaxNumPOrbits+step; i++)
-            polist[i] = nullptr;
+            polist[i] = NULL;
         curMaxNumPOrbits += step;
 
         //fp = fopen("extend_polist.txt", "w");
@@ -254,7 +252,7 @@ public:
         nporbits = 0;
     }
 
-}; //end of LimitCycleList class
+};
 
 
 class Basin{
@@ -426,8 +424,6 @@ public:
 }; //end of ECG_Node class
 
 
-
-
 class ECG_NodeList{
 public:
     ECG_Node **enodes;
@@ -441,7 +437,7 @@ public:
         curMaxNumENodes = initsize;
         nenodes = 0;
 
-        if(enodes == nullptr)
+        if(enodes == NULL)
         {
             char rout[256], var[256];
             sprintf(rout, "%s", "ECG_NodeList Constructor");
@@ -456,7 +452,7 @@ public:
         {
             enodes[i] = (ECG_Node *)malloc(sizeof(ECG_Node));
 
-            if(enodes[i] == nullptr)
+            if(enodes[i] == NULL)
             {
                 char rout[256], var[256];
                 sprintf(rout, "%s", "ECG_NodeList Constructor");
@@ -467,7 +463,7 @@ public:
                 exit(-1);
             }
 
-            enodes[i]->graph_edges = nullptr;
+            enodes[i]->graph_edges = NULL;
             enodes[i]->nedges = 0;
             enodes[i]->cancelled = false;
             enodes[i]->visited = false;
@@ -476,16 +472,16 @@ public:
 
     ~ECG_NodeList()
     {
-        if(enodes!=nullptr)
+        if(enodes!=NULL)
         {
             for(int i=0; i<curMaxNumENodes; i++)
             {
-                if(enodes[i] != nullptr)
+                if(enodes[i] != NULL)
                     free(enodes[i]);
             }
             free(enodes);
         }
-        enodes = nullptr;
+        enodes = NULL;
     }
 
     //add a new vertex to the end of the list, if it succeeds, return true
@@ -561,7 +557,7 @@ public:
     {
         ECG_Node **temp = enodes;
         enodes = (ECG_Node **) malloc(sizeof(ECG_Node *) * (curMaxNumENodes + step));
-        if( enodes == nullptr)
+        if( enodes == NULL)
         {
             //fail
             char rout[256], var[256];
@@ -569,7 +565,7 @@ public:
             sprintf(var, "%s", "enodes");
 
             //write_mem_error(rout, var, 1);
-            exit(-1);
+            //exit(-1);
 
             enodes = temp;
             return false;
@@ -579,7 +575,7 @@ public:
         for(i = 0; i < curMaxNumENodes; i++)
             enodes[i] = temp[i];
         for(i = curMaxNumENodes; i < curMaxNumENodes+step; i++)
-            enodes[i] = nullptr;
+            enodes[i] = NULL;
         curMaxNumENodes += step;
 
         free(temp);
@@ -592,6 +588,7 @@ public:
     }
 
 }; //end of ECG_NodeList class
+
 
 
 /* Graph edge */
@@ -623,9 +620,6 @@ public:
 
 
 
-
-
-
 class Graph_EdgeList{
 public:
     Graph_Edge **edges;
@@ -641,7 +635,7 @@ public:
         curMaxNumGedges = initsize;
         nedges = 0;
 
-        if(edges == nullptr)
+        if(edges == NULL)
         {
             char rout[256], var[256];
             sprintf(rout, "%s", "Graph_EdgeList constructor");
@@ -653,18 +647,18 @@ public:
         }
 
         for(int i = 0; i < initsize; i++)
-            edges[i] = nullptr;
+            edges[i] = NULL;
 
     }
 
     ~Graph_EdgeList()
     {
-        if(edges != nullptr)
+        if(edges != NULL)
         {
             int i;
             for(i = 0; i < curMaxNumGedges/*nedges*/; i++)
             {
-                if(edges[i]!=nullptr)
+                if(edges[i]!=NULL)
                     //free(edges[i]);
                     delete edges[i];
             }
@@ -747,7 +741,7 @@ public:
         Graph_Edge **temp = edges;
         //edges = (Graph_Edge **) malloc(sizeof(Graph_Edge *) * (curMaxNumGedges + step));
         edges = new Graph_Edge *[curMaxNumGedges + step];
-        if( edges == nullptr)
+        if( edges == NULL)
         {
             //fail
             char rout[256], var[256];
@@ -755,7 +749,7 @@ public:
             sprintf(var, "%s", "edges");
 
             //write_mem_error(rout, var, 1);
-            exit(-1);
+            //exit(-1);
 
             edges = temp;
             return false;
@@ -766,7 +760,7 @@ public:
             edges[i] = temp[i];
 
         for(i = curMaxNumGedges; i < curMaxNumGedges+step; i++)
-            edges[i] = nullptr;
+            edges[i] = NULL;
 
         curMaxNumGedges += step;
 
@@ -782,6 +776,9 @@ public:
     }
 
 }; //end of Graph_EdgeList class
+
+
+
 
 
 
@@ -980,9 +977,6 @@ public:
     int cur_sccnode_index;
     int num_sccomps;
 
-    /*int *dfs_stack;
-    int curMaxDFSStack;
-    int top_dfsstack;*/
     stack<int> dfs_stack;
 
 
@@ -990,12 +984,6 @@ public:
     /**Member functions**/
     DirGraph(int nnodes = 0, int nedges = 0)
     {
-        //FILE *fp;
-        //fp = fopen("detect_porbit_cooling.txt", "a");
-        //fp = fopen("detect_porbit_swirl.txt", "a");
-        //fp = fopen("detect_porbit.txt", "a");
-        //fprintf(fp, "Start allocating nlist...\n");
-        //fclose(fp);
 
         if(nnodes == 0)
             nlist = nullptr;
@@ -1005,12 +993,6 @@ public:
             nlist->curMaxNumENodes = nnodes;
             nlist->ndirnodes = nnodes;
         }
-
-        //fp = fopen("detect_porbit_cooling.txt", "a");
-        //fp = fopen("detect_porbit_swirl.txt", "a");
-        //fp = fopen("detect_porbit.txt", "a");
-        //fprintf(fp, "Start allocating elist...\n");
-        //fclose(fp);
 
         if(nedges == 0)
             elist = nullptr;

@@ -1,16 +1,7 @@
 #include "OpenGLWindow.h"
 // this file serves as IBFVDlg.cpp, GLView.cpp
-#include <QDir>
-#include <stdlib.h>
-#include <gl/GL.h>
-#include <gl/GLU.h>
-
-#define	NPN 64
-#define NMESH  100
-#define DM  ((double) (1.0/(NMESH-1.0)))
-#define NPIX  /*512*/800 // number of pixels
 double SCALE = 3.0;
-#define SELECTBUFFERSIZE 128
+
 
 // GLOBAL VARIABLES
 const char filePath [] = "../Qt_VfAnalysis/datasets/simple_fld2.ply";
@@ -20,13 +11,13 @@ double g_zoom_factor = 1.0;
 /*------------------------------------------------------------*/
 //global variables for ibfv
 int     iframe = 0;
-int     Npat   = 64;        // Modified at 02/10/2010
+const int     Npat   = 64;        // Modified at 02/10/2010
 int     alpha  = (0.06*255);  // modified for a smear out LIC texture for better visualization (TVCG revision 11/22/2010)
 double  sa;
-double  tmax   = NPIX/(SCALE*NPN);
+const double  tmax   = NPIX/(SCALE*NPN);
 double  dmax   = 1.8/NPIX;
-int npn = NPN;
-int npix = 800;
+const int npn = NPN;
+const int npix = 800;
 
 int Cal_Regions=0;
 int ndisplay_trajs;
@@ -35,7 +26,7 @@ int Integrator_opt = 0;
 int ndisplay_POs;
 clock_t g_start, g_finish;
 
-double singsize = 0.009; // For visualizing the fixed points with the Morse sets together!
+const double singsize = 0.009; // For visualizing the fixed points with the Morse sets together!
 double trans_x=0;
 double trans_y=0;
 
@@ -48,10 +39,11 @@ bool ShowTDistribution = false;
 bool ShowDiffECGMCG = false;
 bool ShowMCGDiff = false;
 bool ShowRotSumOn = false;
+const int DebugOn = 1;
 
 GLuint Textures[2];
 GLubyte f_tex[NPIX][NPIX][3], b_tex[NPIX][NPIX][3], applied_tex[NPIX][NPIX][3];
-
+GLubyte test_tex[NPIX][NPIX][3];
 struct jitter_struct{
     double x;
     double y;
@@ -82,14 +74,13 @@ extern MCG_Graph *mcg;
 OpenGLWindow::OpenGLWindow(QWidget *parent) : QOpenGLWidget(parent)
 {
     // set surfaceFormat
-    format.setDepthBufferSize(64);
-    format.setStencilBufferSize(8);
-    //format.setAlphaBufferSize(8);
-    format.setVersion(3,2);
-    format.setProfile(QSurfaceFormat::CoreProfile);
-    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
-    QSurfaceFormat::setDefaultFormat(format);
-
+//    format.setDepthBufferSize(32);
+//    format.setStencilBufferSize(8);
+//    //format.setAlphaBufferSize(8);
+//    format.setVersion(3,2);
+//    format.setProfile(QSurfaceFormat::CoreProfile);
+//    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+//    QSurfaceFormat::setDefaultFormat(format);
     qInfo() << "OpenGLWindow Default Constructor has finished";
     //qDebug() << QDir::currentPath();
 }
@@ -102,15 +93,35 @@ OpenGLWindow::~OpenGLWindow() {
 
 void OpenGLWindow::initializeGL(){
     this->makeCurrent();
-
-    mat_ident(rotmat);
+    this->mat_ident(rotmat);
     for(int i = 0; i < 16; i++)
-        ObjXmat[i]=0.;
-    ObjXmat[0] = ObjXmat[5] = ObjXmat[10] = ObjXmat[15] = 1;
+        this->ObjXmat[i]=0.;
+    this->ObjXmat[0] = this->ObjXmat[5] = this->ObjXmat[10] = this->ObjXmat[15] = 1;
+
     this->init_flags();
 
     this->initializeOpenGLFunctions();
-    this->build_Polyhedron(); // no drawing
+
+    // read file
+    FILE *this_file = fopen(filePath, "r");
+    if(this_file == 0){
+        qInfo() << "Cannot open file: " << filePath;
+        exit(-1);
+    }
+    QString str = "Reading file: " + QString(filePath);
+    qInfo() << str;
+
+    // build polyhedron
+    object = new Polyhedron(this_file, 1);
+    object->initialize();
+    this->rot_center = object->rot_center;  ////set the rotation center!
+
+    object->cal_TexCoord();
+
+    morse_decomp = new MorseDecomp(); /*initialize the Morse Decomposition component*/
+
+    L1_morse = new MorseDecomp();
+    L2_morse = new MorseDecomp();
 
     this->InitGL(); // no drawing
 
@@ -119,27 +130,40 @@ void OpenGLWindow::initializeGL(){
     mcg->init_MCG(); // init MCG
 
     //IBFV visualization initialization
-    this->makePatterns();
+    //this->makePatterns();
+    //this->DrawGLScene(GL_RENDER);
+    //this->ReCalTexcoord();
+
+    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    output_tex_to_file(f_tex, "f_tex");
+
+
+    glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    output_tex_to_file(f_tex, "f_tex_2nd");
+    qInfo() << "init gl Error: " << glGetError();
     qInfo() << "OpenGLWindow has been initialized";
 }
 
 
 void OpenGLWindow::paintGL(){
-    this->DrawGLScene(GL_RENDER);
-    this->ReCalTexcoord();
-    this->update();
+    //this->DrawGLScene(GL_RENDER);
+    //this->draw();
+    //this->update();
     qInfo() << "paintGL is Done";
 }
 
 
 void OpenGLWindow::resizeGL(int w, int h){
 
-    qInfo() << "Resize w" << w << "  h" <<h;
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+//    qInfo() << "Resize w" << w << "  h" <<h;
+//    glViewport(0, 0, w, h);
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
 }
 
 
@@ -152,19 +176,21 @@ void OpenGLWindow::set_up_MainWindow_ptr(MainWindow *MW_ptr)
 void OpenGLWindow::draw(){
     float r = 1.0f, g = 0.0f, b = 0.0f;
     glColor3f(r, g, b);
+    glLoadIdentity();
+    glTranslatef(-0.5, -0.5, 0);
+    double min =10;
+    double max = -10;
     glBegin(GL_TRIANGLES);
     for(int i = 0; i < object->tlist.ntris; i++){
         const Triangle * t1 = object->tlist.tris[i];
         const Vertex* v1 = t1->verts[0];
         const Vertex* v2 = t1->verts[1];
         const Vertex* v3 = t1->verts[2];
-
         glVertex3f(v1->x, v1->y, v1->z);
         glVertex3f(v2->x, v2->y, v2->z);
         glVertex3f(v3->x, v3->y, v3->z);
     }
     glEnd();
-
 }
 
 
@@ -219,34 +245,22 @@ void OpenGLWindow::init_flags()
 }
 
 
-
-void OpenGLWindow::build_Polyhedron()
-{
-    // read file
-    FILE *this_file = fopen(filePath, "r");
-    if(this_file == 0){
-        qInfo() << "Cannot open file: " << filePath;
-        exit(-1);
-    }
-    QString str = "Reading file: " + QString(filePath);
-    qInfo() << str;
-
-    // build polyhedron
-    object = new Polyhedron(this_file, 1);
-    object->initialize();
-    this->rot_center = object->rot_center;  ////set the rotation center!
-
-    object->cal_TexCoord();
-
-    morse_decomp = new MorseDecomp(); /*initialize the Morse Decomposition component*/
-
-    L1_morse = new MorseDecomp();
-    L2_morse = new MorseDecomp();
+void OpenGLWindow::init_tex(){
+    for(int i =0; i < NPIX; i++)
+        for(int j =0; j < NPIX; j++){
+            for(int w =0; w < 4; w++){
+                f_tex[i][j][w] = 0;
+                b_tex[i][j][w] = 0;
+                applied_tex[i][j][w] = 0;
+            }
+        }
 }
 
 
 void OpenGLWindow::makePatterns()
 {
+    this->init_tex();
+
     int lut[256];
     int phase[NPN][NPN];
     GLubyte pat[NPN][NPN][4];
@@ -254,6 +268,7 @@ void OpenGLWindow::makePatterns()
     int i, j, k, t;
     int lut_r[256], lut_g[256], lut_b[256];
 
+    //for (i = 0; i < 256; i++) lut[i] = i < 127 ? 0 : 255;
     for (i = 0; i < 256; i++) lut[i] = i < 127 ? 50 : 255;                 // for a brighter texture (TVCG revision 11/22/2010)
 
     for (i = 0; i < NPN; i++)
@@ -261,30 +276,31 @@ void OpenGLWindow::makePatterns()
 
     if ( EnGreyTexture )
     {
-        for (k = 0; k < Npat; k++) {
-            t = k*256/Npat;                           //t is used to control the animation of the image
-            for (i = 0; i < NPN; i++)
-                for (j = 0; j < NPN; j++) {
-                    pat[i][j][0] =
-                        pat[i][j][1] =
-                        pat[i][j][2] = lut[(t + phase[i][j]) % 255];
-                    pat[i][j][3] = alpha;
+//        for (k = 0; k < Npat; k++) {
+//            t = k*256/Npat;                           //t is used to control the animation of the image
+//            for (i = 0; i < NPN; i++)
+//                for (j = 0; j < NPN; j++) {
+//                    pat[i][j][0] =
+//                        pat[i][j][1] =
+//                        pat[i][j][2] = lut[(t + phase[i][j]) % 255];
+//                    pat[i][j][3] = alpha;
 
-                    spat[i][j][0] =
-                        spat[i][j][1] =
-                        spat[i][j][2] = lut[ phase[i][j] % 255];
-                    spat[i][j][3] = alpha;
-                }
-            glNewList(k + 1, GL_COMPILE);
-            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
-                         GL_RGBA, GL_UNSIGNED_BYTE, pat);
-            glEndList();
+//                    spat[i][j][0] =
+//                        spat[i][j][1] =
+//                        spat[i][j][2] = lut[ phase[i][j] % 255];
+//                    spat[i][j][3] = alpha;
+//                }
 
-            glNewList(k + 1 + 100, GL_COMPILE);       //This is for static image
-            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
-                         GL_RGBA, GL_UNSIGNED_BYTE, spat);
-            glEndList();
-        }
+//            glNewList(k + 1, GL_COMPILE);
+//            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
+//                         GL_RGBA, GL_UNSIGNED_BYTE, pat);
+//            glEndList();
+
+//            glNewList(k + 1 + 100, GL_COMPILE);       //This is for static image
+//            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
+//                         GL_RGBA, GL_UNSIGNED_BYTE, spat);
+//            glEndList();
+//        }
     }
 
     else
@@ -299,9 +315,6 @@ void OpenGLWindow::makePatterns()
             lut_g[i] = 1.3*i<127?0:255;
             lut_b[i] = 1.1*i<127?0:255;
 
-            //lut_r[i] = 1.22*i<127?70:255; // for a brighter texture (TVCG revision 11/22/2010)
-            // lut_g[i] = 1.3*i<127?70:255;
-            //lut_b[i] = 1.1*i<127?70:255;
         }
 
         for (i = 0; i < NPN; i++)
@@ -321,10 +334,17 @@ void OpenGLWindow::makePatterns()
                     spat[i][j][2] = lut_b[ phase[i][j] % 255]/*lut[phase[i][j] % 255]*/;
                     spat[i][j][3] = alpha;
                 }
-            glNewList(k + 1, GL_COMPILE);
-            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
-                         GL_RGBA, GL_UNSIGNED_BYTE, pat);
-            glEndList();
+
+//            glNewList(k + 1, GL_COMPILE);
+//            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
+//                         GL_RGBA, GL_UNSIGNED_BYTE, pat);
+//            glEndList();
+
+
+//            if(k == 1){
+//                output_pattern_to_file(spat, "spat");
+//                exit(-5);
+//            }
 
             glNewList(k + 1 + 100, GL_COMPILE);       //This is for static image
             glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
@@ -332,6 +352,7 @@ void OpenGLWindow::makePatterns()
             glEndList();
         }
     }
+    qInfo() << "makePatterns gl Error: " << glGetError();
 }
 
 
@@ -339,15 +360,18 @@ int OpenGLWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Drawing
 {
     if (!IBFVOff) {
         //printf("IBFVOFF!");
-        IBFVSEffect(mode);
+
+        this->IBFVSEffect(mode);
     }
     else
-    {
-        //printf("IBFVON!");
-        glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        draw_shadedObj(mode);
-    }
+        qInfo() << "something went wrong";
+//    else
+//    {
+//        //printf("IBFVON!");
+//        glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//        draw_shadedObj(mode);
+//    }
 
 
 //    glDisable(GL_TEXTURE_2D);
@@ -370,14 +394,14 @@ int OpenGLWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Drawing
 //    glEnable(GL_BLEND);
 
 
-//    // show the rotational sum
+//    //show the rotational sum
 
-//    //glEnable(GL_BLEND);
+//    glEnable(GL_BLEND);
 //    if (ShowRotSumOn)
 //    {
 //        vis_rot_sum();
 //    }
-//    //glDisable(GL_BLEND);
+//    glDisable(GL_BLEND);
 
 //    without_antialiasing(mode);
 
@@ -465,7 +489,6 @@ void OpenGLWindow::ReCalTexcoord()
 
     glGetFloatv(GL_MODELVIEW_MATRIX, ObjXmat);
 
-
     for(i = 0; i < object->vlist.nverts; i++)
     {
         ////Initialize the variables nv and pr
@@ -509,8 +532,11 @@ void OpenGLWindow::ReCalTexcoord()
     }
 }
 
+
+int version = 0;
 void    OpenGLWindow::IBFVSEffect(GLenum mode)
 {
+    qInfo() << "IBFVEFFECT Error1: " << glGetError();
     int i, j;
     Triangle *face;
     Vertex *v;
@@ -521,28 +547,40 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
     GLfloat specular[] = { 0.8, 0.8, 1.0, 1.0 };
     int shiny = 100;
 
+    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    output_tex_to_file(f_tex, "f_tex");
+
+
     glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glShadeModel(GL_FLAT);
+    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    output_tex_to_file(f_tex, "f_tex_2nd");
+    exit(1);
+
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_LIGHTING);
     glDisable(GL_LIGHT0);
-    glEnable(GL_DEPTH_TEST);
 
+
+    glShadeModel(GL_FLAT);
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
     ////////////////////////////////////////////////
-    glDrawBuffer(GL_BACK);
+    //glDrawBuffer(GL_BACK);
+
+    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    output_tex_to_file(f_tex, "f_tex");
+
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, f_tex);
 
     set_view(GL_RENDER);
 
-    glPushMatrix ();
-    set_scene(GL_RENDER);
 
+    glPushMatrix();
+    set_scene(GL_RENDER);
 
     //////Texture distortion and mapping here
     for (i=0; i<object->tlist.ntris; i++) {
@@ -553,86 +591,94 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
             v = face->verts[j];
             glTexCoord2f(v->texture_coord.entry[0], v->texture_coord.entry[1]);
             glVertex3f(v->x, v->y, v->z);
+
         }
         glEnd();
     }
 
     glPopMatrix();
 
-    iframe = iframe + 1;
 
     ////Adding the depth judgement here!
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthFunc(GL_GREATER);
+
     if( MoveOrStop ==0 )   ////Static
         glCallList(iframe % Npat + 1 + 100);
-    else                   ////Moving
-        glCallList(iframe % Npat + 1);
+
+//    else                   ////Moving
+//        glCallList(iframe % Npat + 1);
     glBegin(GL_QUAD_STRIP);
-    glTexCoord2f(0.0,  0.0);  glVertex3f(0.0, 0.0, -39.9);
-    glTexCoord2f(0.0,  tmax); glVertex3f(0.0, 1.0, -39.9);
-    glTexCoord2f(tmax, 0.0);  glVertex3f(1.0, 0.0, -39.9);
-    glTexCoord2f(tmax, tmax); glVertex3f(1.0, 1.0, -39.9);
+        glTexCoord2f(0.0,  0.0);  glVertex3f(0.0, 0.0, -39.9);
+        glTexCoord2f(0.0,  tmax); glVertex3f(0.0, 1.0, -39.9);
+        glTexCoord2f(tmax, 0.0);  glVertex3f(1.0, 0.0, -39.9);
+        glTexCoord2f(tmax, tmax); glVertex3f(1.0, 1.0, -39.9);
     glEnd();
     glDepthFunc(GL_LESS);
     glDisable(GL_BLEND);
 
 
+
     ////Store the vector field texture for next shading blending and next texture generating
 
     //glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, NPIX, NPIX, 0);
-    glReadBuffer(GL_BACK);
+    //glReadBuffer(GL_BACK);
+
+
     glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    //output_tex_to_file(f_tex, "f_tex_2nd");
 
     if(MoveOrStop == 0)
     {
-        /* Calculate backward texture */
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, b_tex);
+//        /* Calculate backward texture */
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
+//                     GL_RGB, GL_UNSIGNED_BYTE, b_tex);
 
-        glPushMatrix ();
-        set_scene(GL_RENDER);
+//        glPushMatrix ();
+//        set_scene(GL_RENDER);
 
 
-        //////Texture distortion and mapping here
-        for (i=0; i<object->tlist.ntris; i++) {
-            face = object->tlist.tris[i];
-            glBegin(GL_POLYGON);
-            for (j=0; j<face->nverts; j++) {
-                ///Using the storaged texture coordinates
-                v = face->verts[j];
-                glTexCoord2f(v->back_Tex.entry[0], v->back_Tex.entry[1]);
-                glVertex3f(v->x, v->y, v->z);
-            }
-            glEnd();
-        }
+//        //////Texture distortion and mapping here
+//        for (i=0; i<object->tlist.ntris; i++) {
+//            face = object->tlist.tris[i];
+//            glBegin(GL_POLYGON);
+//            for (j=0; j<face->nverts; j++) {
+//                ///Using the storaged texture coordinates
+//                v = face->verts[j];
+//                glTexCoord2f(v->back_Tex.entry[0], v->back_Tex.entry[1]);
+//                glVertex3f(v->x, v->y, v->z);
+//            }
+//            glEnd();
+//        }
 
-        glPopMatrix();
+//        glPopMatrix();
 
-        iframe = iframe + 1;
+//        iframe = iframe + 1;
 
-        ////Adding the depth judgement here!
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDepthFunc(GL_GREATER);
-        //if( MoveOrStop ==0 )   ////Static
-        glCallList(iframe % Npat + 1 + 100);
-        //else                   ////Moving
-        //	glCallList(iframe % Npat + 1);
-        glBegin(GL_QUAD_STRIP);
-            glTexCoord2f(0.0,  0.0);  glVertex3f(0.0, 0.0, -39.9);
-            glTexCoord2f(0.0,  tmax); glVertex3f(0.0, 1.0, -39.9);
-            glTexCoord2f(tmax, 0.0);  glVertex3f(1.0, 0.0, -39.9);
-            glTexCoord2f(tmax, tmax); glVertex3f(1.0, 1.0, -39.9);
-        glEnd();
-        glDepthFunc(GL_LESS);
-        glDisable(GL_BLEND);
+//        ////Adding the depth judgement here!
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//        glDepthFunc(GL_GREATER);
+//        //if( MoveOrStop ==0 )   ////Static
+//        glCallList(iframe % Npat + 1 + 100);
+//        if( MoveOrStop ==0 )   ////Static
+//            glCallList(iframe % Npat + 1 + 100);
+////        else                   ////Moving
+////            glCallList(iframe % Npat + 1);
+//        glBegin(GL_QUAD_STRIP);
+//            glTexCoord2f(0.0,  0.0);  glVertex3f(0.0, 0.0, -39.9);
+//            glTexCoord2f(0.0,  tmax); glVertex3f(0.0, 1.0, -39.9);
+//            glTexCoord2f(tmax, 0.0);  glVertex3f(1.0, 0.0, -39.9);
+//            glTexCoord2f(tmax, tmax); glVertex3f(1.0, 1.0, -39.9);
+//        glEnd();
+//        glDepthFunc(GL_LESS);
+//        glDisable(GL_BLEND);
 
-        glReadBuffer(GL_BACK);
-        glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, b_tex);
+//        //glReadBuffer(GL_BACK);
+//        glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, b_tex);
 
-        //blend two images
+//        //blend two images
 
 //        for(int x = 0; x < NPIX; x++)
 //        {
@@ -652,7 +698,7 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
     ////////////////////////////////////////////////////////////////////
     ////Blending shading here 12/1
 
-    /*  First, draw the background  */
+//    /*  First, draw the background  */
 //    if (!DisableLighting && !DisableBackground)
 //    {
 //        glClearColor (0.0, 0.0, 0.0, 1.0);  // background for rendering color coding and lighting
@@ -690,48 +736,48 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
 //    }
 //    ////////////////////////////////////////////
 
-//    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 
-//    set_scene(GL_RENDER);
+    set_scene(GL_RENDER);
 
-//    glShadeModel(GL_SMOOTH);
+    glShadeModel(GL_SMOOTH);
 
-//    if (!DisableLighting)
-//    {
-//        glEnable(GL_LIGHTING);
-//        glEnable(GL_LIGHT0);
-//        //glEnable(GL_LIGHT1);
-//        glEnable(GL_NORMALIZE);
-//    }
+    if (!DisableLighting)
+    {
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        //glEnable(GL_LIGHT1);
+        glEnable(GL_NORMALIZE);
+    }
 
-//    else
-//    {
-//        glDisable(GL_LIGHTING);
-//    }
-//    //glEnable(GL_RESCALE_NORMAL);
+    else
+    {
+        glDisable(GL_LIGHTING);
+    }
+    //glEnable(GL_RESCALE_NORMAL);
 
 
-//    glEnable(GL_TEXTURE_2D);
-//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-//    //glDisable(GL_COLOR_MATERIAL);
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    //glDisable(GL_COLOR_MATERIAL);
 
-//    if (MoveOrStop == 0)
-//    {
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
-//                     GL_RGB, GL_UNSIGNED_BYTE, applied_tex);
-//    }
+    if (MoveOrStop == 0)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
+                     GL_RGB, GL_UNSIGNED_BYTE, applied_tex);
+    }
 //    else
 //        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
 //                     GL_RGB, GL_UNSIGNED_BYTE, f_tex);
 
 
-//    glEnable(GL_COLOR_MATERIAL);
-//    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-//    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-//    glMaterialfv(GL_FRONT_AND_BACK/*GL_FRONT*/, GL_DIFFUSE, diffuse);
-//    glMaterialfv(GL_FRONT_AND_BACK/*GL_FRONT*/, GL_SPECULAR, specular);
-//    //glMaterialf(GL_FRONT, GL_SHININESS, (GLfloat)shiny);
-//    glMateriali(GL_FRONT_AND_BACK/*GL_FRONT*/, GL_SHININESS, 80);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+    glMaterialfv(GL_FRONT_AND_BACK/*GL_FRONT*/, GL_DIFFUSE, diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK/*GL_FRONT*/, GL_SPECULAR, specular);
+    //glMaterialf(GL_FRONT, GL_SHININESS, (GLfloat)shiny);
+    glMateriali(GL_FRONT_AND_BACK/*GL_FRONT*/, GL_SHININESS, 80);
 
 //    for (i=0; i<object->tlist.ntris; i++) {
 //        if (mode == GL_SELECT)
@@ -758,7 +804,10 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
 
 //    }
 
-//    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
+    qInfo() << "IBFVEFFECT Error2: " << glGetError();
+    version++;
+    iframe = iframe + 1;
 }
 
 
@@ -932,14 +981,14 @@ void    OpenGLWindow::set_view(GLenum mode)
 
 void    OpenGLWindow::set_scene(GLenum mode)
 {
-    glTranslatef(trans_x, trans_y, 0);
-    glTranslatef(0.0, 0.0, -3.0);
+    //glTranslatef(trans_x, trans_y, 0);
+    //glTranslatef(0.0, 0.0, -10.0);
     glTranslatef(this->rot_center.entry[0] ,
                  this->rot_center.entry[1],
                  this->rot_center.entry[2]);
 
 
-    multmatrix( this->rotmat );
+    //multmatrix( this->rotmat );
 
     glScalef(this->zoom_factor, this->zoom_factor, this->zoom_factor);
 
@@ -1770,34 +1819,5 @@ void OpenGLWindow::display_diff_MCGs()
                        v->z + 0.001*outn.entry[2]);
         }
         glEnd();
-    }
-}
-
-
-void    display_sel_tri(int tri)
-{
-    Triangle *t = object->tlist.tris[tri];
-    int i;
-    glDepthFunc(GL_LEQUAL);
-    glBegin(GL_LINE_LOOP);
-    for (i=0; i<t->nverts; i++)
-    {
-        glVertex3f(t->verts[i]->x, t->verts[i]->y, t->verts[i]->z);
-    }
-    glEnd();
-    glDepthFunc(GL_LESS);
-}
-
-
-void    matrix_ident( float m[4][4])
-{
-    int i;
-
-    for (i = 0; i <= 3; i++) {
-        m[i][0] = 0.0;
-        m[i][1] = 0.0;
-        m[i][2] = 0.0;
-        m[i][3] = 0.0;
-        m[i][i] = 1.0;
     }
 }

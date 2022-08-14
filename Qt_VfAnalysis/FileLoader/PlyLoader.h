@@ -131,11 +131,11 @@ struct PlyFile {        /* description of PLY file */
 #define NAMED_PROP       1
 
 
-class PlyLoader
+class CPlyLoader
 {
 public:
-    PlyLoader(void);
-    ~PlyLoader(void);
+    CPlyLoader(void);
+    ~CPlyLoader(void);
 
     PlyFile *read_ply(FILE *fp);
     PlyFile *ply_read(FILE *fp, int *nelems, char ***elem_names);
@@ -181,6 +181,7 @@ public:
     void write_ascii_item(FILE *fp,int int_val,unsigned int uint_val,double double_val,int type);
     void get_stored_item(void *ptr,int type,int *int_val,unsigned int *uint_val,double *double_val);
     void write_scalar_type (FILE *fp, int code);
+
 };
 
 #endif /* !__PLY_H__ */

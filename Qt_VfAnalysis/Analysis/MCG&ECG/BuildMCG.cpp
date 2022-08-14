@@ -14,7 +14,7 @@ copyright @2007
 
 extern Polyhedron *object;
 extern MorseDecomp *morse_decomp;
-extern int DebugOn;
+extern const int DebugOn;
 
 MCG_Graph *mcg = NULL;
 //local mcg

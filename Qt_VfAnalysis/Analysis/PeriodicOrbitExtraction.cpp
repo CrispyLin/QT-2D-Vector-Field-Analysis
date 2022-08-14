@@ -11,7 +11,7 @@ copyright @2007
 
 extern MorseDecomp *morse_decomp;
 extern Polyhedron *object;
-extern int DebugOn;
+extern const int DebugOn;
 extern int ndisplay_POs;
 
 

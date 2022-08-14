@@ -24,7 +24,7 @@ ECG_Graph *ecg = NULL;
 extern double ConleyGraphWin_x ;
 extern double ConleyGraphWin_y ;
 extern double types_interval_y ;
-extern int DebugOn;
+extern const int DebugOn;
 
 /*
 */

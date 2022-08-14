@@ -10,18 +10,17 @@ copyright @2007
 
 static PlyFile *in_ply;
 
-
 #define FILEDEBUG
 
 #define EQFIELD
 
-int DebugOn = 1;
+extern const int DebugOn;
 
-Polyhedron *object = nullptr; // used as extern variable in other files
+Polyhedron *object = NULL;
 unsigned char orientation;  // 0=ccw, 1=cw
 
 
-
+#include "Graph2D.h"
 std::vector<Contour_Graph> isolines;
 
 Corner **extend_Link(Corner **corner, int ncorners)
@@ -36,9 +35,9 @@ Corner **extend_Link(Corner **corner, int ncorners)
     Corner **temp = corner;
 
     corner = new Corner *[ncorners+1];
-    if(corner == nullptr)
+    if(corner == NULL)
     {
-        qInfo() << "fail to allocate memory for corner list of a vertex, program will be terminated";
+        //MessageBox(NULL, "fail to allocate memory for corner list of a vertex, program will be terminated", "", MB_OK);
         exit(-1);
     }
 
@@ -83,6 +82,15 @@ Vertex::Vertex(double ix, double iy, double iz,
 Vertex::~Vertex()
 {
 }
+
+/* Implementation of the memeber function for VertexList class */
+//VertexList::VertexList()
+//{
+//}
+
+//VertexList::~VertexList()
+//{
+//}
 
 
 /* Implementation of the memeber function for Triangle class */
@@ -137,22 +145,22 @@ void TriangleList::capture_Singularities()
     nsingulartris = 0;
     //cur_singularity_index = 0;
 
-    ////Initialize the unknown singularities link
-    /////Building the triangle ID link
-    //if(singulartris == nullptr)
-    //{
-    //	curMaxNumSingularTris = (int)(curMaxNumTris/2);
-    //	singulartris = new Triangle *[curMaxNumSingularTris];
+////Initialize the unknown singularities link
+/////Building the triangle ID link
+//if(singulartris == NULL)
+//{
+//	curMaxNumSingularTris = (int)(curMaxNumTris/2);
+//	singulartris = new Triangle *[curMaxNumSingularTris];
 
-    //	if(singulartris == nullptr)
-    //	{
-    //		MessageBox(nullptr, "failed to allocate memory to detect singularities\n", "", MB_OK);
-    //		exit(-1);
-    //	}
-    //}
+//	if(singulartris == NULL)
+//	{
+//		MessageBox(NULL, "failed to allocate memory to detect singularities\n", "", MB_OK);
+//		exit(-1);
+//	}
+//}
 
 
-    //////Test codes here, write to file//////
+//////Test codes here, write to file//////
 #ifdef FILEDEBUG
     FILE *fp = fopen("tt.txt","w");
 #endif
@@ -168,158 +176,178 @@ void TriangleList::capture_Singularities()
 
     /////here we should estimate each triangle under its local frame
     for (i=0; i<ntris; i++) {
-            face = tris[i];
-            //verts = face->verts;
+        face = tris[i];
+        //verts = face->verts;
 
-            Polar_ang = new double[face->num_dir_vecs];
-            angle = new double[face->num_dir_vecs];
+        Polar_ang = new double[face->num_dir_vecs];
+        angle = new double[face->num_dir_vecs];
 
-            ang_sum = 0;
-            direct_id = 0;
+        ang_sum = 0;
+        direct_id = 0;
 
         //int vertexsing = 0;
-            //TiltVectorsForATriangle(i);
+        //TiltVectorsForATriangle(i);
 
-            ////we need to judge whether the singularity is on the vertex or not  04/18/05
-            for(j = 0; j < 3; j++)
+        ////we need to judge whether the singularity is on the vertex or not  04/18/05
+        for(j = 0; j < 3; j++)
+        {
+            if(face->verts[j]->angle_deficit)
             {
-                if(face->verts[j]->angle_deficit)
+                ////get the two vectors on the two edges
+                tempV1 = face->dir_vec[direct_id];
+                direct_id ++;
+                tempV2 = face->dir_vec[direct_id];
+                direct_id ++;
+
+                if((length(tempV1)<= 1e-18) || (length(tempV2) <= 1e-18))////set some threshold instead of 0
                 {
-                    ////get the two vectors on the two edges
-                    tempV1 = face->dir_vec[direct_id];
-                    direct_id ++;
-                    tempV2 = face->dir_vec[direct_id];
-                    direct_id ++;
+                    //if(nsingulartris >= curMaxNumSingularTris)
+                    //{
+                    //	TriangleList **temp = singulartris;
+                    //	singulartris = new Triangle *[curMaxNumSingularTris+50];
 
-                    if((length(tempV1)<= 1e-18) || (length(tempV2) <= 1e-18))////set some threshold instead of 0
-                    {
-                        //if(nsingulartris >= curMaxNumSingularTris)
-                        //{
-                        //	TriangleList **temp = singulartris;
-                        //	singulartris = new Triangle *[curMaxNumSingularTris+50];
+                    //	if(singulartris == NULL)
+                    //	{
+                    //		MessageBox(NULL, "failed to allocate memory to detect singularities\n", "", MB_OK);
+                    //		exit(-1);
+                    //	}
 
-                        //	if(singulartris == nullptr)
-                        //	{
-                        //		MessageBox(nullptr, "failed to allocate memory to detect singularities\n", "", MB_OK);
-                        //		exit(-1);
-                        //	}
+                    //	for(int k = 0; k < curMaxNumSingularTris; k++)
+                    //	{
+                    //		singulartris[k] = temp[k];
+                    //	}
+                    //	curMaxNumSingularTris += 50;
+                    //}
 
-                        //	for(int k = 0; k < curMaxNumSingularTris; k++)
-                        //	{
-                        //		singulartris[k] = temp[k];
-                        //	}
-                        //	curMaxNumSingularTris += 50;
-                        //}
+                    //singulartris[FindTriangleIndex] = i;
 
-                        //singulartris[FindTriangleIndex] = i;
+                    face->singularityID = nsingulartris;         ////Mark current triangle as one containing singularity
+                    nsingulartris ++;
 
-                        face->singularityID = nsingulartris;         ////Mark current triangle as one containing singularity
-                        nsingulartris ++;
-
-                        positive ++;
-                        goto LL;
-                    }
-
-                }
-
-                else{
-                    /////This is for the process of Vertex without angle deficit
-                    tempV1 = VertsVector = face->dir_vec[direct_id];
-                    direct_id ++;
-
-                    vx[j] = VertsVector.entry[0];
-                    vy[j] = VertsVector.entry[1];
-
-                    if(fabs(vx[j]) <= 1e-18 && fabs(vy[j]) <= 1e-18)  ////set some threshold instead of 0
-                    {
-                        //if(FindTriangleIndex >= MaxNumSingularities)
-                        //{
-                        //	MaxNumSingularities += 50;
-                        //	MarkTriangleID = (int*) realloc(MarkTriangleID, sizeof(int) * MaxNumSingularities);
-                        //	singularities = (Singularities*) realloc(singularities, sizeof(Singularities) * MaxNumSingularities);
-                        //}
-
-                        //MarkTriangleID[FindTriangleIndex] = i;
-                        face->singularityID = nsingulartris;         ////Mark current triangle as one containing singularity
-                        nsingulartris ++;
-
-                        positive ++;
-                        goto LL;
-                    }
-                }
-            }
-
-            ///////////////////////////////////////////////////////////////////////////////
-
-
-            ////calculate the angle between two vectors
-            for(j = 0; j < face->num_dir_vecs; j++)
-            {
-                tempV1 = face->dir_vec[j];
-
-                normalize(tempV1);
-
-                Polar_ang[j] = atan2(tempV1.entry[1], tempV1.entry[0]);
-            }
-
-            for(j = 0; j < face->num_dir_vecs; j++)
-            {
-
-                if(face->y2 < 0) //clock wise orientation
-                    angle[j] = Polar_ang[(j-1+face->num_dir_vecs)%face->num_dir_vecs] - Polar_ang[j];
-                else
-                    angle[j] = Polar_ang[j] - Polar_ang[(j-1+face->num_dir_vecs)%face->num_dir_vecs];
-
-
-
-                if( angle[j] < -M_PI)
-                    angle[j] += 2 * M_PI;
-
-                if( angle[j] > M_PI)
-                    angle[j] -= 2 * M_PI;
-
-
-                ang_sum += angle[j];
-            }
-
-
-LL:			if(fabs(ang_sum) >= (2 * M_PI - 0.01))
-            {
-                face->singularityID = nsingulartris;         ////Mark current triangle as one containing singularity
-                nsingulartris ++;
-
-                ////Add the index (at present, we just consider first order critical points
-                if(ang_sum > 0){
-                    poincare_index ++;
                     positive ++;
+                    goto LL;
                 }
-                else{
-                    poincare_index --;
-                    negative ++;
+
+            }
+
+            else{
+                /////This is for the process of Vertex without angle deficit
+                tempV1 = VertsVector = face->dir_vec[direct_id];
+                direct_id ++;
+
+                vx[j] = VertsVector.entry[0];
+                vy[j] = VertsVector.entry[1];
+
+                if(fabs(vx[j]) <= 1e-18 && fabs(vy[j]) <= 1e-18)  ////set some threshold instead of 0
+                {
+                    //if(FindTriangleIndex >= MaxNumSingularities)
+                    //{
+                    //	MaxNumSingularities += 50;
+                    //	MarkTriangleID = (int*) realloc(MarkTriangleID, sizeof(int) * MaxNumSingularities);
+                    //	singularities = (Singularities*) realloc(singularities, sizeof(Singularities) * MaxNumSingularities);
+                    //}
+
+                    //MarkTriangleID[FindTriangleIndex] = i;
+                    face->singularityID = nsingulartris;         ////Mark current triangle as one containing singularity
+                    nsingulartris ++;
+
+                    positive ++;
+                    goto LL;
                 }
-//#ifdef FILEDEBUG
-    if(DebugOn == 1){
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////
+
+
+        ////calculate the angle between two vectors
+        for(j = 0; j < face->num_dir_vecs; j++)
+        {
+            tempV1 = face->dir_vec[j];
+
+            normalize(tempV1);
+
+            Polar_ang[j] = atan2(tempV1.entry[1], tempV1.entry[0]);
+        }
+
+        for(j = 0; j < face->num_dir_vecs; j++)
+        {
+
+            if(face->y2 < 0) //clock wise orientation
+                angle[j] = Polar_ang[(j-1+face->num_dir_vecs)%face->num_dir_vecs] - Polar_ang[j];
+            else
+                angle[j] = Polar_ang[j] - Polar_ang[(j-1+face->num_dir_vecs)%face->num_dir_vecs];
+
+
+
+            if( angle[j] < -M_PI)
+                angle[j] += 2 * M_PI;
+
+            if( angle[j] > M_PI)
+                angle[j] -= 2 * M_PI;
+
+
+            ang_sum += angle[j];
+        }
+
+
+    LL:			if(fabs(ang_sum) >= (2 * M_PI - 0.01))
+        {
+            face->singularityID = nsingulartris;         ////Mark current triangle as one containing singularity
+            nsingulartris ++;
+
+            ////Add the index (at present, we just consider first order critical points
+            if(ang_sum > 0){
+                poincare_index ++;
+                positive ++;
+            }
+            else{
+                poincare_index --;
+                negative ++;
+            }
+            //#ifdef FILEDEBUG
+            if(DebugOn == 1){
                 fprintf(fp, "Triangle : %d,   Index: %f\n", i, ang_sum/(2*M_PI));
                 fprintf(fp, "       The first vectors on the vertices: ");
                 for( int k = 0; k < face->num_dir_vecs; k ++)
                     fprintf(fp, " %f, ", length(face->dir_vec[k]));
 
                 fprintf(fp, "  \n\n ");
-    }
-//#endif
             }
+            //#endif
+        }
 
     }
 
-//#ifdef FILEDEBUG
+    //#ifdef FILEDEBUG
     if(DebugOn == 1){
-    fprintf(fp, "Positive: %d,   Negative: %d,  Total: %d\n", positive, negative, poincare_index);
-    fclose(fp);
+        fprintf(fp, "Positive: %d,   Negative: %d,  Total: %d\n", positive, negative, poincare_index);
+        fclose(fp);
     }
-//#endif
+    //#endif
 }
 
 
+
+/* Implementation of the memeber function for Edge class */
+
+
+/* Build edge list */
+
+/* Implementation of the memeber function for EdgeList class */
+
+
+/* Implementation of the memeber function for Corner class */
+
+
+/* Implementation of the memeber function for CornerList class */
+
+
+/* Implementation of the memeber function for Polyhedron class */
+
+/******************************************************************************
+Read in a polyhedron from a file.
+******************************************************************************/
 
 Polyhedron::Polyhedron(FILE *file, int withvec)
 {
@@ -328,7 +356,8 @@ Polyhedron::Polyhedron(FILE *file, int withvec)
     char *elem_name;
 
     /*** Read in the original PLY object ***/
-    in_ply = this->myplyloader.read_ply (file);
+    in_ply = myplyloader.read_ply (file);
+
     for (i = 0; i < in_ply->num_elem_types; i++)
     {
         /* prepare to read the i'th list of elements */
@@ -355,7 +384,7 @@ Polyhedron::Polyhedron(FILE *file, int withvec)
             }
 
             vert_other = myplyloader.get_other_properties_ply (in_ply,
-                                offsetof(Vertex_io,other_props));
+                                                              offsetof(Vertex_io,other_props));
 
             /* grab all the vertex elements */
             for (j = 0; j < vlist.nverts; j++) {
@@ -368,7 +397,7 @@ Polyhedron::Polyhedron(FILE *file, int withvec)
                     vlist.verts[j] = new Vertex (vert.x, vert.y, vert.z);
                 else
                     vlist.verts[j] = new Vertex (vert.x, vert.y, vert.z, vert.vx, vert.vy, vert.vz);
-                    //vlist.verts[j] = new Vertex (vert.x, vert.y, vert.z, vert.vx, vert.vy, vert.vz, 0);
+                //vlist.verts[j] = new Vertex (vert.x, vert.y, vert.z, vert.vx, vert.vy, vert.vz, 0);
 
                 /* set angle deficit */
                 if(vert.angle_deficit == 1)
@@ -380,8 +409,8 @@ Polyhedron::Polyhedron(FILE *file, int withvec)
                 vlist.verts[j]->index = j;
 
                 /* initial other member variables */
-                vlist.verts[i]->edges = nullptr;
-                vlist.verts[i]->corners = nullptr;
+                vlist.verts[i]->edges = NULL;
+                vlist.verts[i]->corners = NULL;
                 vlist.verts[j]->ncorners = vlist.verts[j]->nedges = 0;
                 vlist.verts[j]->ntris = 0;
 
@@ -392,7 +421,7 @@ Polyhedron::Polyhedron(FILE *file, int withvec)
 
             }
         }
-        else if (myplyloader.equal_strings ((char*) "face", elem_name))
+        else if (myplyloader.equal_strings ((char*)"face", elem_name))
         {
             /* create a list to hold all the face elements */
             tlist.ntris =tlist.curMaxNumTris = elem_count;
@@ -423,14 +452,14 @@ Polyhedron::Polyhedron(FILE *file, int withvec)
                 tlist.tris[j]->other_props = face.other_props;
 
                 /*important resetting*/
-                tlist.tris[j]->samplepts = nullptr;  /*intialize the sample list 05/01/07*/
+                tlist.tris[j]->samplepts = NULL;  /*intialize the sample list 05/01/07*/
                 tlist.tris[j]->num_samplepts = 0;
 
                 //tlist.tris[j]->inDesignCell = false;
 
                 tlist.tris[j]->counter = 0;
 
-        //cprintf("Current faces: %d\n", j);
+                //cprintf("Current faces: %d\n", j);
                 if (j==2269)
                 {
                     int stop = 1;
@@ -485,77 +514,7 @@ Polyhedron::Polyhedron(FILE *file, int withvec)
 }
 
 
-/*
-Tranfer color from hsv mode to rgb mode
-*/
-void  HsvRgb( float hsv[3], float rgb[3] )
-{
-    float h, s, v;			// hue, sat, value
-    float r, g, b;			// red, green, blue
-    float i, f, p, q, t;		// interim values
-
-    // guarantee valid input:
-    h = hsv[0] / 60.;
-    while( h >= 6. )	h -= 6.;
-    while( h <  0. ) 	h += 6.;
-
-    s = hsv[1];
-    if( s < 0. )
-        s = 0.;
-    if( s > 1. )
-        s = 1.;
-
-    v = hsv[2];
-    if( v < 0. )
-        v = 0.;
-    if( v > 1. )
-        v = 1.;
-
-    // if sat==0, then is a gray:
-    if( s == 0.0 )
-    {
-        rgb[0] = rgb[1] = rgb[2] = v;
-        return;
-    }
-
-    // get an rgb from the hue itself:
-    i = floor( h );
-    f = h - i;
-    p = v * ( 1. - s );
-    q = v * ( 1. - s*f );
-    t = v * ( 1. - ( s * (1.-f) ) );
-
-    switch( (int) i )
-    {
-    case 0:
-        r = v;	g = t;	b = p;
-        break;
-
-    case 1:
-        r = q;	g = v;	b = p;
-        break;
-
-    case 2:
-        r = p;	g = v;	b = t;
-        break;
-
-    case 3:
-        r = p;	g = q;	b = v;
-        break;
-
-    case 4:
-        r = t;	g = p;	b = v;
-        break;
-
-    case 5:
-        r = v;	g = p;	b = q;
-        break;
-    }
-
-    rgb[0] = r;
-    rgb[1] = g;
-    rgb[2] = b;
-}
+extern void  HsvRgb( float hsv[3], float rgb[3] );
 
 void Polyhedron::assign_color_VFmagnitude()
 {
@@ -625,13 +584,6 @@ Polyhedron::assign_color_VFmagnitude2()
     */
     icVector3 look_dir(0.3310, 0.0710, 0.9410);
 
-//#ifdef EQFIELD
-//	for (i=0; i<vlist.nverts; i++)
-//	{
-//		icVector3 proj = /*vlist.verts[i]->g_vec -*/ dot(vlist.verts[i]->g_vec, look_dir)*look_dir;
-//		vlist.verts[i]->g_vec = proj;
-//	}
-//#endif
 
     for(i=0; i<vlist.nverts; i++)
     {
@@ -666,17 +618,7 @@ Polyhedron::assign_color_VFmagnitude2()
     sd = sd/vlist.nverts;
     sd = sqrt(sd);
 
-    ///*
-    //    for cooling jacket model
-    //*/
-    //min_VecLenVisualized = mean_vfmagnitude - 0.9*sd;
-    //max_VecLenVisualized = mean_vfmagnitude + 0.9*sd;
 
-    /*
-        for earth quake data 06/13/2011
-    */
-    //min_VecLenVisualized = mean_vfmagnitude - 0.99*sd;
-    //max_VecLenVisualized = mean_vfmagnitude + 0.6*sd;
     min_VecLenVisualized = mean_vfmagnitude - 0.5*sd;  // for projected magnitude
     max_VecLenVisualized = mean_vfmagnitude + 0.85*sd;
 
@@ -732,6 +674,7 @@ Polyhedron::assign_color_VFmagnitude2()
 
 extern double dmax;  //parameter related to the IBFV method
 
+
 void Polyhedron::normalize_Field()
 {
     int i;
@@ -761,18 +704,57 @@ void Polyhedron::normalize_Field()
 }
 
 
-Triangle *Polyhedron::find_common_Edge(Triangle *f1, Vertex *v1, Vertex *v2)
+//void Polyhedron::normalize_TangentField()
+//{
+//	int i;
+//    double r;
+//	Vertex *cur_v;
+//
+//	for(i = 0; i < vlist.nverts; i++)
+//	{
+//		cur_v = vlist.verts[i];
+//		r = length(cur_v->t_vec);
+//		r *= r;
+//
+//		if (r < DistanceThreshold)
+//		{
+//			r = DistanceThreshold;
+//			cur_v->t_vec *= dmax/r;
+//		}
+//
+//		r = length(cur_v->t_vec);
+//		r *= r;
+//
+//		if (r > dmax*dmax) {
+//			r  = sqrt(r);
+//			cur_v->t_vec *= dmax/r;
+//		}
+//	}
+//}
+
+/******************************************************************************
+Find out if there is another face that shares an edge with a given face.
+
+Entry:
+        f1    - face that we're looking to share with
+        v1,v2 - two vertices of f1 that define edge
+
+                Exit:
+                       return the matching face, or NULL if there is no such face
+                ******************************************************************************/
+
+            Triangle *Polyhedron::find_common_Edge(Triangle *f1, Vertex *v1, Vertex *v2)
 {
     int i,j;
     Triangle *f2;
-    Triangle *adjacent = nullptr;
+    Triangle *adjacent = NULL;
 
     /* look through all faces of the first vertex */
 
     for (i = 0; i < v1->ntris; i++) {
         f2 = v1->tris[i];
         if (f2 == f1)
-        continue;
+            continue;
         /* examine the vertices of the face for a match with the second vertex */
         for (j = 0; j < f2->nverts; j++)
         {
@@ -819,7 +801,7 @@ void Polyhedron::create_Pointers()
     //		Edge *e = elist.edges[i];
     //		_cprintf("Edge (%d, %d): tri1 = %d, tri2 = %d.\n",
     //			e->verts[0]->index, e->verts[1]->index,
-    //			e->tris[0]->index, e->tris[1]!=nullptr? e->tris[1]->index: -1);
+    //			e->tris[0]->index, e->tris[1]!=NULL? e->tris[1]->index: -1);
     //	}
     //}
 
@@ -875,9 +857,9 @@ void Polyhedron::vertex_to_tri_ptrs()
     for (i = 0; i < tlist.ntris; i++) {
         f = tlist.tris[i];
         for (j = 0; j < f->nverts; j++) {
-        v = f->verts[j];
-        v->tris[v->ntris] = f;
-        v->ntris++;
+            v = f->verts[j];
+            v->tris[v->ntris] = f;
+            v->ntris++;
         }
     }
 }
@@ -887,10 +869,10 @@ void Polyhedron::vertex_to_tri_ptrs()
 Order the pointers to faces that are around a given vertex.
 
 Entry:
-  v - vertex whose face list is to be ordered
-******************************************************************************/
+        v - vertex whose face list is to be ordered
+                  ******************************************************************************/
 
-void Polyhedron::order_Vertex_to_Tri_Ptrs(Vertex *v)
+              void Polyhedron::order_Vertex_to_Tri_Ptrs(Vertex *v)
 {
     int i,j;
     Triangle *f;
@@ -913,10 +895,10 @@ void Polyhedron::order_Vertex_to_Tri_Ptrs(Vertex *v)
         /* find reference to v in f */
         vindex = -1;
         for (j = 0; j < f->nverts; j++)
-        if (f->verts[j] == v) {
-        vindex = j;
-        break;
-        }
+            if (f->verts[j] == v) {
+                vindex = j;
+                break;
+            }
 
         /* error check */
         if (vindex == -1) {
@@ -930,14 +912,14 @@ void Polyhedron::order_Vertex_to_Tri_Ptrs(Vertex *v)
         /* see if we've reached a boundary, and if so then place the */
         /* current face in the first position of the vertice's face list */
 
-        if (fnext == nullptr) {
-        /* find reference to f in v */
-        for (j = 0; j < v->ntris; j++)
-            if (v->tris[j] == f) {
-                v->tris[j] = v->tris[0];
-                v->tris[0] = f;
-                break;
-            }
+        if (fnext == NULL) {
+            /* find reference to f in v */
+            for (j = 0; j < v->ntris; j++)
+                if (v->tris[j] == f) {
+                    v->tris[j] = v->tris[0];
+                    v->tris[0] = f;
+                    break;
+                }
             boundary = 1;
             break;
         }
@@ -956,10 +938,10 @@ void Polyhedron::order_Vertex_to_Tri_Ptrs(Vertex *v)
         /* find reference to vertex in f */
         vindex = -1;
         for (j = 0; j < f->nverts; j++)
-        if (f->verts[(j+1) % f->nverts] == v) {
-            vindex = j;
-            break;
-        }
+            if (f->verts[(j+1) % f->nverts] == v) {
+                vindex = j;
+                break;
+            }
 
         /* error check */
         if (vindex == -1) {
@@ -972,17 +954,17 @@ void Polyhedron::order_Vertex_to_Tri_Ptrs(Vertex *v)
 
         /* break out of loop if we've reached a boundary */
         count = i;
-        if (fnext == nullptr) {
+        if (fnext == NULL) {
             break;
         }
 
         /* swap the next face into its proper place in the face list */
         for (j = 0; j < v->ntris; j++)
-        if (v->tris[j] == fnext) {
-            v->tris[j] = v->tris[i];
-            v->tris[i] = fnext;
-            break;
-        }
+            if (v->tris[j] == fnext) {
+                v->tris[j] = v->tris[i];
+                v->tris[i] = fnext;
+                break;
+            }
 
         f = fnext;
     }
@@ -990,7 +972,7 @@ void Polyhedron::order_Vertex_to_Tri_Ptrs(Vertex *v)
 
 
 /******************************************************************************
-Find the other triangle that is incident on an edge, or nullptr if there is
+Find the other triangle that is incident on an edge, or NULL if there is
 no other.
 Input: Edge *edge -- the pointer of an edge
        Triangle *tri -- pointer to current triangle
@@ -1002,10 +984,10 @@ Triangle *Polyhedron::other_Triangle(Edge *edge, Triangle *tri)
 
     for (int i = 0; i < edge->ntris; i++)
         if (edge->tris[i] != tri)
-        return (edge->tris[i]);
+            return (edge->tris[i]);
 
     /* there is no such other triangle if we get here */
-    return (nullptr);
+    return (NULL);
 }
 
 
@@ -1033,7 +1015,7 @@ void Polyhedron::calc_Bounding_Sphere()
                 min.entry[2] = vlist.verts[i]->z;
             if (vlist.verts[i]->z > max.entry[2])
                 max.entry[2] = vlist.verts[i]->z;
-            }
+        }
     }
     center = (min + max) * 0.5;
     radius = length(center - min);
@@ -1057,16 +1039,16 @@ void Polyhedron::calc_Face_Normals_and_Area()
         area += tlist.tris[i]->area;
         temp_t = tlist.tris[i];
         v1.set(vlist.verts[tlist.tris[i]->verts[0]->index]->x,
-            vlist.verts[tlist.tris[i]->verts[0]->index]->y,
-            vlist.verts[tlist.tris[i]->verts[0]->index]->z);
+               vlist.verts[tlist.tris[i]->verts[0]->index]->y,
+               vlist.verts[tlist.tris[i]->verts[0]->index]->z);
 
         v2.set(vlist.verts[tlist.tris[i]->verts[1]->index]->x,
-            vlist.verts[tlist.tris[i]->verts[1]->index]->y,
-            vlist.verts[tlist.tris[i]->verts[1]->index]->z);
+               vlist.verts[tlist.tris[i]->verts[1]->index]->y,
+               vlist.verts[tlist.tris[i]->verts[1]->index]->z);
 
         v0.set(vlist.verts[tlist.tris[i]->verts[2]->index]->x,
-            vlist.verts[tlist.tris[i]->verts[2]->index]->y,
-            vlist.verts[tlist.tris[i]->verts[2]->index]->z);
+               vlist.verts[tlist.tris[i]->verts[2]->index]->y,
+               vlist.verts[tlist.tris[i]->verts[2]->index]->z);
 
         tlist.tris[i]->normal = cross(v0-v1, v2-v1);
         normalize(tlist.tris[i]->normal);
@@ -1078,8 +1060,8 @@ void Polyhedron::calc_Face_Normals_and_Area()
     icVector3 test = center;
     for (i=0; i<tlist.ntris; i++){
         icVector3 cent(vlist.verts[tlist.tris[i]->verts[0]->index]->x,
-            vlist.verts[tlist.tris[i]->verts[0]->index]->y,
-            vlist.verts[tlist.tris[i]->verts[0]->index]->z);
+                       vlist.verts[tlist.tris[i]->verts[0]->index]->y,
+                       vlist.verts[tlist.tris[i]->verts[0]->index]->z);
 
         signedvolume += dot(test-cent, tlist.tris[i]->normal)*tlist.tris[i]->area;
     }
@@ -1133,8 +1115,8 @@ void Polyhedron::calc_Face_Normals_and_Area_2(void)
         normalize(v2);
         for (j=0; j<face->nverts; j++){
             v0.set(face->verts[j]->x-face->verts[0]->x,
-                face->verts[j]->y-face->verts[0]->y,
-                face->verts[j]->z-face->verts[0]->z);
+                   face->verts[j]->y-face->verts[0]->y,
+                   face->verts[j]->z-face->verts[0]->z);
             temp_x[j] = dot(v1, v0);
             temp_y[j] = dot(v2, v0);
         }
@@ -1160,8 +1142,8 @@ void Polyhedron::calc_Face_Normals_and_Area_2(void)
                 test += center;
                 for (i=0; i<vlist.nverts; i++){
                     icVector3 cent(tlist.tris[i]->verts[0]->x,
-                        tlist.tris[i]->verts[0]->y,
-                        tlist.tris[i]->verts[0]->z);
+                                   tlist.tris[i]->verts[0]->y,
+                                   tlist.tris[i]->verts[0]->z);
 
                     test_val += dot(test-cent, tlist.tris[i]->normal)*tlist.tris[i]->area;
                 }
@@ -1247,10 +1229,10 @@ void Polyhedron::project_to_TangentPlane()
           Some observations: it seems that the normalized field could get
           better ring-like structure (more smooth, fewer holes)
 
-          However, the non-normalized vector field with certain scaling
-          can produce good result with large tau (e.g. t=3) value as well!
-        */
-        normalize(V);    // comment out by Guoning at 2/8/2010
+        However, the non-normalized vector field with certain scaling
+                                   can produce good result with large tau (e.g. t=3) value as well!
+                               */
+                               normalize(V);    // comment out by Guoning at 2/8/2010
         //V = 1000.*V;        // modified by Guoning at 2/8/2010
         //V = 1000.*V;        // modified by Guoning at 3/9/2010 for the diesel slice
 
@@ -1723,8 +1705,8 @@ icVector2 Polyhedron::get_Miu(int vertid, int faceid, double vk[3])
     ////test shows that the orientation of the triangle maybe clockwise
 
     if( fabs(p->x - vk[0]) < 1e-12
-    &&  fabs(p->y - vk[1]) < 1e-12
-    &&  fabs(p->z - vk[2]) < 1e-12)
+        &&  fabs(p->y - vk[1]) < 1e-12
+        &&  fabs(p->z - vk[2]) < 1e-12)
     {
         if( face->verts[0] == p){
             PK.entry[0] = face->verts[2]->x - p->x;
@@ -1798,8 +1780,8 @@ double Polyhedron::get_Phi(int vertid, int faceid, double vk[3])
 
 
     if( fabs(p->x - vk[0]) < 1e-12
-    && fabs (p->y - vk[1]) < 1e-12
-    && fabs (p->z - vk[2]) < 1e-12 )    ////may have numerical issue
+        && fabs (p->y - vk[1]) < 1e-12
+        && fabs (p->z - vk[2]) < 1e-12 )    ////may have numerical issue
     {
         if( face->verts[0] == p){
             PK.entry[0] = face->verts[2]->x - p->x;
@@ -2103,8 +2085,8 @@ void Polyhedron::initialize(){
             vlist.verts[i]->distance = 0.;
 
             vlist.verts[i]->g_vec.entry[0] =
-            vlist.verts[i]->g_vec.entry[1] =
-            vlist.verts[i]->g_vec.entry[2] = 0.;
+                vlist.verts[i]->g_vec.entry[1] =
+                vlist.verts[i]->g_vec.entry[2] = 0.;
         }
     }
 
@@ -2142,34 +2124,6 @@ void Polyhedron::initialize(){
 }
 
 
-//void Polyhedron::finalize(){
-//	int i;
-//
-//	for (i=0; i<ntris; i++){
-//		//free(tlist[i]->other_props);
-//		free(tlist[i]);
-//	}
-//	for (i=0; i<nedges; i++) {
-//		free(elist[i]->tris);
-//		free(elist[i]);
-//	}
-//	for (i=0; i<nverts; i++) {
-//		free(vlist[i]->adjedges);
-//		free(vlist[i]->tris);
-//		//free(vlist[i]->other_props);
-//		free(vlist[i]);
-//	}
-//
-//	free(tlist);
-//	free(elist);
-//	free(vlist);
-//	if (!vert_other)
-//		free(vert_other);
-//	if (!face_other)
-//		free(face_other);
-//}
-
-
 void
 Polyhedron::mark_in_outlets()
 {
@@ -2185,7 +2139,7 @@ Polyhedron::mark_in_outlets()
         //if (length(raw_vec) < 1.e-3)
         //	vlist.verts[i]->in_out_let = true;
         //else
-            vlist.verts[i]->in_out_let = false;
+        vlist.verts[i]->in_out_let = false;
     }
 }
 
@@ -2253,7 +2207,7 @@ void Edge::cal_normal_at_edge(Edge *cur_edge, Triangle *face, int which_face)
             break;
 
         default:
-            //MessageBox(nullptr, "wrong edge!", "Error", MB_OK);
+            //MessageBox(NULL, "wrong edge!", "Error", MB_OK);
             fprintf(stderr, "wrong edge!\n");
         }
     }
@@ -2276,7 +2230,7 @@ void Edge::cal_normal_at_edge(Edge *cur_edge, Triangle *face, int which_face)
             break;
 
         default:
-            //MessageBox(nullptr, "wrong edge!", "Error", MB_OK);
+            //MessageBox(NULL, "wrong edge!", "Error", MB_OK);
             fprintf(stderr, "wrong edge!\n");
         }
     }
@@ -2385,7 +2339,7 @@ void Polyhedron::cal_TexCoord(void)
 {
     double px, py, pz,  vx, vy, vz;
 
-    double  dmax   = 3.13/800;  //Hardcode here!!!
+    double  dmax   = 3.13/800.;  //Hardcode here!!!
 
     for(int i = 0; i < vlist.nverts; i++)
     {
@@ -2434,4 +2388,77 @@ void Polyhedron::XAxisVF(void)
 
     }
     cal_TexCoord();
+}
+
+
+/*
+Tranfer color from hsv mode to rgb mode
+*/
+void  HsvRgb( float hsv[3], float rgb[3] )
+{
+    float h, s, v;			// hue, sat, value
+    float r, g, b;			// red, green, blue
+    float i, f, p, q, t;		// interim values
+
+    // guarantee valid input:
+    h = hsv[0] / 60.;
+    while( h >= 6. )	h -= 6.;
+    while( h <  0. ) 	h += 6.;
+
+    s = hsv[1];
+    if( s < 0. )
+        s = 0.;
+    if( s > 1. )
+        s = 1.;
+
+    v = hsv[2];
+    if( v < 0. )
+        v = 0.;
+    if( v > 1. )
+        v = 1.;
+
+    // if sat==0, then is a gray:
+    if( s == 0.0 )
+    {
+        rgb[0] = rgb[1] = rgb[2] = v;
+        return;
+    }
+
+    // get an rgb from the hue itself:
+    i = floor( h );
+    f = h - i;
+    p = v * ( 1. - s );
+    q = v * ( 1. - s*f );
+    t = v * ( 1. - ( s * (1.-f) ) );
+
+    switch( (int) i )
+    {
+    case 0:
+        r = v;	g = t;	b = p;
+        break;
+
+    case 1:
+        r = q;	g = v;	b = p;
+        break;
+
+    case 2:
+        r = p;	g = v;	b = t;
+        break;
+
+    case 3:
+        r = p;	g = q;	b = v;
+        break;
+
+    case 4:
+        r = t;	g = p;	b = v;
+        break;
+
+    case 5:
+        r = v;	g = p;	b = q;
+        break;
+    }
+
+    rgb[0] = r;
+    rgb[1] = g;
+    rgb[2] = b;
 }

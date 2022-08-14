@@ -159,10 +159,10 @@ void Polyhedron::find_Opposite()
                 //if(face_index < 0) ////the oposite triangle does not exist!
                 //	continue;
 
-                if(clist.corners[i*3 + j]->e->tris[0] != nullptr &&
+                if(clist.corners[i*3 + j]->e->tris[0] != NULL &&
                     clist.corners[i*3 + j]->e->tris[0]->index != i)
                     face_index = clist.corners[i*3 + j]->e->tris[0]->index;
-                else if(clist.corners[i*3 + j]->e->tris[1] != nullptr &&
+                else if(clist.corners[i*3 + j]->e->tris[1] != NULL &&
                          clist.corners[i*3 + j]->e->tris[1]->index != i)
                     face_index = clist.corners[i*3 + j]->e->tris[1]->index;
                 else
@@ -217,6 +217,40 @@ double Polyhedron::get_Angle(Corner *c)
 /*
 An implementation of quick sort algorithm
 */
+//void QuickSort(int array[], int left, int right)
+//{
+//        if(left>=right)
+//        return;
+//
+//        int i = left;
+//        int j = right+1;
+//        int t = array[left];//left most element is the pivot element
+//
+//        while(1)
+//        {
+//                //elements to the left of t should be less than t and elements to the right of t should be greater than t
+//                do
+//                {
+//                        i++;
+//                }while(i<=right && array[i]<t);
+//                do
+//                {
+//                        j--;
+//                }while(array[j]>t);
+//                if(i>j)//if the indices cross
+//                        break;
+//                int temp = array[i];
+//                array[i] = array[j];
+//                array[j] = temp;
+//        }
+//        //swap the pivot element and array[j]
+//        int temp = array[left];
+//        array[left] = array[j];
+//        array[j] = temp;
+//
+//        QuickSort(array,left,j-1);
+//        QuickSort(array,j+1,right);
+//}
 
 
 void QuickSortforCorner(int corner[], int min_v[], int max_v[], int left, int right)
@@ -320,8 +354,8 @@ void Polyhedron::sort_Corner_on_Vertex()
         {
             //if(vert->edges[j]->tris[0]->index == -1
             //	||vert->edges[j]->tris[1]->index == -1)
-            if(vert->edges[j]->tris[0] == nullptr
-                ||vert->edges[j]->tris[1] == nullptr)
+            if(vert->edges[j]->tris[0] == NULL
+                ||vert->edges[j]->tris[1] == NULL)
             {
                 flag = true;
                 break;
@@ -342,7 +376,7 @@ void Polyhedron::sort_Corner_on_Vertex()
             {
                 Corner *c=vert->corners[j];
 
-                if (c->edge[0]->tris[1]==nullptr || c->edge[1]->tris[1]==nullptr)
+                if (c->edge[0]->tris[1]==NULL || c->edge[1]->tris[1]==NULL)
                 {
                     Newlist[0] = vert->corners[j];
 
@@ -360,14 +394,14 @@ void Polyhedron::sort_Corner_on_Vertex()
         {
             //Need to deal with boundary for open manifold
             //if(Newlist[j-1]->index < 0) //07/18/06
-            if(Newlist[j-1]== nullptr) //07/18/06
+            if(Newlist[j-1]== NULL) //07/18/06
                 continue;
 
             // The following is not correct if the vertex is non manifold (i.e., the touch point of two disks)
             if(clist.corners[Newlist[j-1]->p]->o < 0) //07/18/06
             {
                 keep_original = true;
-                Newlist[j] = nullptr;
+                Newlist[j] = NULL;
                 continue;
             }
 
@@ -472,7 +506,7 @@ void Polyhedron::alloc_Corner_Angle()
         bool defect_corner = false;
         for(j = 0; j < vert->ncorners; j++)
         {
-            if(vert->corners[j] == nullptr) //07/18/06
+            if(vert->corners[j] == NULL) //07/18/06
             {
                 defect_corner = true;
                 _cprintf ("Defect corner at Vertex %d\n", i);
@@ -577,7 +611,7 @@ void Polyhedron::find_all_corners_around_vertex(int vertid)
     Corner *temp_c, *start_c, *current_c;
 
     //temp_v->incident_corners = new CornerList(10);
-    if (temp_v->corners!=nullptr)
+    if (temp_v->corners!=NULL)
         free (temp_v->corners);
     temp_v->corners = (Corner **) malloc( sizeof(Corner*)*temp_v->nedges);  // assume that edge list has been added
     temp_v->ncorners = 0;

@@ -68,7 +68,6 @@ Contour_Graph::extract_iso_contour_from_distance_field(double iso_val)
             one_v.index = vlist.size();
             add_one_node(one_v);
 
-            //
             e->MidPointID = one_v.index;
         }
     }

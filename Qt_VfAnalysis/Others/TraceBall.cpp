@@ -76,9 +76,9 @@ Entry:
 
                 Exit:
                        q - quaternion
-                                 ******************************************************************************/
+******************************************************************************/
 
-                             void CTraceBall::mat_to_quat(Matrix mat, Quaternion q)
+void CTraceBall::mat_to_quat(Matrix mat, Quaternion q)
 {
     int i,j,k;
     float tr,s;

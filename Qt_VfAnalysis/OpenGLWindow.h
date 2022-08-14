@@ -12,12 +12,27 @@
 #include <QSurfaceFormat>
 #include <QDebug>
 #include <QColor>
+#include <QDir>
+#include <stdlib.h>
+#include <gl/GL.h>
+#include <gl/GLU.h>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 #include "Predefined.h"
 #include "BuildGeom/Geometry.h"
 #include "Analysis/MorseDecomp.h"
 #include "VField.h"
 #include "StreamlineCalculate/EvenStreamlines.h"
+
+
+#define	NPN 64
+#define NMESH  100
+#define DM  ((double) (1.0/(NMESH-1.0)))
+#define NPIX  /*512*/800 // number of pixels
+#define SELECTBUFFERSIZE 128
+
 
 typedef float Matrix[4][4];
 
@@ -77,7 +92,7 @@ public:
     void    draw();
     int     InitGL();
     void    init_flags();
-    void    build_Polyhedron();
+    void    init_tex();
     void    makePatterns();
     int     DrawGLScene(GLenum mode); // Here's Where We Do All The Drawing
     void    vis_rot_sum();
@@ -110,5 +125,7 @@ public:
 
 void    display_sel_tri(int tri);
 void    matrix_ident( float m[4][4]);
+void    output_tex_to_file(GLubyte tex[NPIX][NPIX][3], string tex_name);
+void    output_pattern_to_file(GLubyte pattern[NPN][NPN][4], string pattern_name);
 
 #endif // OPENGLWINDOW_H

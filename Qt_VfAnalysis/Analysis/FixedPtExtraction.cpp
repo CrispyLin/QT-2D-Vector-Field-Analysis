@@ -10,7 +10,7 @@ Created and Modified by Guoning Chen
 #include "Numerical.h"
 
 #define FILEDEBUG
-extern int DebugOn;
+extern const int DebugOn;
 
 extern Polyhedron *object;
 double x_cp, y_cp;

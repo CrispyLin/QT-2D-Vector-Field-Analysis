@@ -22,7 +22,7 @@ extern Polyhedron *object;
 extern MorseDecomp *morse_decomp;
 extern PeriodicOrbitList *periodic_orbits;
 extern PeriodicOrbit_Detector *periodicorbit_detector;
-extern int DebugOn;
+extern const int DebugOn;
 extern int Integrator_opt;
 
 /*

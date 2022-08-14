@@ -7,25 +7,17 @@ Created and modified by Guoning Chen
 
 #include "StreamlineCalculate/EvenStreamlines.h"
 
-
 extern Polyhedron *object;
 extern PeriodicOrbitList *periodic_orbits;
 extern TrajectoryList *separatrices;
 
-
-/*temporary solution for calculating the rotation matrix using OpenGL*/
-extern CGlView *g_pclGlView;
-extern CGraphView *g_pCgraphView;
-
 EvenStreamlinePlace *evenplace = NULL;
-extern int DebugOn;
+extern const int DebugOn;
 extern clock_t g_start, g_finish;
 
 double StreamlinePlace_slength;
 double StreamlinePlace_dsep;
 
-
-/*for testing the problem of the geodesic distance calculation*/
 double g_dist = 0.;
 double g_separate_dist = 0.;
 int g_sample_tri = -1;
@@ -233,7 +225,7 @@ void EvenStreamlinePlace::place_streamlines(int flag)
 
                     //write_mem_error(rout, var, 1);
                     delete seedpts;
-                    exit(-1);
+                    //exit(-1);
 
                     /*release the seed point list*/
                     return;
@@ -597,6 +589,19 @@ void  EvenStreamlinePlace::cal_init_streamlines_enhanced(double streamlinelength
         }
     }
 
+    /*testing codes*/
+    //fp = fopen("num_trajs_chamber3.txt", "a");
+    //if(DebugOn == 1){
+    //fp = fopen("num_trajs_chamber3_2.txt", "a");
+    ////fp = fopen("num_trajs_cooling.txt", "a");
+    //fprintf(fp, "finish processing periodic orbits. \n");
+    //fprintf(fp, "current number of streamlines: %d. \n", evenstreamlines->ntrajs);
+    //fclose(fp);
+    //}
+
+    /*According to the previous limit cycle, we tend to store the separatrices,
+    and make sure they are evenly placed
+    */
 
     int except_trajs[4] = {0};
     ////Update according to the separatrices
@@ -792,10 +797,29 @@ void  EvenStreamlinePlace::cal_init_streamlines_enhanced(double streamlinelength
 
             }
 
+            /*testing codes*/
+            //fp = fopen("num_trajs_chamber3.txt", "a");
+            //if(DebugOn == 1){
+            //fp = fopen("num_trajs_chamber3_2.txt", "a");
+            //			//fp = fopen("num_trajs_cooling.txt", "a");
+            //			fprintf(fp, "finish processing a separatrix. \n");
+            //			fprintf(fp, "current number of streamlines: %d. \n", evenstreamlines->ntrajs);
+            //			fprintf(fp, "number of samples on the last streamline is: %d. \n",
+            //				samplepts[evenstreamlines->ntrajs-1]->nsamples);
+            //			fclose(fp);
+            //}
 
         }
     }
 
+    /*testing codes*/
+    //fp = fopen("num_trajs_chamber3.txt", "a");
+    //if(DebugOn == 1){
+    //fp = fopen("num_trajs_chamber3_2.txt", "a");
+    ////fp = fopen("num_trajs_cooling.txt", "a");
+    //fprintf(fp, "finish processing all separatrices. \n");
+    //fclose(fp);
+    //}
 }
 
 bool EvenStreamlinePlace::grow_a_streamline(double seed_p[3], int triangle, double dtest, double discsize,
@@ -820,9 +844,15 @@ bool EvenStreamlinePlace::grow_a_streamline(double seed_p[3], int triangle, doub
 
     FILE *fp;
 
+    //FILE *fp1;
+    //fp1 = fopen("streamline_err_log.txt", "a");
+    //fprintf(fp1, "1 start calculating %d streamline.\n", evenstreamlines->ntrajs);
+    //fclose(fp1);
 
     evenstreamlines->trajs[evenstreamlines->ntrajs]->nlinesegs = 0;
-
+    //fp1 = fopen("streamline_err_log.txt", "a");
+    //fprintf(fp1, "2 start calculating first streamline.\n");
+    //fclose(fp1);
 
     samplepts[evenstreamlines->ntrajs]->samples[0]->gpt[0] = seed_p[0];
     samplepts[evenstreamlines->ntrajs]->samples[0]->gpt[1] = seed_p[1];
@@ -1016,37 +1046,35 @@ bool EvenStreamlinePlace::grow_a_streamline(double seed_p[3], int triangle, doub
             fclose(fp);
         }
 
-        QString str;
-        //int global_loc;
-        int loc;
+//        CString str;
+//        //int global_loc;
+//        int loc;
 
-        if(DebugOn == 1)
-        {
-            /*
-            g_finish = clock();
-            str.Format(_T("\n----Streamline placement info-----\n"));
-            loc=g_ctrlDebugList->GetCount();
-            g_ctrlDebugList->InsertString(loc, str);
-            str.Format(_T("Current number of streamlines is %d\n"), evenstreamlines->ntrajs);
-            loc=g_ctrlDebugList->GetCount();
-            g_ctrlDebugList->InsertString(loc, str);
-            str.Format(_T("current being dealt streamline is %d\n"), cur_traj);
-            loc=g_ctrlDebugList->GetCount();
-            g_ctrlDebugList->InsertString(loc, str);
-            str.Format(_T("current number of seed points is %d\n"), seedpts->nseeds);
-            loc=g_ctrlDebugList->GetCount();
-            g_ctrlDebugList->InsertString(loc, str);
-            str.Format(_T("time for even placement till now is %f seconds\n"),(double)(g_finish - g_start)/CLOCKS_PER_SEC);
-            loc=g_ctrlDebugList->GetCount();
-            g_ctrlDebugList->InsertString(loc, str);
-            str.Format(_T("see the log file for more details\n"));
-            loc=g_ctrlDebugList->GetCount();
-            g_ctrlDebugList->InsertString(loc, str);
-            str.Format("--------------------------------------");
-            loc=g_ctrlDebugList->GetCount();
-            g_ctrlDebugList->InsertString(loc, str);
-            */
-        }
+//        if(DebugOn == 1)
+//        {
+//            g_finish = clock();
+//            str.Format(_T("\n----Streamline placement info-----\n"));
+//            loc=g_ctrlDebugList->GetCount();
+//            g_ctrlDebugList->InsertString(loc, str);
+//            str.Format(_T("Current number of streamlines is %d\n"), evenstreamlines->ntrajs);
+//            loc=g_ctrlDebugList->GetCount();
+//            g_ctrlDebugList->InsertString(loc, str);
+//            str.Format(_T("current being dealt streamline is %d\n"), cur_traj);
+//            loc=g_ctrlDebugList->GetCount();
+//            g_ctrlDebugList->InsertString(loc, str);
+//            str.Format(_T("current number of seed points is %d\n"), seedpts->nseeds);
+//            loc=g_ctrlDebugList->GetCount();
+//            g_ctrlDebugList->InsertString(loc, str);
+//            str.Format(_T("time for even placement till now is %f seconds\n"),(double)(g_finish - g_start)/CLOCKS_PER_SEC);
+//            loc=g_ctrlDebugList->GetCount();
+//            g_ctrlDebugList->InsertString(loc, str);
+//            str.Format(_T("see the log file for more details\n"));
+//            loc=g_ctrlDebugList->GetCount();
+//            g_ctrlDebugList->InsertString(loc, str);
+//            str.Format("--------------------------------------");
+//            loc=g_ctrlDebugList->GetCount();
+//            g_ctrlDebugList->InsertString(loc, str);
+//        }
 
         return true;
     }

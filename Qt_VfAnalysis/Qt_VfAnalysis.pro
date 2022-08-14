@@ -33,7 +33,8 @@ SOURCES += \
     StreamlineCalculate/Streamline_cal.cpp \
     main.cpp \
     MainWindow.cpp \
-    OpenGLWindow.cpp
+    OpenGLWindow.cpp \
+    utility_functions.cpp
 
 HEADERS += \
     Analysis/MorseDecomp.h \

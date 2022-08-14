@@ -90,7 +90,7 @@ void Polyhedron::build_Edges()
 
     for (i = 0; i < tlist.ntris; i++)
         for (j = 0; j < 3; j++)
-            tlist.tris[i]->edges[j] = nullptr;
+            tlist.tris[i]->edges[j] = NULL;
 
     /* create all the edges by examining all the triangles */
 
@@ -166,13 +166,13 @@ void Polyhedron::create_Edge(Vertex *v1, Vertex *v2)
     if (e->ntris < 2)
     {
         e->tris = new Triangle *[2];
-        e->tris[0] = e->tris[1] = nullptr;
+        e->tris[0] = e->tris[1] = NULL;
     }
 
     else
     {
         e->tris = new Triangle *[e->ntris];
-        e->tris[0] = e->tris[1] = nullptr;
+        e->tris[0] = e->tris[1] = NULL;
     }
 
     /* create pointers from edges to faces and vice-versa */
@@ -206,14 +206,15 @@ void Polyhedron::create_Edge(Vertex *v1, Vertex *v2)
 
     /*initialize the edge content*/
 
-    e->attp = nullptr;
-    e->sep = nullptr;
+    e->attp = NULL;
+    e->sep = NULL;
     e->att_visit = 0;
     e->sep_visit = 0;
     e->valid = false;
     e->find_attp = false;
     e->find_sep = false;
 }
+
 
 
 

@@ -7,7 +7,7 @@ Created and Modified by Guoning Chen
 
 #include "VField.h"
 
-extern int DebugOn;
+extern const int DebugOn;
 
 extern Polyhedron *object;
 
@@ -459,4 +459,5 @@ void DirGraph::add_to_edgelist(int node1, int node2, int &cur_index)
     cur_index = elist->nedges;
 
 }
+
 

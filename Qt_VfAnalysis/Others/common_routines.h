@@ -54,7 +54,7 @@ public:
     {
         int *temp = elems;
         elems = new int[curMaxNum + step];
-        if(elems == nullptr)
+        if(elems == NULL)
         {
             elems = temp;
             return false;

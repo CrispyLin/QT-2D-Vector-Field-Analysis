@@ -11,6 +11,8 @@ Created and Modified by Guoning Chen
 
 extern Polyhedron *object;
 
+
+
 /*
 Implementation of the member functions of class Triangle
 */
