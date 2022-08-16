@@ -6,12 +6,9 @@ Created and Modified by Guoning Chen
         copyright @2007
     */
 
-#include "VField.h"
-#include "Others/common_routines.h"
+#include "BuildGeom/Geometry.h"
 
 extern Polyhedron *object;
-
-
 
 /*
 Implementation of the member functions of class Triangle

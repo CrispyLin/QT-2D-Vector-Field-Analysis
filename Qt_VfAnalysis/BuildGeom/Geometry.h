@@ -9,7 +9,6 @@ copyright @2007
 #define __GEOMETRY_H__
 
 #include <math.h>
-#include <conio.h>
 
 #include "ExternalDependencies/icVector.h"
 #include "ExternalDependencies/icMatrix.h"
@@ -82,6 +81,7 @@ public:
 
     void *other_props;
 
+    Vertex(double ix, double iy, double iz);
     Vertex(double, double, double, double, double, double);
     Vertex(double ix, double iy, double iz,
            double vx, double vy, double vz, int i);
@@ -260,9 +260,6 @@ public:
     void cal_Geodesic(Vertex *);        //calculate the geodesic distance from source vertex
 
 }; //end of VertexList class
-
-
-
 
 
 

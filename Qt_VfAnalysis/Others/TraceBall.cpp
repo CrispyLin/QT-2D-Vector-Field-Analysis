@@ -124,7 +124,7 @@ void CTraceBall::mat_to_quat(Matrix mat, Quaternion q)
 
 float *CTraceBall::this_vnew()
 {
-    register float *v;
+    float *v;
 
     v = (float *) malloc(sizeof(float)*3);
     return v;
@@ -132,7 +132,7 @@ float *CTraceBall::this_vnew()
 
 void CTraceBall::this_vcopy(const float *v1, float *v2)
 {
-    register int i;
+    int i;
     for (i = 0 ; i < 3 ; i++)
         v2[i] = v1[i];
 }
@@ -234,7 +234,7 @@ void CTraceBall::vreflect(const float *in, const float *mirror, float *out)
 
 void CTraceBall::vmultmatrix(const Matrix m1, const Matrix m2, Matrix prod)
 {
-    register int row, col;
+    int row, col;
     Matrix temp;
 
     for(row=0 ; row<4 ; row++)

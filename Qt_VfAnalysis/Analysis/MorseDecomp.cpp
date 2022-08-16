@@ -1467,7 +1467,7 @@ void MorseDecomp::build_multivalued_graph(double tau)
     //fprintf(fp, "finish vertex tracing (backward).\n");
     //fclose(fp);
 
-    _cprintf("finish vertex tracing (backward).\n");
+    //_cprintf("finish vertex tracing (backward).\n");
 
     /*1.2. build the edges according to the result*/
     build_edges_all_Vers(1);
@@ -1476,7 +1476,7 @@ void MorseDecomp::build_multivalued_graph(double tau)
     //fprintf(fp, "finish building edges for vertex tracing results.\n");
     //fclose(fp);
 
-    _cprintf("finish building edges for vertex tracing results (backward).\n");
+    //_cprintf("finish building edges for vertex tracing results (backward).\n");
 
     /************************************************************/
     /*   initialize the sample point list  02/09/2010  */
@@ -1487,11 +1487,11 @@ void MorseDecomp::build_multivalued_graph(double tau)
 
     trace_all_centers_tris_build_edges(tau, 1);
 
-    _cprintf("start adaptive edge sampling (backward).\n");
+    //_cprintf("start adaptive edge sampling (backward).\n");
 
     trace_all_edges_build_di_edges_adp(tau, 1);
 
-    _cprintf("finish adaptive edge sampling (backward).\n");
+    //_cprintf("finish adaptive edge sampling (backward).\n");
 
     //fp=fopen("cooling_test.txt", "a");
     //fprintf(fp, "finish edge sampling.\n");
@@ -1503,7 +1503,7 @@ void MorseDecomp::build_multivalued_graph(double tau)
     //fopen("cooling_test.txt", "a");
     //fprintf(fp, "finish vertex tracing (forward).\n");
     //fclose(fp);
-    _cprintf("finish vertex tracing (forward).\n");
+    //_cprintf("finish vertex tracing (forward).\n");
 
     /*2.2. build the edges according to the result*/
     build_edges_all_Vers(0);
@@ -3203,7 +3203,7 @@ int Trajectory::trace_in_triangle_tau(int &face_id, double globalp[3],
             if (type == 0)
                 trace_result = get_next_pt_tau_f(pre_point, cur_point, face_id, alpha, (unsigned char)(Integrator_opt));
             else
-                trace_result = get_next_pt_tau_b(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt));
+                trace_result = get_next_pt_tau_b(pre_point, cur_point, face_id, alpha, (unsigned char)(Integrator_opt));
 
             if (trace_result)
             {
@@ -3404,7 +3404,7 @@ int Trajectory::trace_in_triangle_tau_f(int &face_id, double globalp[3],
             //if (get_next_pt_tau(pre_point, cur_point, face_id, alpha, type, unsigned char(Integrator_opt)))
 
 
-            if (get_next_pt_tau_f(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
+            if (get_next_pt_tau_f(pre_point, cur_point, face_id, alpha, (unsigned char)(Integrator_opt)))
             {
                 ////update the global point
 
@@ -3602,7 +3602,7 @@ int Trajectory::trace_in_triangle_tau_b(int &face_id, double globalp[3],
             //if(cal_next_pt_RK4_tau(pre_point, cur_point, face_id, alpha, type))
             //if (get_next_pt_tau(pre_point, cur_point, face_id, alpha, type, unsigned char(Integrator_opt)))
 
-            if (get_next_pt_tau_b(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
+            if (get_next_pt_tau_b(pre_point, cur_point, face_id, alpha, (unsigned char)(Integrator_opt)))
             {
                 ////update the global point
 
@@ -5462,7 +5462,7 @@ int Trajectory::trace_in_triangle_tau_f_rot_sum(int &face_id, double globalp[3],
 
 
             //if (get_next_pt_tau_f(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
-            if (get_next_pt_rotsum_f(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
+            if (get_next_pt_rotsum_f(pre_point, cur_point, face_id, alpha, (unsigned char)(Integrator_opt)))
             {
                 ////update the global point
 
@@ -5721,7 +5721,7 @@ int Trajectory::trace_in_triangle_tau_f_smooth(int &face_id, double globalp[3],
                         +alpha[2]*face->verts[2]->total_rot_sum);
 
             //if (get_next_pt_tau_f(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
-            if (get_next_pt_rotsum_f(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
+            if (get_next_pt_rotsum_f(pre_point, cur_point, face_id, alpha, (unsigned char)(Integrator_opt)))
             {
                 ////update the global point
 
@@ -5876,7 +5876,7 @@ int Trajectory::trace_in_triangle_tau_b_smooth(int &face_id, double globalp[3],
                         +alpha[2]*face->verts[2]->total_rot_sum);
 
             //if (get_next_pt_tau_b(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
-            if (get_next_pt_rotsum_b(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
+            if (get_next_pt_rotsum_b(pre_point, cur_point, face_id, alpha, (unsigned char)(Integrator_opt)))
             {
                 ////update the global point
 
@@ -6074,7 +6074,7 @@ int Trajectory::trace_in_triangle_tau_b_rot_sum(int &face_id, double globalp[3],
             //if (get_next_pt_tau(pre_point, cur_point, face_id, alpha, type, unsigned char(Integrator_opt)))
 
             //if (get_next_pt_tau_b(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
-            if (get_next_pt_rotsum_b(pre_point, cur_point, face_id, alpha, unsigned char(Integrator_opt)))
+            if (get_next_pt_rotsum_b(pre_point, cur_point, face_id, alpha, (unsigned char)(Integrator_opt)))
             {
                 ////update the global point
 

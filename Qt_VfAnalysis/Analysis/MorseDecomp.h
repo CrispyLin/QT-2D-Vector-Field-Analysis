@@ -11,7 +11,6 @@ Created and Modified by Guoning Chen
 #define __MORSEDECOMP_H__
 
 #include <stack>
-#include <conio.h>
 
 #include "GL_LIB/glew.h"
 

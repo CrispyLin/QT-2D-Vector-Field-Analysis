@@ -1,4 +1,4 @@
-#include "OpenGLWindow.h"
+#include "VectorFieldWindow.h"
 
 extern int version;
 extern Polyhedron* object;

@@ -9,7 +9,7 @@
 #ifndef UI_MAINWINDOW_H
 #define UI_MAINWINDOW_H
 
-#include <OpenGLWindow.h>
+#include <VectorFieldWindow.h>
 #include <QtCore/QVariant>
 #include <QtOpenGLWidgets/QOpenGLWidget>
 #include <QtWidgets/QApplication>
@@ -34,7 +34,7 @@ public:
     QWidget *centralwidget;
     QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout_21;
-    OpenGLWindow *openGLWindow;
+    VectorFieldWindow *openGLWindow;
     QVBoxLayout *verticalLayout_16;
     QGroupBox *groupBox_12;
     QHBoxLayout *horizontalLayout_22;
@@ -173,7 +173,7 @@ public:
         horizontalLayout_21 = new QHBoxLayout(layoutWidget);
         horizontalLayout_21->setObjectName(QString::fromUtf8("horizontalLayout_21"));
         horizontalLayout_21->setContentsMargins(0, 0, 0, 0);
-        openGLWindow = new OpenGLWindow(layoutWidget);
+        openGLWindow = new VectorFieldWindow(layoutWidget);
         openGLWindow->setObjectName(QString::fromUtf8("openGLWindow"));
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(80);

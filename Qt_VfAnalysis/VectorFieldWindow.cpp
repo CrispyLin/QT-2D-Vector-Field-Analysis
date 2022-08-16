@@ -1,10 +1,11 @@
-#include "OpenGLWindow.h"
+#include "VectorFieldWindow.h"
+
 // this file serves as IBFVDlg.cpp, GLView.cpp
 double SCALE = 3.0;
 
 
 // GLOBAL VARIABLES
-const char filePath [] = "../Qt_VfAnalysis/datasets/simple_fld2.ply";
+const char filePath [] = "/Users/linxinw/Desktop/GitHub/QT-2D-Vector-Field-Analysis/Qt_VfAnalysis/Datasets/simple_fld2.ply";
 int picked_node = -1;
 double g_zoom_factor = 1.0;
 
@@ -16,8 +17,6 @@ int     alpha  = (0.06*255);  // modified for a smear out LIC texture for better
 double  sa;
 const double  tmax   = NPIX/(SCALE*NPN);
 double  dmax   = 1.8/NPIX;
-const int npn = NPN;
-const int npix = 800;
 
 int Cal_Regions=0;
 int ndisplay_trajs;
@@ -71,7 +70,7 @@ extern MCG_Graph *mcg;
 
 
 
-OpenGLWindow::OpenGLWindow(QWidget *parent) : QOpenGLWidget(parent)
+VectorFieldWindow::VectorFieldWindow(QWidget *parent) : QOpenGLWidget(parent)
 {
     // set surfaceFormat
 //    format.setDepthBufferSize(32);
@@ -86,12 +85,12 @@ OpenGLWindow::OpenGLWindow(QWidget *parent) : QOpenGLWidget(parent)
 }
 
 
-OpenGLWindow::~OpenGLWindow() {
+VectorFieldWindow::~VectorFieldWindow() {
     qInfo() << "OpenGLWindow Desctuctor called";
 }
 
 
-void OpenGLWindow::initializeGL(){
+void VectorFieldWindow::initializeGL(){
     this->makeCurrent();
     this->mat_ident(rotmat);
     for(int i = 0; i < 16; i++)
@@ -140,15 +139,15 @@ void OpenGLWindow::initializeGL(){
 }
 
 
-void OpenGLWindow::paintGL(){
+void VectorFieldWindow::paintGL(){
     //this->DrawGLScene(GL_RENDER);
-    //this->draw();
+    this->draw();
     //this->update();
     qInfo() << "paintGL is Done";
 }
 
 
-void OpenGLWindow::resizeGL(int w, int h){
+void VectorFieldWindow::resizeGL(int w, int h){
 
 //    qInfo() << "Resize w" << w << "  h" <<h;
 //    glViewport(0, 0, w, h);
@@ -159,13 +158,13 @@ void OpenGLWindow::resizeGL(int w, int h){
 }
 
 
-void OpenGLWindow::set_up_MainWindow_ptr(MainWindow *MW_ptr)
+void VectorFieldWindow::set_up_MainWindow_ptr(MainWindow *MW_ptr)
 {
     this->mainWindow = MW_ptr;
 }
 
 
-void OpenGLWindow::draw(){
+void VectorFieldWindow::draw(){
     float r = 1.0f, g = 0.0f, b = 0.0f;
     glColor3f(r, g, b);
     glLoadIdentity();
@@ -186,7 +185,7 @@ void OpenGLWindow::draw(){
 }
 
 
-int OpenGLWindow::InitGL( )
+int VectorFieldWindow::InitGL( )
 {
     glViewport(0, 0, (GLsizei) NPIX, (GLsizei) NPIX);
 
@@ -195,11 +194,11 @@ int OpenGLWindow::InitGL( )
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    return TRUE;
+    return true;
 }
 
 
-void OpenGLWindow::init_flags()
+void VectorFieldWindow::init_flags()
 {
     this->ShowMCGOn = 0;
     this->ShowConleyCircle=0;
@@ -237,7 +236,7 @@ void OpenGLWindow::init_flags()
 }
 
 
-void OpenGLWindow::init_tex(){
+void VectorFieldWindow::init_tex(){
     for(int i =0; i < NPIX; i++)
         for(int j =0; j < NPIX; j++){
             for(int w =0; w < 4; w++){
@@ -249,7 +248,7 @@ void OpenGLWindow::init_tex(){
 }
 
 
-void OpenGLWindow::makePatterns()
+void VectorFieldWindow::makePatterns()
 {
     this->init_tex();
 
@@ -348,7 +347,7 @@ void OpenGLWindow::makePatterns()
 }
 
 
-int OpenGLWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Drawing
+int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Drawing
 {
     if (!IBFVOff) {
         //printf("IBFVOFF!");
@@ -432,11 +431,11 @@ int OpenGLWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Drawing
 
 //    glDisable(GL_COLOR_MATERIAL);
 
-    return TRUE;
+    return true;
 }
 
 
-void OpenGLWindow::vis_rot_sum()
+void VectorFieldWindow::vis_rot_sum()
 {
     int i, j;
     float hsv[3] = {0, 1, 1}, rgb[3];
@@ -471,7 +470,7 @@ void OpenGLWindow::vis_rot_sum()
 }
 
 
-void OpenGLWindow::ReCalTexcoord()
+void VectorFieldWindow::ReCalTexcoord()
 {
     double p[4], pr[4];
 
@@ -526,7 +525,7 @@ void OpenGLWindow::ReCalTexcoord()
 
 
 int version = 0;
-void    OpenGLWindow::IBFVSEffect(GLenum mode)
+void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 {
     qInfo() << "IBFVEFFECT Error1: " << glGetError();
     int i, j;
@@ -795,7 +794,7 @@ void    OpenGLWindow::IBFVSEffect(GLenum mode)
 }
 
 
-void    OpenGLWindow::draw_shadedObj(GLenum mode)
+void    VectorFieldWindow::draw_shadedObj(GLenum mode)
 {
     int i, j;
     Triangle *face;
@@ -842,7 +841,7 @@ void    OpenGLWindow::draw_shadedObj(GLenum mode)
 }
 
 
-void    OpenGLWindow::without_antialiasing(GLenum mode)
+void    VectorFieldWindow::without_antialiasing(GLenum mode)
 {
     if(ShowConnectionRegion==1)
     {
@@ -898,7 +897,7 @@ void    OpenGLWindow::without_antialiasing(GLenum mode)
 }
 
 
-void    OpenGLWindow::set_view(GLenum mode)
+void    VectorFieldWindow::set_view(GLenum mode)
 {
     icVector3 up, ray, view;
     GLfloat light_ambient0[] = { 0.3, 0.3, 0.3, 1.0 };
@@ -963,7 +962,7 @@ void    OpenGLWindow::set_view(GLenum mode)
 }
 
 
-void    OpenGLWindow::set_scene(GLenum mode)
+void    VectorFieldWindow::set_scene(GLenum mode)
 {
     //glTranslatef(trans_x, trans_y, 0);
     //glTranslatef(0.0, 0.0, -10.0);
@@ -983,7 +982,7 @@ void    OpenGLWindow::set_scene(GLenum mode)
                  -this->rot_center.entry[2] );
 }
 
-void OpenGLWindow::set_ColorByType(unsigned char type)
+void VectorFieldWindow::set_ColorByType(unsigned char type)
 {
     if(type == SOURCE){
         glColor4f(0.,1., 0.,1);
@@ -1017,7 +1016,7 @@ void OpenGLWindow::set_ColorByType(unsigned char type)
     }
 }
 
-void    OpenGLWindow::draw_ASolidSphere(double x, double y, double z, double r)
+void    VectorFieldWindow::draw_ASolidSphere(double x, double y, double z, double r)
 {
     glPushMatrix();
     glTranslatef(x, y, z);
@@ -1034,7 +1033,7 @@ void    OpenGLWindow::draw_ASolidSphere(double x, double y, double z, double r)
 }
 
 
-void    OpenGLWindow::multmatrix(const Matrix m)
+void    VectorFieldWindow::multmatrix(const Matrix m)
 {
     int i,j, index = 0;
 
@@ -1048,7 +1047,7 @@ void    OpenGLWindow::multmatrix(const Matrix m)
 }
 
 
-void    OpenGLWindow::mat_ident(Matrix m)
+void    VectorFieldWindow::mat_ident(Matrix m)
 {
     int i;
 
@@ -1062,7 +1061,7 @@ void    OpenGLWindow::mat_ident(Matrix m)
 }
 
 
-void    OpenGLWindow::display_MCG_connections()
+void    VectorFieldWindow::display_MCG_connections()
 {
     int i, j, k;
 
@@ -1157,7 +1156,7 @@ void    OpenGLWindow::display_MCG_connections()
 }
 
 
-void    OpenGLWindow::display_SCCs(GLenum mode)
+void    VectorFieldWindow::display_SCCs(GLenum mode)
 {
     int i, j, k;
     Triangle *face;
@@ -1360,7 +1359,7 @@ void    OpenGLWindow::display_SCCs(GLenum mode)
 }
 
 
-void    OpenGLWindow::display_color_VFMag()
+void    VectorFieldWindow::display_color_VFMag()
 {
     int i, j;
     Triangle *face;
@@ -1390,7 +1389,7 @@ void    OpenGLWindow::display_color_VFMag()
     }
 }
 
-void    OpenGLWindow::display_separatrices(GLenum mode)
+void    VectorFieldWindow::display_separatrices(GLenum mode)
 {
     //Draw the separatrices begin from each saddle and long their major direction
 
@@ -1415,7 +1414,7 @@ void    OpenGLWindow::display_separatrices(GLenum mode)
 }
 
 
-void    OpenGLWindow::display_periodicorbits(GLenum mode)
+void    VectorFieldWindow::display_periodicorbits(GLenum mode)
 {
     int i, j;
     icVector3 outn;
@@ -1531,7 +1530,7 @@ void    OpenGLWindow::display_periodicorbits(GLenum mode)
 }
 
 
-void    OpenGLWindow::display_even_streamlines(GLenum mode)
+void    VectorFieldWindow::display_even_streamlines(GLenum mode)
 {
     int i;
 
@@ -1544,7 +1543,7 @@ void    OpenGLWindow::display_even_streamlines(GLenum mode)
 }
 
 
-void    OpenGLWindow::display_FixedPtsIcon(GLenum mode)
+void    VectorFieldWindow::display_FixedPtsIcon(GLenum mode)
 {
     int i;
 
@@ -1575,7 +1574,7 @@ void    OpenGLWindow::display_FixedPtsIcon(GLenum mode)
 }
 
 
-void    OpenGLWindow::display_single_traj(Trajectory *traj, int sep_id)
+void    VectorFieldWindow::display_single_traj(Trajectory *traj, int sep_id)
 {
     icVector3 outn;
 
@@ -1695,7 +1694,7 @@ void    OpenGLWindow::display_single_traj(Trajectory *traj, int sep_id)
 }
 
 
-void OpenGLWindow::display_tau_distribution()
+void VectorFieldWindow::display_tau_distribution()
 {
     int i, j;
     Triangle *face;
@@ -1738,7 +1737,7 @@ void OpenGLWindow::display_tau_distribution()
 }
 
 
-void OpenGLWindow::display_diff_ECG_MCG()
+void VectorFieldWindow::display_diff_ECG_MCG()
 {
     int i, j;
     Triangle *face;
@@ -1773,7 +1772,7 @@ void OpenGLWindow::display_diff_ECG_MCG()
 }
 
 
-void OpenGLWindow::display_diff_MCGs()
+void VectorFieldWindow::display_diff_MCGs()
 {
     int i, j;
     Triangle *face;

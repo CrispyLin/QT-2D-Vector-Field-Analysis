@@ -9,8 +9,6 @@ Created and Modified by Guoning Chen
 #ifndef __PERIODICORBITEXTRACTION_H__
 #define __PERIODICORBITEXTRACTION_H__
 
-#include <conio.h>
-
 #include "VField.h"
 #include "Others/common_routines.h"
 #include "MorseDecomp.h"

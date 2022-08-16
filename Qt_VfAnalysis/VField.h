@@ -9,7 +9,6 @@ copyright @2007
 */
 #include <QDebug>
 #include <stack>
-#include <conio.h>
 
 #include "BuildGeom/Geometry.h"
 #include "ConleyIndex.h"

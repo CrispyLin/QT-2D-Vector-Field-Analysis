@@ -55,8 +55,8 @@ void Polyhedron::detect_PeriodicOrbit()
                 (double)(l_finish - l_start)/CLOCKS_PER_SEC);
         fclose(fp);
 
-        _cprintf("time for computing Morse Decomposition is %f...\n",
-                 (double)(l_finish - l_start)/CLOCKS_PER_SEC);
+        //_cprintf("time for computing Morse Decomposition is %f...\n",
+                 //(double)(l_finish - l_start)/CLOCKS_PER_SEC);
     }
 
     /*second, calculate the separation and attachment points for the valid SCCs*/
@@ -73,8 +73,8 @@ void Polyhedron::detect_PeriodicOrbit()
                 (double)(l_finish - l_start)/CLOCKS_PER_SEC);
         fclose(fp);
 
-        _cprintf("time for computing special points is %f...\n",
-                 (double)(l_finish - l_start)/CLOCKS_PER_SEC);
+        //_cprintf("time for computing special points is %f...\n",
+                 //(double)(l_finish - l_start)/CLOCKS_PER_SEC);
     }
 
     /*third, start periodic orbit extraction*/
@@ -790,7 +790,7 @@ int PeriodicOrbit_Detector::trace_in_triangle_po_detect(double globalp[3], int &
             //if(detect_traj->cal_next_point_euler1(pre_point, cur_point, face_id, alpha, type))
             //if(detect_traj->cal_nextpt_2ndeuler(pre_point, cur_point, face_id, alpha, type))
             //if(detect_traj->cal_nextpt_RK4(pre_point, cur_point, face_id, alpha, type))
-            if(detect_traj->get_next_pt(pre_point, cur_point, face_id, alpha, type, unsigned char(Integrator_opt)))
+            if(detect_traj->get_next_pt(pre_point, cur_point, face_id, alpha, type, (unsigned char)(Integrator_opt)))
             {
                 ////update the global point
 

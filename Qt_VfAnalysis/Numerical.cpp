@@ -1,4 +1,6 @@
 #include "Numerical.h"
+#include <sys/malloc.h>
+#include <stdlib.h>
 
 /****************************************************
 Maybe better for 2X2 and 3X3 matrix inversion
@@ -6,7 +8,7 @@ Maybe better for 2X2 and 3X3 matrix inversion
 double *MatrixOpp(double A[],int m,int n) //inverse
 {
     int i,j,x,y,k;
-    double *SP=NULL,*AB=NULL,*B=NULL,XX,*C;
+    double *SP=nullptr,*AB=nullptr,*B=nullptr,XX,*C;
     SP=(double *)malloc(m*n*sizeof(double));
     AB=(double *)malloc(m*n*sizeof(double));
     B=(double *)malloc(m*n*sizeof(double));

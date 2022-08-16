@@ -14,6 +14,7 @@ Created and Modified by Guoning Chen
 
 #include "Analysis/MorseDecomp.h"
 
+#include "Analysis/PeriodicOrbitExtraction.h"
 #include "ExternalDependencies/nr.h"
 
 #include "Others/common_routines.h"
@@ -875,7 +876,7 @@ int Trajectory::trace_in_triangle(int &face_id, double globalp[3], int type, int
             //if(cal_nextpt_2ndeuler(pre_point, cur_point, face_id, alpha, type))
             //if(cal_nextpt_RK4(pre_point, cur_point, face_id, alpha, type))
 
-            if (get_next_pt(pre_point, cur_point, face_id, alpha, type, unsigned char(Integrator_opt)))
+            if (get_next_pt(pre_point, cur_point, face_id, alpha, type, (unsigned char)(Integrator_opt)))
             {
                 ////update the global point
 

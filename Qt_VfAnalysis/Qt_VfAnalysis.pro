@@ -2,7 +2,7 @@ QT       += core gui openglwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -12,14 +12,13 @@ SOURCES += \
     Analysis/CalSepAttpPts.cpp \
     Analysis/DirGraphOps.cpp \
     Analysis/FixedPtExtraction.cpp \
-    Analysis/MCG&ECG/BuildECG.cpp \
-    Analysis/MCG&ECG/BuildMCG.cpp \
+    Analysis/BuildECG.cpp \
+    Analysis/BuildMCG.cpp \
     Analysis/MorseDecomp.cpp \
     Analysis/PeriodicOrbitExtraction.cpp \
     BuildGeom/BuildCorners.cpp \
     BuildGeom/BuildEdges.cpp \
     BuildGeom/Geometry.cpp \
-    Analysis/CalSepAttpPts.cpp \
     ConleyIndex.cpp \
     Contour_2D.cpp \
     EdgeSamplePts.cpp \
@@ -31,9 +30,9 @@ SOURCES += \
     RegionTauMap.cpp \
     StreamlineCalculate/EvenStreamlines.cpp \
     StreamlineCalculate/Streamline_cal.cpp \
+    VectorFieldWindow.cpp \
     main.cpp \
     MainWindow.cpp \
-    OpenGLWindow.cpp \
     utility_functions.cpp
 
 HEADERS += \
@@ -61,14 +60,14 @@ HEADERS += \
     StreamlineCalculate/EvenStreamlines.h \
     VField.h \
     MainWindow.h \
-    OpenGLWindow.h \
     Predefined.h \
-    GL_LIB/glew.h
+    GL_LIB/glew.h \
+    VectorFieldWindow.h
 
 FORMS += \
     MainWindow.ui
 
-LIBS += -lglu32 -lopengl32
+LIBS
 
 
 # Default rules for deployment.

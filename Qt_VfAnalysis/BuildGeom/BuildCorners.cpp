@@ -509,7 +509,7 @@ void Polyhedron::alloc_Corner_Angle()
             if(vert->corners[j] == NULL) //07/18/06
             {
                 defect_corner = true;
-                _cprintf ("Defect corner at Vertex %d\n", i);
+                //_cprintf ("Defect corner at Vertex %d\n", i);
                 continue;
             }
 

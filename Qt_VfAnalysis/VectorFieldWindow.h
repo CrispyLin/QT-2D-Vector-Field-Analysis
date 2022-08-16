@@ -3,10 +3,7 @@
 #define OPENGLWINDOW_H
 
 #include "GL_LIB/glew.h"
-#include <stdlib.h>
 
-
-#include <mainwindow.h>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QSurfaceFormat>
@@ -14,12 +11,14 @@
 #include <QColor>
 #include <QDir>
 #include <stdlib.h>
-#include <gl/GL.h>
-#include <gl/GLU.h>
+#include <OpenGL/GL.h>
+#include <OpenGl/GLU.h>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdlib.h>
 
+#include "MainWindow.h"
 #include "Predefined.h"
 #include "BuildGeom/Geometry.h"
 #include "Analysis/MorseDecomp.h"
@@ -36,7 +35,7 @@
 
 typedef float Matrix[4][4];
 
-class OpenGLWindow : public QOpenGLWidget, public QOpenGLFunctions
+class VectorFieldWindow : public QOpenGLWidget, public QOpenGLFunctions
 {
     Q_OBJECT
 
@@ -84,8 +83,8 @@ public:
     Polyhedron* polyhedron = nullptr;
 
     // constructor and desctuctor
-    OpenGLWindow(QWidget *parent = nullptr);
-    ~OpenGLWindow();
+    VectorFieldWindow(QWidget *parent = nullptr);
+    ~VectorFieldWindow();
 
     // public member functions
     void    set_up_MainWindow_ptr(MainWindow* MW_ptr);

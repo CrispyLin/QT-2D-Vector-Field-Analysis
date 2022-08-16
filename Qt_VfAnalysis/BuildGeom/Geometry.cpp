@@ -51,9 +51,21 @@ Corner **extend_Link(Corner **corner, int ncorners)
 
 
 /* Implementation of the memeber function for Vertex class */
+Vertex::Vertex(double ix, double iy, double iz)
+{
+    x = ix; y = iy;  z = iz;
+    g_vec.entry[0] = 0;
+    g_vec.entry[1] = 0;
+    g_vec.entry[2] = 0;
 
-Vertex::Vertex(double ix=0, double iy=0, double iz=0,
-               double vx=0, double vy=0, double vz=0)
+    raw_vec.entry[0] = 0;
+    raw_vec.entry[1] = 0;
+    raw_vec.entry[2] = 0;
+}
+
+
+Vertex::Vertex(double ix, double iy, double iz,
+               double vx, double vy, double vz)
 {
     x = ix; y = iy;  z = iz;
     g_vec.entry[0] = vx;
@@ -476,9 +488,9 @@ Polyhedron::Polyhedron(FILE *file, int withvec)
 
     /* fix up vertex pointers in triangles */
     for (i = 0; i < tlist.ntris; i++) {
-        tlist.tris[i]->verts[0] = vlist.verts[(int) tlist.tris[i]->verts[0]];
-        tlist.tris[i]->verts[1] = vlist.verts[(int) tlist.tris[i]->verts[1]];
-        tlist.tris[i]->verts[2] = vlist.verts[(int) tlist.tris[i]->verts[2]];
+        tlist.tris[i]->verts[0] = vlist.verts[(long) tlist.tris[i]->verts[0]];
+        tlist.tris[i]->verts[1] = vlist.verts[(long) tlist.tris[i]->verts[1]];
+        tlist.tris[i]->verts[2] = vlist.verts[(long) tlist.tris[i]->verts[2]];
     }
 
     /* get rid of triangles that use the same vertex more than once */
