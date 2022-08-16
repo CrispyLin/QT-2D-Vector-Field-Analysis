@@ -8,6 +8,6 @@ PkgInfo
 *.Release
 *.user
 *.DS_Store
-*.stash
+*.qmake.stash
 *.plist
 *.lproj
