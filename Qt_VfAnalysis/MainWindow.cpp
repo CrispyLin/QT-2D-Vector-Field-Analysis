@@ -18,7 +18,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::init(){
-    this->ui->openGLWindow->set_up_MainWindow_ptr(this);
+    this->ui->VF_window->set_up_MainWindow_ptr(this);
     qInfo()  << QString("Main Window has been initialized");
 }
 
