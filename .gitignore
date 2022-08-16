@@ -16,9 +16,10 @@ build-Qt_VfAnalysis-Qt_6_3_1_for_macOS-Debug/
 *.out
 *.app
 
+**/.DS_Store
+
 # specific files
 debug
 release
 Makefile
 PkgInfo
-.DS_Store
