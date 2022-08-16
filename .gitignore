@@ -1,15 +1,24 @@
+# folders
+build-Qt_VfAnalysis-Qt_6_3_1_for_macOS-Debug/
+
+
+# with certain file extensions
+*.qtc_clangd
+*.o
+*.obj
+*.Debug
+*.Release
+*.pro.user
+*.qmake.stash
+*.plist
+*.lproj
+*.exe
+*.out
+*.app
+
+# specific files
 debug
 release
 Makefile
 PkgInfo
-*.qtc_clangd
-*.o
-*.Debug
-*.Release
-*.pro.user
-*.DS_Store
-*.qmake.stash
-*.plist
-*.lproj
-
-build-Qt_VfAnalysis-Qt_6_3_1_for_macOS-Debug/
+.DS_Store
