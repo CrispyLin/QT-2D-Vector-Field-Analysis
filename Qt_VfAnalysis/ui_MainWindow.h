@@ -9,7 +9,6 @@
 #ifndef UI_MAINWINDOW_H
 #define UI_MAINWINDOW_H
 
-#include "VectorFieldWindow.h"
 #include <QtCore/QVariant>
 #include <QtOpenGLWidgets/QOpenGLWidget>
 #include <QtWidgets/QApplication>
@@ -25,6 +24,7 @@
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include <VectorFieldWindow.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -32,8 +32,16 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QHBoxLayout *horizontalLayout_21;
-    QHBoxLayout *UserControls_layout;
+    QHBoxLayout *horizontalLayout_6;
+    QHBoxLayout *openGLWindows_layout;
+    VectorFieldWindow *VF_window;
+    QVBoxLayout *verticalLayout_16;
+    QGroupBox *MCG_GB;
+    QHBoxLayout *horizontalLayout_22;
+    QOpenGLWidget *MCG_Window;
+    QGroupBox *ECG_GB;
+    QHBoxLayout *horizontalLayout_23;
+    QOpenGLWidget *ECG_Window;
     QVBoxLayout *verticalLayout_15;
     QGroupBox *groupBox_10;
     QVBoxLayout *verticalLayout_9;
@@ -78,25 +86,22 @@ public:
     QLabel *label_13;
     QLineEdit *lineEdit_11;
     QCheckBox *checkBox_18;
-    QVBoxLayout *verticalLayout_14;
-    QGroupBox *groupBox_8;
     QVBoxLayout *verticalLayout_12;
+    QGroupBox *groupBox_8;
     QVBoxLayout *verticalLayout_7;
     QCheckBox *checkBox_19;
     QCheckBox *checkBox_20;
     QCheckBox *checkBox_21;
     QPushButton *pushButton_3;
-    QGroupBox *groupBox_2;
-    QVBoxLayout *verticalLayout_11;
-    QHBoxLayout *horizontalLayout_6;
-    QCheckBox *checkBox_11;
-    QCheckBox *checkBox_13;
-    QCheckBox *checkBox_14;
-    QHBoxLayout *horizontalLayout_7;
-    QCheckBox *checkBox_12;
-    QCheckBox *checkBox_15;
+    QGroupBox *Visualization;
+    QVBoxLayout *verticalLayout_6;
     QCheckBox *checkBox_16;
+    QCheckBox *checkBox_14;
+    QCheckBox *checkBox_15;
+    QCheckBox *checkBox_11;
+    QCheckBox *checkBox_12;
     QCheckBox *checkBox_17;
+    QCheckBox *checkBox_13;
     QGroupBox *groupBox_6;
     QVBoxLayout *verticalLayout_4;
     QHBoxLayout *horizontalLayout_9;
@@ -107,8 +112,8 @@ public:
     QLabel *label_8;
     QLineEdit *lineEdit_7;
     QLabel *label_9;
-    QGroupBox *groupBox_11;
-    QVBoxLayout *verticalLayout_6;
+    QGroupBox *Debug_GB;
+    QVBoxLayout *verticalLayout_11;
     QTextEdit *debug_window;
     QVBoxLayout *verticalLayout_13;
     QGroupBox *groupBox;
@@ -146,15 +151,6 @@ public:
     QLabel *label_2;
     QLineEdit *lineEdit_2;
     QPushButton *pushButton_2;
-    QHBoxLayout *openGLWindows_layout;
-    VectorFieldWindow *VF_window;
-    QVBoxLayout *verticalLayout_16;
-    QGroupBox *MCG_GB;
-    QHBoxLayout *horizontalLayout_22;
-    QOpenGLWidget *MCG_Window;
-    QGroupBox *ECG_GB;
-    QHBoxLayout *horizontalLayout_23;
-    QOpenGLWidget *ECG_Window;
     QButtonGroup *IntergratorsBG;
 
     void setupUi(QMainWindow *MainWindow)
@@ -166,20 +162,87 @@ public:
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setMinimumSize(QSize(0, 0));
-        horizontalLayout_21 = new QHBoxLayout(centralwidget);
-        horizontalLayout_21->setObjectName(QString::fromUtf8("horizontalLayout_21"));
-        UserControls_layout = new QHBoxLayout();
-        UserControls_layout->setObjectName(QString::fromUtf8("UserControls_layout"));
+        horizontalLayout_6 = new QHBoxLayout(centralwidget);
+        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
+        openGLWindows_layout = new QHBoxLayout();
+        openGLWindows_layout->setObjectName(QString::fromUtf8("openGLWindows_layout"));
+        VF_window = new VectorFieldWindow(centralwidget);
+        VF_window->setObjectName(QString::fromUtf8("VF_window"));
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(80);
+        sizePolicy.setVerticalStretch(80);
+        sizePolicy.setHeightForWidth(VF_window->sizePolicy().hasHeightForWidth());
+        VF_window->setSizePolicy(sizePolicy);
+        VF_window->setMinimumSize(QSize(400, 400));
+        VF_window->setMaximumSize(QSize(400, 400));
+
+        openGLWindows_layout->addWidget(VF_window);
+
+        verticalLayout_16 = new QVBoxLayout();
+        verticalLayout_16->setObjectName(QString::fromUtf8("verticalLayout_16"));
+        MCG_GB = new QGroupBox(centralwidget);
+        MCG_GB->setObjectName(QString::fromUtf8("MCG_GB"));
+        QSizePolicy sizePolicy1(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(MCG_GB->sizePolicy().hasHeightForWidth());
+        MCG_GB->setSizePolicy(sizePolicy1);
+        horizontalLayout_22 = new QHBoxLayout(MCG_GB);
+        horizontalLayout_22->setObjectName(QString::fromUtf8("horizontalLayout_22"));
+        horizontalLayout_22->setContentsMargins(0, 0, 0, 0);
+        MCG_Window = new QOpenGLWidget(MCG_GB);
+        MCG_Window->setObjectName(QString::fromUtf8("MCG_Window"));
+        QSizePolicy sizePolicy2(QSizePolicy::Maximum, QSizePolicy::Maximum);
+        sizePolicy2.setHorizontalStretch(50);
+        sizePolicy2.setVerticalStretch(50);
+        sizePolicy2.setHeightForWidth(MCG_Window->sizePolicy().hasHeightForWidth());
+        MCG_Window->setSizePolicy(sizePolicy2);
+        MCG_Window->setMinimumSize(QSize(250, 175));
+        MCG_Window->setMaximumSize(QSize(250, 175));
+
+        horizontalLayout_22->addWidget(MCG_Window);
+
+
+        verticalLayout_16->addWidget(MCG_GB);
+
+        ECG_GB = new QGroupBox(centralwidget);
+        ECG_GB->setObjectName(QString::fromUtf8("ECG_GB"));
+        sizePolicy1.setHeightForWidth(ECG_GB->sizePolicy().hasHeightForWidth());
+        ECG_GB->setSizePolicy(sizePolicy1);
+        horizontalLayout_23 = new QHBoxLayout(ECG_GB);
+        horizontalLayout_23->setObjectName(QString::fromUtf8("horizontalLayout_23"));
+        horizontalLayout_23->setContentsMargins(0, 0, 0, 0);
+        ECG_Window = new QOpenGLWidget(ECG_GB);
+        ECG_Window->setObjectName(QString::fromUtf8("ECG_Window"));
+        QSizePolicy sizePolicy3(QSizePolicy::Maximum, QSizePolicy::Maximum);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(ECG_Window->sizePolicy().hasHeightForWidth());
+        ECG_Window->setSizePolicy(sizePolicy3);
+        ECG_Window->setMinimumSize(QSize(250, 175));
+        ECG_Window->setMaximumSize(QSize(250, 175));
+
+        horizontalLayout_23->addWidget(ECG_Window);
+
+
+        verticalLayout_16->addWidget(ECG_GB);
+
+
+        openGLWindows_layout->addLayout(verticalLayout_16);
+
+
+        horizontalLayout_6->addLayout(openGLWindows_layout);
+
         verticalLayout_15 = new QVBoxLayout();
         verticalLayout_15->setObjectName(QString::fromUtf8("verticalLayout_15"));
         groupBox_10 = new QGroupBox(centralwidget);
         groupBox_10->setObjectName(QString::fromUtf8("groupBox_10"));
-        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(groupBox_10->sizePolicy().hasHeightForWidth());
-        groupBox_10->setSizePolicy(sizePolicy);
-        groupBox_10->setMaximumSize(QSize(280, 16777215));
+        QSizePolicy sizePolicy4(QSizePolicy::Minimum, QSizePolicy::Preferred);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(0);
+        sizePolicy4.setHeightForWidth(groupBox_10->sizePolicy().hasHeightForWidth());
+        groupBox_10->setSizePolicy(sizePolicy4);
+        groupBox_10->setMaximumSize(QSize(260, 16777215));
         verticalLayout_9 = new QVBoxLayout(groupBox_10);
         verticalLayout_9->setObjectName(QString::fromUtf8("verticalLayout_9"));
         verticalLayout_9->setContentsMargins(0, 0, 0, 0);
@@ -188,26 +251,27 @@ public:
         horizontalLayout_18->setSizeConstraint(QLayout::SetMinimumSize);
         label_17 = new QLabel(groupBox_10);
         label_17->setObjectName(QString::fromUtf8("label_17"));
-        sizePolicy.setHeightForWidth(label_17->sizePolicy().hasHeightForWidth());
-        label_17->setSizePolicy(sizePolicy);
+        sizePolicy4.setHeightForWidth(label_17->sizePolicy().hasHeightForWidth());
+        label_17->setSizePolicy(sizePolicy4);
 
         horizontalLayout_18->addWidget(label_17);
 
         lineEdit_15 = new QLineEdit(groupBox_10);
         lineEdit_15->setObjectName(QString::fromUtf8("lineEdit_15"));
-        QSizePolicy sizePolicy1(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(lineEdit_15->sizePolicy().hasHeightForWidth());
-        lineEdit_15->setSizePolicy(sizePolicy1);
+        QSizePolicy sizePolicy5(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        sizePolicy5.setHorizontalStretch(0);
+        sizePolicy5.setVerticalStretch(0);
+        sizePolicy5.setHeightForWidth(lineEdit_15->sizePolicy().hasHeightForWidth());
+        lineEdit_15->setSizePolicy(sizePolicy5);
         lineEdit_15->setMaximumSize(QSize(50, 16777215));
 
         horizontalLayout_18->addWidget(lineEdit_15);
 
         pushButton_6 = new QPushButton(groupBox_10);
         pushButton_6->setObjectName(QString::fromUtf8("pushButton_6"));
-        sizePolicy1.setHeightForWidth(pushButton_6->sizePolicy().hasHeightForWidth());
-        pushButton_6->setSizePolicy(sizePolicy1);
+        sizePolicy5.setHeightForWidth(pushButton_6->sizePolicy().hasHeightForWidth());
+        pushButton_6->setSizePolicy(sizePolicy5);
+        pushButton_6->setMaximumSize(QSize(130, 16777215));
 
         horizontalLayout_18->addWidget(pushButton_6);
 
@@ -218,23 +282,24 @@ public:
         horizontalLayout_19->setObjectName(QString::fromUtf8("horizontalLayout_19"));
         label_18 = new QLabel(groupBox_10);
         label_18->setObjectName(QString::fromUtf8("label_18"));
-        sizePolicy.setHeightForWidth(label_18->sizePolicy().hasHeightForWidth());
-        label_18->setSizePolicy(sizePolicy);
+        sizePolicy4.setHeightForWidth(label_18->sizePolicy().hasHeightForWidth());
+        label_18->setSizePolicy(sizePolicy4);
 
         horizontalLayout_19->addWidget(label_18);
 
         lineEdit_16 = new QLineEdit(groupBox_10);
         lineEdit_16->setObjectName(QString::fromUtf8("lineEdit_16"));
-        sizePolicy1.setHeightForWidth(lineEdit_16->sizePolicy().hasHeightForWidth());
-        lineEdit_16->setSizePolicy(sizePolicy1);
+        sizePolicy5.setHeightForWidth(lineEdit_16->sizePolicy().hasHeightForWidth());
+        lineEdit_16->setSizePolicy(sizePolicy5);
         lineEdit_16->setMaximumSize(QSize(50, 16777215));
 
         horizontalLayout_19->addWidget(lineEdit_16);
 
         pushButton_7 = new QPushButton(groupBox_10);
         pushButton_7->setObjectName(QString::fromUtf8("pushButton_7"));
-        sizePolicy1.setHeightForWidth(pushButton_7->sizePolicy().hasHeightForWidth());
-        pushButton_7->setSizePolicy(sizePolicy1);
+        sizePolicy5.setHeightForWidth(pushButton_7->sizePolicy().hasHeightForWidth());
+        pushButton_7->setSizePolicy(sizePolicy5);
+        pushButton_7->setMaximumSize(QSize(130, 16777215));
 
         horizontalLayout_19->addWidget(pushButton_7);
 
@@ -243,8 +308,8 @@ public:
 
         pushButton_8 = new QPushButton(groupBox_10);
         pushButton_8->setObjectName(QString::fromUtf8("pushButton_8"));
-        sizePolicy1.setHeightForWidth(pushButton_8->sizePolicy().hasHeightForWidth());
-        pushButton_8->setSizePolicy(sizePolicy1);
+        sizePolicy5.setHeightForWidth(pushButton_8->sizePolicy().hasHeightForWidth());
+        pushButton_8->setSizePolicy(sizePolicy5);
         pushButton_8->setMaximumSize(QSize(1000, 16777215));
 
         verticalLayout_9->addWidget(pushButton_8);
@@ -254,9 +319,9 @@ public:
 
         groupBox_9 = new QGroupBox(centralwidget);
         groupBox_9->setObjectName(QString::fromUtf8("groupBox_9"));
-        sizePolicy.setHeightForWidth(groupBox_9->sizePolicy().hasHeightForWidth());
-        groupBox_9->setSizePolicy(sizePolicy);
-        groupBox_9->setMaximumSize(QSize(280, 16777215));
+        sizePolicy4.setHeightForWidth(groupBox_9->sizePolicy().hasHeightForWidth());
+        groupBox_9->setSizePolicy(sizePolicy4);
+        groupBox_9->setMaximumSize(QSize(260, 16777215));
         verticalLayout_8 = new QVBoxLayout(groupBox_9);
         verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
         verticalLayout_8->setSizeConstraint(QLayout::SetMinimumSize);
@@ -275,11 +340,11 @@ public:
 
         lineEdit_12 = new QLineEdit(groupBox_9);
         lineEdit_12->setObjectName(QString::fromUtf8("lineEdit_12"));
-        QSizePolicy sizePolicy2(QSizePolicy::Preferred, QSizePolicy::Fixed);
-        sizePolicy2.setHorizontalStretch(0);
-        sizePolicy2.setVerticalStretch(0);
-        sizePolicy2.setHeightForWidth(lineEdit_12->sizePolicy().hasHeightForWidth());
-        lineEdit_12->setSizePolicy(sizePolicy2);
+        QSizePolicy sizePolicy6(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        sizePolicy6.setHorizontalStretch(0);
+        sizePolicy6.setVerticalStretch(0);
+        sizePolicy6.setHeightForWidth(lineEdit_12->sizePolicy().hasHeightForWidth());
+        lineEdit_12->setSizePolicy(sizePolicy6);
 
         horizontalLayout_14->addWidget(lineEdit_12);
 
@@ -297,8 +362,8 @@ public:
 
         lineEdit_13 = new QLineEdit(groupBox_9);
         lineEdit_13->setObjectName(QString::fromUtf8("lineEdit_13"));
-        sizePolicy2.setHeightForWidth(lineEdit_13->sizePolicy().hasHeightForWidth());
-        lineEdit_13->setSizePolicy(sizePolicy2);
+        sizePolicy6.setHeightForWidth(lineEdit_13->sizePolicy().hasHeightForWidth());
+        lineEdit_13->setSizePolicy(sizePolicy6);
 
         horizontalLayout_15->addWidget(lineEdit_13);
 
@@ -314,8 +379,8 @@ public:
 
         lineEdit_14 = new QLineEdit(groupBox_9);
         lineEdit_14->setObjectName(QString::fromUtf8("lineEdit_14"));
-        sizePolicy2.setHeightForWidth(lineEdit_14->sizePolicy().hasHeightForWidth());
-        lineEdit_14->setSizePolicy(sizePolicy2);
+        sizePolicy6.setHeightForWidth(lineEdit_14->sizePolicy().hasHeightForWidth());
+        lineEdit_14->setSizePolicy(sizePolicy6);
 
         horizontalLayout_16->addWidget(lineEdit_14);
 
@@ -332,11 +397,11 @@ public:
 
         pushButton_4 = new QPushButton(groupBox_9);
         pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
-        QSizePolicy sizePolicy3(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        sizePolicy3.setHorizontalStretch(0);
-        sizePolicy3.setVerticalStretch(0);
-        sizePolicy3.setHeightForWidth(pushButton_4->sizePolicy().hasHeightForWidth());
-        pushButton_4->setSizePolicy(sizePolicy3);
+        QSizePolicy sizePolicy7(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy7.setHorizontalStretch(0);
+        sizePolicy7.setVerticalStretch(0);
+        sizePolicy7.setHeightForWidth(pushButton_4->sizePolicy().hasHeightForWidth());
+        pushButton_4->setSizePolicy(sizePolicy7);
 
         verticalLayout_8->addWidget(pushButton_4);
 
@@ -352,11 +417,8 @@ public:
         horizontalLayout_20->setObjectName(QString::fromUtf8("horizontalLayout_20"));
         groupBox_7 = new QGroupBox(centralwidget);
         groupBox_7->setObjectName(QString::fromUtf8("groupBox_7"));
-        QSizePolicy sizePolicy4(QSizePolicy::Minimum, QSizePolicy::Minimum);
-        sizePolicy4.setHorizontalStretch(0);
-        sizePolicy4.setVerticalStretch(0);
-        sizePolicy4.setHeightForWidth(groupBox_7->sizePolicy().hasHeightForWidth());
-        groupBox_7->setSizePolicy(sizePolicy4);
+        sizePolicy1.setHeightForWidth(groupBox_7->sizePolicy().hasHeightForWidth());
+        groupBox_7->setSizePolicy(sizePolicy1);
         groupBox_7->setMaximumSize(QSize(280, 16777215));
         verticalLayout_5 = new QVBoxLayout(groupBox_7);
         verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
@@ -370,8 +432,8 @@ public:
 
         lineEdit_8 = new QLineEdit(groupBox_7);
         lineEdit_8->setObjectName(QString::fromUtf8("lineEdit_8"));
-        sizePolicy1.setHeightForWidth(lineEdit_8->sizePolicy().hasHeightForWidth());
-        lineEdit_8->setSizePolicy(sizePolicy1);
+        sizePolicy5.setHeightForWidth(lineEdit_8->sizePolicy().hasHeightForWidth());
+        lineEdit_8->setSizePolicy(sizePolicy5);
 
         horizontalLayout_10->addWidget(lineEdit_8);
 
@@ -387,8 +449,8 @@ public:
 
         lineEdit_9 = new QLineEdit(groupBox_7);
         lineEdit_9->setObjectName(QString::fromUtf8("lineEdit_9"));
-        sizePolicy1.setHeightForWidth(lineEdit_9->sizePolicy().hasHeightForWidth());
-        lineEdit_9->setSizePolicy(sizePolicy1);
+        sizePolicy5.setHeightForWidth(lineEdit_9->sizePolicy().hasHeightForWidth());
+        lineEdit_9->setSizePolicy(sizePolicy5);
 
         horizontalLayout_11->addWidget(lineEdit_9);
 
@@ -404,8 +466,8 @@ public:
 
         lineEdit_10 = new QLineEdit(groupBox_7);
         lineEdit_10->setObjectName(QString::fromUtf8("lineEdit_10"));
-        sizePolicy1.setHeightForWidth(lineEdit_10->sizePolicy().hasHeightForWidth());
-        lineEdit_10->setSizePolicy(sizePolicy1);
+        sizePolicy5.setHeightForWidth(lineEdit_10->sizePolicy().hasHeightForWidth());
+        lineEdit_10->setSizePolicy(sizePolicy5);
 
         horizontalLayout_12->addWidget(lineEdit_10);
 
@@ -421,8 +483,8 @@ public:
 
         lineEdit_11 = new QLineEdit(groupBox_7);
         lineEdit_11->setObjectName(QString::fromUtf8("lineEdit_11"));
-        sizePolicy2.setHeightForWidth(lineEdit_11->sizePolicy().hasHeightForWidth());
-        lineEdit_11->setSizePolicy(sizePolicy2);
+        sizePolicy6.setHeightForWidth(lineEdit_11->sizePolicy().hasHeightForWidth());
+        lineEdit_11->setSizePolicy(sizePolicy6);
 
         horizontalLayout_13->addWidget(lineEdit_11);
 
@@ -441,23 +503,18 @@ public:
         verticalLayout_15->addLayout(horizontalLayout_20);
 
 
-        UserControls_layout->addLayout(verticalLayout_15);
+        horizontalLayout_6->addLayout(verticalLayout_15);
 
-        verticalLayout_14 = new QVBoxLayout();
-        verticalLayout_14->setObjectName(QString::fromUtf8("verticalLayout_14"));
+        verticalLayout_12 = new QVBoxLayout();
+        verticalLayout_12->setObjectName(QString::fromUtf8("verticalLayout_12"));
         groupBox_8 = new QGroupBox(centralwidget);
         groupBox_8->setObjectName(QString::fromUtf8("groupBox_8"));
-        QSizePolicy sizePolicy5(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
-        sizePolicy5.setHorizontalStretch(0);
-        sizePolicy5.setVerticalStretch(0);
-        sizePolicy5.setHeightForWidth(groupBox_8->sizePolicy().hasHeightForWidth());
-        groupBox_8->setSizePolicy(sizePolicy5);
-        groupBox_8->setMaximumSize(QSize(200, 16777215));
-        verticalLayout_12 = new QVBoxLayout(groupBox_8);
-        verticalLayout_12->setObjectName(QString::fromUtf8("verticalLayout_12"));
-        verticalLayout_12->setContentsMargins(0, 0, 0, 0);
-        verticalLayout_7 = new QVBoxLayout();
+        sizePolicy4.setHeightForWidth(groupBox_8->sizePolicy().hasHeightForWidth());
+        groupBox_8->setSizePolicy(sizePolicy4);
+        groupBox_8->setMaximumSize(QSize(300, 16777215));
+        verticalLayout_7 = new QVBoxLayout(groupBox_8);
         verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
+        verticalLayout_7->setContentsMargins(0, 0, 0, 0);
         checkBox_19 = new QCheckBox(groupBox_8);
         checkBox_19->setObjectName(QString::fromUtf8("checkBox_19"));
 
@@ -479,92 +536,84 @@ public:
         verticalLayout_7->addWidget(pushButton_3);
 
 
-        verticalLayout_12->addLayout(verticalLayout_7);
+        verticalLayout_12->addWidget(groupBox_8);
 
-        groupBox_2 = new QGroupBox(groupBox_8);
-        groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
-        QSizePolicy sizePolicy6(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        sizePolicy6.setHorizontalStretch(0);
-        sizePolicy6.setVerticalStretch(0);
-        sizePolicy6.setHeightForWidth(groupBox_2->sizePolicy().hasHeightForWidth());
-        groupBox_2->setSizePolicy(sizePolicy6);
-        verticalLayout_11 = new QVBoxLayout(groupBox_2);
-        verticalLayout_11->setObjectName(QString::fromUtf8("verticalLayout_11"));
-        horizontalLayout_6 = new QHBoxLayout();
-        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
-        checkBox_11 = new QCheckBox(groupBox_2);
-        checkBox_11->setObjectName(QString::fromUtf8("checkBox_11"));
-        sizePolicy6.setHeightForWidth(checkBox_11->sizePolicy().hasHeightForWidth());
-        checkBox_11->setSizePolicy(sizePolicy6);
-
-        horizontalLayout_6->addWidget(checkBox_11);
-
-        checkBox_13 = new QCheckBox(groupBox_2);
-        checkBox_13->setObjectName(QString::fromUtf8("checkBox_13"));
-        sizePolicy6.setHeightForWidth(checkBox_13->sizePolicy().hasHeightForWidth());
-        checkBox_13->setSizePolicy(sizePolicy6);
-
-        horizontalLayout_6->addWidget(checkBox_13);
-
-        checkBox_14 = new QCheckBox(groupBox_2);
-        checkBox_14->setObjectName(QString::fromUtf8("checkBox_14"));
-        sizePolicy6.setHeightForWidth(checkBox_14->sizePolicy().hasHeightForWidth());
-        checkBox_14->setSizePolicy(sizePolicy6);
-
-        horizontalLayout_6->addWidget(checkBox_14);
-
-
-        verticalLayout_11->addLayout(horizontalLayout_6);
-
-        horizontalLayout_7 = new QHBoxLayout();
-        horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
-        checkBox_12 = new QCheckBox(groupBox_2);
-        checkBox_12->setObjectName(QString::fromUtf8("checkBox_12"));
-        sizePolicy6.setHeightForWidth(checkBox_12->sizePolicy().hasHeightForWidth());
-        checkBox_12->setSizePolicy(sizePolicy6);
-
-        horizontalLayout_7->addWidget(checkBox_12);
-
-        checkBox_15 = new QCheckBox(groupBox_2);
-        checkBox_15->setObjectName(QString::fromUtf8("checkBox_15"));
-        sizePolicy6.setHeightForWidth(checkBox_15->sizePolicy().hasHeightForWidth());
-        checkBox_15->setSizePolicy(sizePolicy6);
-
-        horizontalLayout_7->addWidget(checkBox_15);
-
-        checkBox_16 = new QCheckBox(groupBox_2);
+        Visualization = new QGroupBox(centralwidget);
+        Visualization->setObjectName(QString::fromUtf8("Visualization"));
+        QSizePolicy sizePolicy8(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+        sizePolicy8.setHorizontalStretch(0);
+        sizePolicy8.setVerticalStretch(0);
+        sizePolicy8.setHeightForWidth(Visualization->sizePolicy().hasHeightForWidth());
+        Visualization->setSizePolicy(sizePolicy8);
+        Visualization->setMaximumSize(QSize(300, 16777215));
+        verticalLayout_6 = new QVBoxLayout(Visualization);
+        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
+        verticalLayout_6->setContentsMargins(0, 0, 0, 0);
+        checkBox_16 = new QCheckBox(Visualization);
         checkBox_16->setObjectName(QString::fromUtf8("checkBox_16"));
-        sizePolicy6.setHeightForWidth(checkBox_16->sizePolicy().hasHeightForWidth());
-        checkBox_16->setSizePolicy(sizePolicy6);
+        QSizePolicy sizePolicy9(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+        sizePolicy9.setHorizontalStretch(0);
+        sizePolicy9.setVerticalStretch(0);
+        sizePolicy9.setHeightForWidth(checkBox_16->sizePolicy().hasHeightForWidth());
+        checkBox_16->setSizePolicy(sizePolicy9);
 
-        horizontalLayout_7->addWidget(checkBox_16);
+        verticalLayout_6->addWidget(checkBox_16);
 
+        checkBox_14 = new QCheckBox(Visualization);
+        checkBox_14->setObjectName(QString::fromUtf8("checkBox_14"));
+        sizePolicy9.setHeightForWidth(checkBox_14->sizePolicy().hasHeightForWidth());
+        checkBox_14->setSizePolicy(sizePolicy9);
 
-        verticalLayout_11->addLayout(horizontalLayout_7);
+        verticalLayout_6->addWidget(checkBox_14);
 
-        checkBox_17 = new QCheckBox(groupBox_2);
+        checkBox_15 = new QCheckBox(Visualization);
+        checkBox_15->setObjectName(QString::fromUtf8("checkBox_15"));
+        sizePolicy9.setHeightForWidth(checkBox_15->sizePolicy().hasHeightForWidth());
+        checkBox_15->setSizePolicy(sizePolicy9);
+
+        verticalLayout_6->addWidget(checkBox_15);
+
+        checkBox_11 = new QCheckBox(Visualization);
+        checkBox_11->setObjectName(QString::fromUtf8("checkBox_11"));
+        sizePolicy9.setHeightForWidth(checkBox_11->sizePolicy().hasHeightForWidth());
+        checkBox_11->setSizePolicy(sizePolicy9);
+
+        verticalLayout_6->addWidget(checkBox_11);
+
+        checkBox_12 = new QCheckBox(Visualization);
+        checkBox_12->setObjectName(QString::fromUtf8("checkBox_12"));
+        sizePolicy9.setHeightForWidth(checkBox_12->sizePolicy().hasHeightForWidth());
+        checkBox_12->setSizePolicy(sizePolicy9);
+
+        verticalLayout_6->addWidget(checkBox_12);
+
+        checkBox_17 = new QCheckBox(Visualization);
         checkBox_17->setObjectName(QString::fromUtf8("checkBox_17"));
-        sizePolicy6.setHeightForWidth(checkBox_17->sizePolicy().hasHeightForWidth());
-        checkBox_17->setSizePolicy(sizePolicy6);
+        sizePolicy9.setHeightForWidth(checkBox_17->sizePolicy().hasHeightForWidth());
+        checkBox_17->setSizePolicy(sizePolicy9);
 
-        verticalLayout_11->addWidget(checkBox_17);
+        verticalLayout_6->addWidget(checkBox_17);
 
-        groupBox_6 = new QGroupBox(groupBox_2);
+        checkBox_13 = new QCheckBox(Visualization);
+        checkBox_13->setObjectName(QString::fromUtf8("checkBox_13"));
+        sizePolicy9.setHeightForWidth(checkBox_13->sizePolicy().hasHeightForWidth());
+        checkBox_13->setSizePolicy(sizePolicy9);
+
+        verticalLayout_6->addWidget(checkBox_13);
+
+        groupBox_6 = new QGroupBox(Visualization);
         groupBox_6->setObjectName(QString::fromUtf8("groupBox_6"));
-        QSizePolicy sizePolicy7(QSizePolicy::Preferred, QSizePolicy::Expanding);
-        sizePolicy7.setHorizontalStretch(0);
-        sizePolicy7.setVerticalStretch(0);
-        sizePolicy7.setHeightForWidth(groupBox_6->sizePolicy().hasHeightForWidth());
-        groupBox_6->setSizePolicy(sizePolicy7);
+        QSizePolicy sizePolicy10(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        sizePolicy10.setHorizontalStretch(0);
+        sizePolicy10.setVerticalStretch(0);
+        sizePolicy10.setHeightForWidth(groupBox_6->sizePolicy().hasHeightForWidth());
+        groupBox_6->setSizePolicy(sizePolicy10);
         verticalLayout_4 = new QVBoxLayout(groupBox_6);
         verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
         horizontalLayout_9 = new QHBoxLayout();
         horizontalLayout_9->setObjectName(QString::fromUtf8("horizontalLayout_9"));
         label_6 = new QLabel(groupBox_6);
         label_6->setObjectName(QString::fromUtf8("label_6"));
-        QSizePolicy sizePolicy8(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-        sizePolicy8.setHorizontalStretch(0);
-        sizePolicy8.setVerticalStretch(0);
         sizePolicy8.setHeightForWidth(label_6->sizePolicy().hasHeightForWidth());
         label_6->setSizePolicy(sizePolicy8);
         label_6->setAlignment(Qt::AlignCenter);
@@ -573,18 +622,19 @@ public:
 
         lineEdit_6 = new QLineEdit(groupBox_6);
         lineEdit_6->setObjectName(QString::fromUtf8("lineEdit_6"));
-        QSizePolicy sizePolicy9(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-        sizePolicy9.setHorizontalStretch(0);
-        sizePolicy9.setVerticalStretch(0);
-        sizePolicy9.setHeightForWidth(lineEdit_6->sizePolicy().hasHeightForWidth());
-        lineEdit_6->setSizePolicy(sizePolicy9);
+        QSizePolicy sizePolicy11(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+        sizePolicy11.setHorizontalStretch(0);
+        sizePolicy11.setVerticalStretch(0);
+        sizePolicy11.setHeightForWidth(lineEdit_6->sizePolicy().hasHeightForWidth());
+        lineEdit_6->setSizePolicy(sizePolicy11);
+        lineEdit_6->setMaximumSize(QSize(40, 1000));
 
         horizontalLayout_9->addWidget(lineEdit_6);
 
         label_7 = new QLabel(groupBox_6);
         label_7->setObjectName(QString::fromUtf8("label_7"));
-        sizePolicy6.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
-        label_7->setSizePolicy(sizePolicy6);
+        sizePolicy9.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
+        label_7->setSizePolicy(sizePolicy9);
         label_7->setAlignment(Qt::AlignCenter);
 
         horizontalLayout_9->addWidget(label_7);
@@ -598,14 +648,16 @@ public:
         label_8->setObjectName(QString::fromUtf8("label_8"));
         sizePolicy8.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
         label_8->setSizePolicy(sizePolicy8);
+        label_8->setMaximumSize(QSize(100, 16777215));
         label_8->setAlignment(Qt::AlignCenter);
 
         horizontalLayout_8->addWidget(label_8);
 
         lineEdit_7 = new QLineEdit(groupBox_6);
         lineEdit_7->setObjectName(QString::fromUtf8("lineEdit_7"));
-        sizePolicy9.setHeightForWidth(lineEdit_7->sizePolicy().hasHeightForWidth());
-        lineEdit_7->setSizePolicy(sizePolicy9);
+        sizePolicy11.setHeightForWidth(lineEdit_7->sizePolicy().hasHeightForWidth());
+        lineEdit_7->setSizePolicy(sizePolicy11);
+        lineEdit_7->setMaximumSize(QSize(40, 16777215));
 
         horizontalLayout_8->addWidget(lineEdit_7);
 
@@ -621,40 +673,38 @@ public:
         verticalLayout_4->addLayout(horizontalLayout_8);
 
 
-        verticalLayout_11->addWidget(groupBox_6);
+        verticalLayout_6->addWidget(groupBox_6);
 
 
-        verticalLayout_12->addWidget(groupBox_2);
+        verticalLayout_12->addWidget(Visualization);
 
-
-        verticalLayout_14->addWidget(groupBox_8);
-
-        groupBox_11 = new QGroupBox(centralwidget);
-        groupBox_11->setObjectName(QString::fromUtf8("groupBox_11"));
-        sizePolicy5.setHeightForWidth(groupBox_11->sizePolicy().hasHeightForWidth());
-        groupBox_11->setSizePolicy(sizePolicy5);
-        groupBox_11->setMaximumSize(QSize(200, 400));
-        verticalLayout_6 = new QVBoxLayout(groupBox_11);
-        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
-        verticalLayout_6->setContentsMargins(0, 0, 0, 0);
-        debug_window = new QTextEdit(groupBox_11);
+        Debug_GB = new QGroupBox(centralwidget);
+        Debug_GB->setObjectName(QString::fromUtf8("Debug_GB"));
+        sizePolicy4.setHeightForWidth(Debug_GB->sizePolicy().hasHeightForWidth());
+        Debug_GB->setSizePolicy(sizePolicy4);
+        Debug_GB->setMaximumSize(QSize(300, 100));
+        verticalLayout_11 = new QVBoxLayout(Debug_GB);
+        verticalLayout_11->setObjectName(QString::fromUtf8("verticalLayout_11"));
+        verticalLayout_11->setContentsMargins(0, 0, 0, 0);
+        debug_window = new QTextEdit(Debug_GB);
         debug_window->setObjectName(QString::fromUtf8("debug_window"));
         debug_window->setEnabled(false);
+        debug_window->setMaximumSize(QSize(10000, 16777215));
 
-        verticalLayout_6->addWidget(debug_window);
-
-
-        verticalLayout_14->addWidget(groupBox_11);
+        verticalLayout_11->addWidget(debug_window);
 
 
-        UserControls_layout->addLayout(verticalLayout_14);
+        verticalLayout_12->addWidget(Debug_GB);
+
+
+        horizontalLayout_6->addLayout(verticalLayout_12);
 
         verticalLayout_13 = new QVBoxLayout();
         verticalLayout_13->setObjectName(QString::fromUtf8("verticalLayout_13"));
         groupBox = new QGroupBox(centralwidget);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
-        sizePolicy4.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
-        groupBox->setSizePolicy(sizePolicy4);
+        sizePolicy1.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
+        groupBox->setSizePolicy(sizePolicy1);
         groupBox->setMaximumSize(QSize(200, 16777215));
         verticalLayout_3 = new QVBoxLayout(groupBox);
         verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
@@ -693,8 +743,8 @@ public:
 
         lineEdit_3 = new QLineEdit(groupBox);
         lineEdit_3->setObjectName(QString::fromUtf8("lineEdit_3"));
-        sizePolicy2.setHeightForWidth(lineEdit_3->sizePolicy().hasHeightForWidth());
-        lineEdit_3->setSizePolicy(sizePolicy2);
+        sizePolicy6.setHeightForWidth(lineEdit_3->sizePolicy().hasHeightForWidth());
+        lineEdit_3->setSizePolicy(sizePolicy6);
 
         horizontalLayout_3->addWidget(lineEdit_3);
 
@@ -710,8 +760,8 @@ public:
 
         lineEdit_4 = new QLineEdit(groupBox);
         lineEdit_4->setObjectName(QString::fromUtf8("lineEdit_4"));
-        sizePolicy2.setHeightForWidth(lineEdit_4->sizePolicy().hasHeightForWidth());
-        lineEdit_4->setSizePolicy(sizePolicy2);
+        sizePolicy6.setHeightForWidth(lineEdit_4->sizePolicy().hasHeightForWidth());
+        lineEdit_4->setSizePolicy(sizePolicy6);
 
         horizontalLayout_4->addWidget(lineEdit_4);
 
@@ -741,26 +791,26 @@ public:
         verticalLayout_10->setObjectName(QString::fromUtf8("verticalLayout_10"));
         groupBox_3 = new QGroupBox(centralwidget);
         groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
-        sizePolicy4.setHeightForWidth(groupBox_3->sizePolicy().hasHeightForWidth());
-        groupBox_3->setSizePolicy(sizePolicy4);
+        sizePolicy1.setHeightForWidth(groupBox_3->sizePolicy().hasHeightForWidth());
+        groupBox_3->setSizePolicy(sizePolicy1);
         groupBox_3->setMaximumSize(QSize(200, 100));
         horizontalLayout_5 = new QHBoxLayout(groupBox_3);
         horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
         horizontalLayout_5->setContentsMargins(0, 0, 0, 0);
         label_5 = new QLabel(groupBox_3);
         label_5->setObjectName(QString::fromUtf8("label_5"));
-        QSizePolicy sizePolicy10(QSizePolicy::Preferred, QSizePolicy::Minimum);
-        sizePolicy10.setHorizontalStretch(0);
-        sizePolicy10.setVerticalStretch(0);
-        sizePolicy10.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
-        label_5->setSizePolicy(sizePolicy10);
+        QSizePolicy sizePolicy12(QSizePolicy::Preferred, QSizePolicy::Minimum);
+        sizePolicy12.setHorizontalStretch(0);
+        sizePolicy12.setVerticalStretch(0);
+        sizePolicy12.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
+        label_5->setSizePolicy(sizePolicy12);
 
         horizontalLayout_5->addWidget(label_5);
 
         pushButton = new QPushButton(groupBox_3);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        sizePolicy4.setHeightForWidth(pushButton->sizePolicy().hasHeightForWidth());
-        pushButton->setSizePolicy(sizePolicy4);
+        sizePolicy1.setHeightForWidth(pushButton->sizePolicy().hasHeightForWidth());
+        pushButton->setSizePolicy(sizePolicy1);
 
         horizontalLayout_5->addWidget(pushButton);
 
@@ -769,8 +819,8 @@ public:
 
         groupBox_5 = new QGroupBox(centralwidget);
         groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
-        sizePolicy4.setHeightForWidth(groupBox_5->sizePolicy().hasHeightForWidth());
-        groupBox_5->setSizePolicy(sizePolicy4);
+        sizePolicy1.setHeightForWidth(groupBox_5->sizePolicy().hasHeightForWidth());
+        groupBox_5->setSizePolicy(sizePolicy1);
         groupBox_5->setMaximumSize(QSize(200, 16777215));
         verticalLayout = new QVBoxLayout(groupBox_5);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
@@ -801,8 +851,8 @@ public:
 
         Refine_Morse_Set_Layout = new QGroupBox(centralwidget);
         Refine_Morse_Set_Layout->setObjectName(QString::fromUtf8("Refine_Morse_Set_Layout"));
-        sizePolicy4.setHeightForWidth(Refine_Morse_Set_Layout->sizePolicy().hasHeightForWidth());
-        Refine_Morse_Set_Layout->setSizePolicy(sizePolicy4);
+        sizePolicy1.setHeightForWidth(Refine_Morse_Set_Layout->sizePolicy().hasHeightForWidth());
+        Refine_Morse_Set_Layout->setSizePolicy(sizePolicy1);
         Refine_Morse_Set_Layout->setMaximumSize(QSize(200, 16777215));
         verticalLayout_2 = new QVBoxLayout(Refine_Morse_Set_Layout);
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
@@ -817,8 +867,8 @@ public:
 
         lineEdit = new QLineEdit(Refine_Morse_Set_Layout);
         lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
-        sizePolicy2.setHeightForWidth(lineEdit->sizePolicy().hasHeightForWidth());
-        lineEdit->setSizePolicy(sizePolicy2);
+        sizePolicy6.setHeightForWidth(lineEdit->sizePolicy().hasHeightForWidth());
+        lineEdit->setSizePolicy(sizePolicy6);
 
         horizontalLayout->addWidget(lineEdit);
 
@@ -834,8 +884,8 @@ public:
 
         lineEdit_2 = new QLineEdit(Refine_Morse_Set_Layout);
         lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
-        sizePolicy2.setHeightForWidth(lineEdit_2->sizePolicy().hasHeightForWidth());
-        lineEdit_2->setSizePolicy(sizePolicy2);
+        sizePolicy6.setHeightForWidth(lineEdit_2->sizePolicy().hasHeightForWidth());
+        lineEdit_2->setSizePolicy(sizePolicy6);
 
         horizontalLayout_2->addWidget(lineEdit_2);
 
@@ -844,8 +894,8 @@ public:
 
         pushButton_2 = new QPushButton(Refine_Morse_Set_Layout);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        sizePolicy2.setHeightForWidth(pushButton_2->sizePolicy().hasHeightForWidth());
-        pushButton_2->setSizePolicy(sizePolicy2);
+        sizePolicy6.setHeightForWidth(pushButton_2->sizePolicy().hasHeightForWidth());
+        pushButton_2->setSizePolicy(sizePolicy6);
 
         verticalLayout_2->addWidget(pushButton_2);
 
@@ -856,76 +906,7 @@ public:
         verticalLayout_13->addLayout(verticalLayout_10);
 
 
-        UserControls_layout->addLayout(verticalLayout_13);
-
-
-        horizontalLayout_21->addLayout(UserControls_layout);
-
-        openGLWindows_layout = new QHBoxLayout();
-        openGLWindows_layout->setObjectName(QString::fromUtf8("openGLWindows_layout"));
-        VF_window = new VectorFieldWindow(centralwidget);
-        VF_window->setObjectName(QString::fromUtf8("VF_window"));
-        QSizePolicy sizePolicy11(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy11.setHorizontalStretch(80);
-        sizePolicy11.setVerticalStretch(80);
-        sizePolicy11.setHeightForWidth(VF_window->sizePolicy().hasHeightForWidth());
-        VF_window->setSizePolicy(sizePolicy11);
-        VF_window->setMinimumSize(QSize(400, 400));
-        VF_window->setMaximumSize(QSize(400, 400));
-
-        openGLWindows_layout->addWidget(VF_window);
-
-        verticalLayout_16 = new QVBoxLayout();
-        verticalLayout_16->setObjectName(QString::fromUtf8("verticalLayout_16"));
-        MCG_GB = new QGroupBox(centralwidget);
-        MCG_GB->setObjectName(QString::fromUtf8("MCG_GB"));
-        sizePolicy4.setHeightForWidth(MCG_GB->sizePolicy().hasHeightForWidth());
-        MCG_GB->setSizePolicy(sizePolicy4);
-        horizontalLayout_22 = new QHBoxLayout(MCG_GB);
-        horizontalLayout_22->setObjectName(QString::fromUtf8("horizontalLayout_22"));
-        horizontalLayout_22->setContentsMargins(0, 0, 0, 0);
-        MCG_Window = new QOpenGLWidget(MCG_GB);
-        MCG_Window->setObjectName(QString::fromUtf8("MCG_Window"));
-        QSizePolicy sizePolicy12(QSizePolicy::Maximum, QSizePolicy::Maximum);
-        sizePolicy12.setHorizontalStretch(50);
-        sizePolicy12.setVerticalStretch(50);
-        sizePolicy12.setHeightForWidth(MCG_Window->sizePolicy().hasHeightForWidth());
-        MCG_Window->setSizePolicy(sizePolicy12);
-        MCG_Window->setMinimumSize(QSize(250, 175));
-        MCG_Window->setMaximumSize(QSize(250, 175));
-
-        horizontalLayout_22->addWidget(MCG_Window);
-
-
-        verticalLayout_16->addWidget(MCG_GB);
-
-        ECG_GB = new QGroupBox(centralwidget);
-        ECG_GB->setObjectName(QString::fromUtf8("ECG_GB"));
-        sizePolicy4.setHeightForWidth(ECG_GB->sizePolicy().hasHeightForWidth());
-        ECG_GB->setSizePolicy(sizePolicy4);
-        horizontalLayout_23 = new QHBoxLayout(ECG_GB);
-        horizontalLayout_23->setObjectName(QString::fromUtf8("horizontalLayout_23"));
-        horizontalLayout_23->setContentsMargins(0, 0, 0, 0);
-        ECG_Window = new QOpenGLWidget(ECG_GB);
-        ECG_Window->setObjectName(QString::fromUtf8("ECG_Window"));
-        QSizePolicy sizePolicy13(QSizePolicy::Maximum, QSizePolicy::Maximum);
-        sizePolicy13.setHorizontalStretch(0);
-        sizePolicy13.setVerticalStretch(0);
-        sizePolicy13.setHeightForWidth(ECG_Window->sizePolicy().hasHeightForWidth());
-        ECG_Window->setSizePolicy(sizePolicy13);
-        ECG_Window->setMinimumSize(QSize(250, 175));
-        ECG_Window->setMaximumSize(QSize(250, 175));
-
-        horizontalLayout_23->addWidget(ECG_Window);
-
-
-        verticalLayout_16->addWidget(ECG_GB);
-
-
-        openGLWindows_layout->addLayout(verticalLayout_16);
-
-
-        horizontalLayout_21->addLayout(openGLWindows_layout);
+        horizontalLayout_6->addLayout(verticalLayout_13);
 
         MainWindow->setCentralWidget(centralwidget);
 
@@ -937,10 +918,12 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+        MCG_GB->setTitle(QCoreApplication::translate("MainWindow", "MCG", nullptr));
+        ECG_GB->setTitle(QCoreApplication::translate("MainWindow", "ECG", nullptr));
         groupBox_10->setTitle(QCoreApplication::translate("MainWindow", "Morse Triangle Observe", nullptr));
         label_17->setText(QCoreApplication::translate("MainWindow", "Morse", nullptr));
-        lineEdit_15->setText(QCoreApplication::translate("MainWindow", "100", nullptr));
-        pushButton_6->setText(QCoreApplication::translate("MainWindow", "Display Conne", nullptr));
+        lineEdit_15->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
+        pushButton_6->setText(QCoreApplication::translate("MainWindow", "Display Connection", nullptr));
         label_18->setText(QCoreApplication::translate("MainWindow", "Triangle", nullptr));
         lineEdit_16->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
         pushButton_7->setText(QCoreApplication::translate("MainWindow", "Display Connection", nullptr));
@@ -971,14 +954,14 @@ public:
         checkBox_20->setText(QCoreApplication::translate("MainWindow", "Show triangle mapping", nullptr));
         checkBox_21->setText(QCoreApplication::translate("MainWindow", "Show Back ward", nullptr));
         pushButton_3->setText(QCoreApplication::translate("MainWindow", "Change Edge", nullptr));
-        groupBox_2->setTitle(QCoreApplication::translate("MainWindow", "Visualization", nullptr));
-        checkBox_11->setText(QCoreApplication::translate("MainWindow", "Animate the flow", nullptr));
-        checkBox_13->setText(QCoreApplication::translate("MainWindow", "IBFV off", nullptr));
-        checkBox_14->setText(QCoreApplication::translate("MainWindow", "Flip normal", nullptr));
-        checkBox_12->setText(QCoreApplication::translate("MainWindow", "Disable lighting", nullptr));
-        checkBox_15->setText(QCoreApplication::translate("MainWindow", "Grey texture", nullptr));
+        Visualization->setTitle(QCoreApplication::translate("MainWindow", "Visualization", nullptr));
         checkBox_16->setText(QCoreApplication::translate("MainWindow", "Not Shiny", nullptr));
+        checkBox_14->setText(QCoreApplication::translate("MainWindow", "Flip normal", nullptr));
+        checkBox_15->setText(QCoreApplication::translate("MainWindow", "Grey texture", nullptr));
+        checkBox_11->setText(QCoreApplication::translate("MainWindow", "Animate the flow", nullptr));
+        checkBox_12->setText(QCoreApplication::translate("MainWindow", "Disable lighting", nullptr));
         checkBox_17->setText(QCoreApplication::translate("MainWindow", "Color map of vector field magnitude", nullptr));
+        checkBox_13->setText(QCoreApplication::translate("MainWindow", "IBFV off", nullptr));
         groupBox_6->setTitle(QCoreApplication::translate("MainWindow", "Even streamline placement", nullptr));
         label_6->setText(QCoreApplication::translate("MainWindow", "Separation", nullptr));
         lineEdit_6->setText(QCoreApplication::translate("MainWindow", "0.03", nullptr));
@@ -986,7 +969,7 @@ public:
         label_8->setText(QCoreApplication::translate("MainWindow", "Shortest", nullptr));
         lineEdit_7->setText(QCoreApplication::translate("MainWindow", "0.03", nullptr));
         label_9->setText(QCoreApplication::translate("MainWindow", "* Object radius", nullptr));
-        groupBox_11->setTitle(QCoreApplication::translate("MainWindow", "Debug Window", nullptr));
+        Debug_GB->setTitle(QCoreApplication::translate("MainWindow", "Debug Window", nullptr));
         groupBox->setTitle(QCoreApplication::translate("MainWindow", "Analysis", nullptr));
         checkBox->setText(QCoreApplication::translate("MainWindow", "Display fixed points", nullptr));
         checkBox_2->setText(QCoreApplication::translate("MainWindow", "Display separatrices", nullptr));
@@ -1013,8 +996,6 @@ public:
         label_2->setText(QCoreApplication::translate("MainWindow", "tau", nullptr));
         lineEdit_2->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "Refine", nullptr));
-        MCG_GB->setTitle(QCoreApplication::translate("MainWindow", "MCG", nullptr));
-        ECG_GB->setTitle(QCoreApplication::translate("MainWindow", "ECG", nullptr));
     } // retranslateUi
 
 };

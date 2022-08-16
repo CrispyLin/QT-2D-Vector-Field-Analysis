@@ -5,7 +5,6 @@ Separation and attachment points for periodic orbit extraction
 Created and Modified by Guoning Chen
         copyright @2007
     */
-
 #include "BuildGeom/Geometry.h"
 
 extern Polyhedron *object;

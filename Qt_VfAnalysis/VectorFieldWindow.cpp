@@ -1,3 +1,4 @@
+#include "GL_LIB/glew.h"
 #include "VectorFieldWindow.h"
 
 // this file serves as IBFVDlg.cpp, GLView.cpp
@@ -5,7 +6,7 @@ double SCALE = 3.0;
 
 
 // GLOBAL VARIABLES
-const char filePath [] = "/Users/linxinw/Desktop/GitHub/QT-2D-Vector-Field-Analysis/Qt_VfAnalysis/Datasets/simple_fld2.ply";
+const char filePath [] = "/Users/linxinw/Public/GitHub/QT-2D-Vector-Field-Analysis/Qt_VfAnalysis/Datasets/simple_fld2.ply";
 int picked_node = -1;
 double g_zoom_factor = 1.0;
 
