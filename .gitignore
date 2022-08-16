@@ -1,8 +1,13 @@
 debug
 release
 Makefile
+PkgInfo
 *.qtc_clangd
 *.o
 *.Debug
 *.Release
 *.user
+*.DS_Store
+*.stash
+*.plist
+*.lproj
