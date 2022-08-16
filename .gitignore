@@ -1,4 +1,8 @@
 debug
-.qtc_clangd
 release
 Makefile
+*.qtc_clangd
+*.o
+*.Debug
+*.Release
+*.user
