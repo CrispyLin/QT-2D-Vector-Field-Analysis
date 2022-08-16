@@ -129,9 +129,9 @@ void VectorFieldWindow::initializeGL(){
     mcg->init_MCG(); // init MCG
 
     //IBFV visualization initialization
-    this->makePatterns();
-    this->DrawGLScene(GL_RENDER);
-    this->ReCalTexcoord();
+    //this->makePatterns();
+    //this->DrawGLScene(GL_RENDER);
+    //this->ReCalTexcoord();
 
 
     qInfo() << "init gl Error: " << glGetError();
