@@ -1,4 +1,3 @@
-#include "GL_LIB/glew.h"
 #include "VectorFieldWindow.h"
 
 // this file serves as IBFVDlg.cpp, GLView.cpp
@@ -6,7 +5,7 @@ double SCALE = 3.0;
 
 
 // GLOBAL VARIABLES
-const char filePath [] = "/Users/linxinw/Public/GitHub/QT-2D-Vector-Field-Analysis/Qt_VfAnalysis/Datasets/simple_fld2.ply";
+const char filePath [] = "/Users/linxinw/Public/GitHub/QT-2D-Vector-Field-Analysis/QtMac_VfAnalysis/Datasets/simple_fld2.ply";
 int picked_node = -1;
 double g_zoom_factor = 1.0;
 
@@ -130,9 +129,9 @@ void VectorFieldWindow::initializeGL(){
     mcg->init_MCG(); // init MCG
 
     //IBFV visualization initialization
-    //this->makePatterns();
-    //this->DrawGLScene(GL_RENDER);
-    //this->ReCalTexcoord();
+    this->makePatterns();
+    this->DrawGLScene(GL_RENDER);
+    this->ReCalTexcoord();
 
 
     qInfo() << "init gl Error: " << glGetError();
@@ -141,21 +140,16 @@ void VectorFieldWindow::initializeGL(){
 
 
 void VectorFieldWindow::paintGL(){
-    //this->DrawGLScene(GL_RENDER);
-    this->draw();
+    this->DrawGLScene(GL_RENDER);
+    //this->draw();
     //this->update();
     qInfo() << "paintGL is Done";
 }
 
 
 void VectorFieldWindow::resizeGL(int w, int h){
-
-//    qInfo() << "Resize w" << w << "  h" <<h;
-//    glViewport(0, 0, w, h);
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
+    qInfo() << "Resize w" << w << "  h" <<h;
+    glViewport(0, 0, w, h);
 }
 
 
@@ -170,8 +164,6 @@ void VectorFieldWindow::draw(){
     glColor3f(r, g, b);
     glLoadIdentity();
     glTranslatef(-0.5, -0.5, 0);
-    double min =10;
-    double max = -10;
     glBegin(GL_TRIANGLES);
     for(int i = 0; i < object->tlist.ntris; i++){
         const Triangle * t1 = object->tlist.tris[i];
@@ -268,31 +260,31 @@ void VectorFieldWindow::makePatterns()
 
     if ( EnGreyTexture )
     {
-//        for (k = 0; k < Npat; k++) {
-//            t = k*256/Npat;                           //t is used to control the animation of the image
-//            for (i = 0; i < NPN; i++)
-//                for (j = 0; j < NPN; j++) {
-//                    pat[i][j][0] =
-//                        pat[i][j][1] =
-//                        pat[i][j][2] = lut[(t + phase[i][j]) % 255];
-//                    pat[i][j][3] = alpha;
+        for (k = 0; k < Npat; k++) {
+            t = k*256/Npat;                           //t is used to control the animation of the image
+            for (i = 0; i < NPN; i++)
+                for (j = 0; j < NPN; j++) {
+                    pat[i][j][0] =
+                        pat[i][j][1] =
+                        pat[i][j][2] = lut[(t + phase[i][j]) % 255];
+                    pat[i][j][3] = alpha;
 
-//                    spat[i][j][0] =
-//                        spat[i][j][1] =
-//                        spat[i][j][2] = lut[ phase[i][j] % 255];
-//                    spat[i][j][3] = alpha;
-//                }
+                    spat[i][j][0] =
+                        spat[i][j][1] =
+                        spat[i][j][2] = lut[ phase[i][j] % 255];
+                    spat[i][j][3] = alpha;
+                }
 
-//            glNewList(k + 1, GL_COMPILE);
-//            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
-//                         GL_RGBA, GL_UNSIGNED_BYTE, pat);
-//            glEndList();
+            glNewList(k + 1, GL_COMPILE);
+            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, pat);
+            glEndList();
 
-//            glNewList(k + 1 + 100, GL_COMPILE);       //This is for static image
-//            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
-//                         GL_RGBA, GL_UNSIGNED_BYTE, spat);
-//            glEndList();
-//        }
+            glNewList(k + 1 + 100, GL_COMPILE);       //This is for static image
+            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, spat);
+            glEndList();
+        }
     }
 
     else
@@ -538,13 +530,9 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
     GLfloat diffuse[] = { 0.8, .8, 1., 1.0 };
     GLfloat specular[] = { 0.8, 0.8, 1.0, 1.0 };
 
-    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-    output_tex_to_file(f_tex, "f_tex");
     glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-    output_tex_to_file(f_tex, "f_tex");
-    exit(0);
+
 
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_LIGHTING);

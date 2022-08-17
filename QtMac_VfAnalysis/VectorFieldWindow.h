@@ -29,7 +29,7 @@
 #define	NPN 64
 #define NMESH  100
 #define DM  ((double) (1.0/(NMESH-1.0)))
-#define NPIX  /*512*/800 // number of pixels
+#define NPIX  800 // number of pixels
 #define SELECTBUFFERSIZE 128
 
 
