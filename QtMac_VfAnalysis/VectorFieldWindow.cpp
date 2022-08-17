@@ -515,7 +515,6 @@ void VectorFieldWindow::ReCalTexcoord()
 }
 
 
-int version = 0;
 void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 {
     qInfo() << "IBFVEFFECT Error1: " << glGetError();
@@ -530,45 +529,45 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 
 
     /*  First, draw the background  */
-    if (!DisableLighting && !DisableBackground)
-    {
-        glClearColor (0.0, 0.0, 0.0, 1.0);  // background for rendering color coding and lighting
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
-        glShadeModel(GL_SMOOTH);
+//    if (!DisableLighting && !DisableBackground)
+//    {
+//        glClearColor (0.0, 0.0, 0.0, 1.0);  // background for rendering color coding and lighting
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+//        glDisable(GL_DEPTH_TEST);
+//        glDisable(GL_LIGHTING);
+//        glDisable(GL_TEXTURE_2D);
+//        glShadeModel(GL_SMOOTH);
 
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        gluOrtho2D(-1., 1., -1., 1.);
+//        glMatrixMode(GL_PROJECTION);
+//        glPushMatrix();
+//        glLoadIdentity();
+//        gluOrtho2D(-1., 1., -1., 1.);
 
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
+//        glMatrixMode(GL_MODELVIEW);
+//        glPushMatrix();
+//        glLoadIdentity();
 
-        glBegin(GL_QUADS);
-        //red color
-        //glColor3f(0.4,0.4,0.3);
-        glColor3f(0.1,0.1,0.3);
-        glVertex2f(-1.0,-1.0);
-        glVertex2f(1.0,-1.0);
-        //blue color
-        glColor3f(1.,1.,1.);
-        glVertex2f(1.0, 1.0);
-        glVertex2f(-1.0, 1.0);
-        glEnd();
+//        glBegin(GL_QUADS);
+//        //red color
+//        //glColor3f(0.4,0.4,0.3);
+//        glColor3f(0.1,0.1,0.3);
+//        glVertex2f(-1.0,-1.0);
+//        glVertex2f(1.0,-1.0);
+//        //blue color
+//        glColor3f(1.,1.,1.);
+//        glVertex2f(1.0, 1.0);
+//        glVertex2f(-1.0, 1.0);
+//        glEnd();
 
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
-    }
+//        glMatrixMode(GL_PROJECTION);
+//        glPopMatrix();
+//        glMatrixMode(GL_MODELVIEW);
+//        glPopMatrix();
+//    }
 
 
-    //glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_LIGHTING);
@@ -693,7 +692,7 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
             for(int y = 0; y < NPIX; y++)
             {
                 /**/
-                int temp_color = (int)(f_tex[x][y][0] + b_tex[x][y][0])/2.;
+                //int temp_color = (int)(f_tex[x][y][0] + b_tex[x][y][0])/2.;
                 applied_tex[x][y][0] = (int)(f_tex[x][y][0] + b_tex[x][y][0])/2;
                 applied_tex[x][y][1] = (int)(f_tex[x][y][1] + b_tex[x][y][1])/2;
                 applied_tex[x][y][2] = (int)(f_tex[x][y][2] + b_tex[x][y][2])/2;
@@ -701,12 +700,7 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
         }
     }
 
-    ///////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////Blending shading here 12/1
 
-
-    ////////////////////////////////////////////
 
     glEnable(GL_DEPTH_TEST);
 
@@ -777,8 +771,9 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 
     glDisable(GL_TEXTURE_2D);
     qInfo() << "IBFVEFFECT Error2: " << glGetError();
-    version++;
+
     iframe = iframe + 1;
+
 }
 
 
@@ -952,8 +947,8 @@ void    VectorFieldWindow::set_view(GLenum mode)
 
 void    VectorFieldWindow::set_scene(GLenum mode)
 {
-    //glTranslatef(trans_x, trans_y, 0);
-    //glTranslatef(0.0, 0.0, -10.0);
+    glTranslatef(trans_x, trans_y, 0);
+    glTranslatef(0.0, 0.0, -3.0);
     glTranslatef(this->rot_center.entry[0] ,
                  this->rot_center.entry[1],
                  this->rot_center.entry[2]);
@@ -1003,6 +998,7 @@ void VectorFieldWindow::set_ColorByType(unsigned char type)
         glColor4f(0.,1., 0.,1);
     }
 }
+
 
 void    VectorFieldWindow::draw_ASolidSphere(double x, double y, double z, double r)
 {
