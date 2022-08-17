@@ -142,7 +142,7 @@ void VectorFieldWindow::initializeGL(){
 void VectorFieldWindow::paintGL(){
     this->DrawGLScene(GL_RENDER);
     //this->draw();
-    //this->update();
+    this->update();
     qInfo() << "paintGL is Done";
 }
 
@@ -348,81 +348,79 @@ int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Dr
         this->IBFVSEffect(mode);
     }
     else
-        qInfo() << "something went wrong";
-//    else
-//    {
-//        //printf("IBFVON!");
-//        glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        draw_shadedObj(mode);
-//    }
+    {
+        //printf("IBFVON!");
+        glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        draw_shadedObj(mode);
+    }
 
 
-//    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
 
 
-//    glEnable(GL_LIGHTING);
-//    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
 
-//    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_COLOR_MATERIAL);
 
-//    glDepthFunc(GL_LEQUAL);
-//    glEnable(GL_LINE_SMOOTH);
-//    glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//    glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
 
-//    /*display the extracted Morse sets with blending mode*/
-//    glDisable(GL_LIGHTING);
-//    glEnable(GL_COLOR_MATERIAL);
-//    glEnable(GL_BLEND);
-
-
-//    //show the rotational sum
-
-//    glEnable(GL_BLEND);
-//    if (ShowRotSumOn)
-//    {
-//        vis_rot_sum();
-//    }
-//    glDisable(GL_BLEND);
-
-//    without_antialiasing(mode);
+    /*display the extracted Morse sets with blending mode*/
+    glDisable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_BLEND);
 
 
-//    /*************************************************************
-//    /*
-//       Display the stored sample points along edges 02/09/2010
-//    */
-//    glDisable(GL_LIGHTING);
-//    extern EdgeSamplePt_List *edge_samples;
-//    if (ShowEdgeSamplesOn)
-//    {
-//        if (edge_samples != NULL)
-//            //edge_samples->display(); display_sel_edges
-//            edge_samples->display_sel_edges(selected_triangle,ShowBackward,sampling_edge);
-//    }
+    //show the rotational sum
 
-//    if (ShowTriMappingOn)
-//    {
-//        morse_decomp->show_tri_mapping(selected_triangle);
-//    }
+    glEnable(GL_BLEND);
+    if (ShowRotSumOn)
+    {
+        vis_rot_sum();
+    }
+    glDisable(GL_BLEND);
 
-//    /**************************************************************
-//    /*
-//        Test the triangle selection 02/10/2010
-//    */
-//    if (selected_triangle >=0 && selected_triangle < object->tlist.ntris)
-//    {
-//        display_sel_tri(selected_triangle);
-//    }
-
-//    glDepthFunc(GL_LESS);
-
-//    glColor3f (1, 1, 1);
+    without_antialiasing(mode);
 
 
-//    glDisable(GL_COLOR_MATERIAL);
+    /*************************************************************
+    /*
+       Display the stored sample points along edges 02/09/2010
+    */
+    glDisable(GL_LIGHTING);
+    extern EdgeSamplePt_List *edge_samples;
+    if (ShowEdgeSamplesOn)
+    {
+        if (edge_samples != NULL)
+            //edge_samples->display(); display_sel_edges
+            edge_samples->display_sel_edges(selected_triangle,ShowBackward,sampling_edge);
+    }
+
+    if (ShowTriMappingOn)
+    {
+        morse_decomp->show_tri_mapping(selected_triangle);
+    }
+
+    /**************************************************************
+    /*
+        Test the triangle selection 02/10/2010
+    */
+    if (selected_triangle >=0 && selected_triangle < object->tlist.ntris)
+    {
+        display_sel_tri(selected_triangle);
+    }
+
+    glDepthFunc(GL_LESS);
+
+    glColor3f (1, 1, 1);
+
+
+    glDisable(GL_COLOR_MATERIAL);
 
     return true;
 }
@@ -530,9 +528,47 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
     GLfloat diffuse[] = { 0.8, .8, 1., 1.0 };
     GLfloat specular[] = { 0.8, 0.8, 1.0, 1.0 };
 
-    glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    /*  First, draw the background  */
+    if (!DisableLighting && !DisableBackground)
+    {
+        glClearColor (0.0, 0.0, 0.0, 1.0);  // background for rendering color coding and lighting
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+        glShadeModel(GL_SMOOTH);
+
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(-1., 1., -1., 1.);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        glBegin(GL_QUADS);
+        //red color
+        //glColor3f(0.4,0.4,0.3);
+        glColor3f(0.1,0.1,0.3);
+        glVertex2f(-1.0,-1.0);
+        glVertex2f(1.0,-1.0);
+        //blue color
+        glColor3f(1.,1.,1.);
+        glVertex2f(1.0, 1.0);
+        glVertex2f(-1.0, 1.0);
+        glEnd();
+
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+    }
+
+
+    //glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_LIGHTING);
@@ -603,110 +639,74 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 
     if(MoveOrStop == 0)
     {
-//        /* Calculate backward texture */
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
-//                     GL_RGB, GL_UNSIGNED_BYTE, b_tex);
+        /* Calculate backward texture */
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
+                     GL_RGB, GL_UNSIGNED_BYTE, b_tex);
 
-//        glPushMatrix ();
-//        set_scene(GL_RENDER);
+        glPushMatrix ();
+        set_scene(GL_RENDER);
 
 
-//        //////Texture distortion and mapping here
-//        for (i=0; i<object->tlist.ntris; i++) {
-//            face = object->tlist.tris[i];
-//            glBegin(GL_POLYGON);
-//            for (j=0; j<face->nverts; j++) {
-//                ///Using the storaged texture coordinates
-//                v = face->verts[j];
-//                glTexCoord2f(v->back_Tex.entry[0], v->back_Tex.entry[1]);
-//                glVertex3f(v->x, v->y, v->z);
-//            }
-//            glEnd();
-//        }
+        //////Texture distortion and mapping here
+        for (i=0; i<object->tlist.ntris; i++) {
+            face = object->tlist.tris[i];
+            glBegin(GL_POLYGON);
+            for (j=0; j<face->nverts; j++) {
+                ///Using the storaged texture coordinates
+                v = face->verts[j];
+                glTexCoord2f(v->back_Tex.entry[0], v->back_Tex.entry[1]);
+                glVertex3f(v->x, v->y, v->z);
+            }
+            glEnd();
+        }
 
-//        glPopMatrix();
+        glPopMatrix();
 
-//        iframe = iframe + 1;
+        iframe = iframe + 1;
 
-//        ////Adding the depth judgement here!
-//        glEnable(GL_BLEND);
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//        glDepthFunc(GL_GREATER);
-//        //if( MoveOrStop ==0 )   ////Static
-//        glCallList(iframe % Npat + 1 + 100);
-//        if( MoveOrStop ==0 )   ////Static
-//            glCallList(iframe % Npat + 1 + 100);
-////        else                   ////Moving
-////            glCallList(iframe % Npat + 1);
-//        glBegin(GL_QUAD_STRIP);
-//            glTexCoord2f(0.0,  0.0);  glVertex3f(0.0, 0.0, -39.9);
-//            glTexCoord2f(0.0,  tmax); glVertex3f(0.0, 1.0, -39.9);
-//            glTexCoord2f(tmax, 0.0);  glVertex3f(1.0, 0.0, -39.9);
-//            glTexCoord2f(tmax, tmax); glVertex3f(1.0, 1.0, -39.9);
-//        glEnd();
-//        glDepthFunc(GL_LESS);
-//        glDisable(GL_BLEND);
+        ////Adding the depth judgement here!
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthFunc(GL_GREATER);
+        //if( MoveOrStop ==0 )   ////Static
+        glCallList(iframe % Npat + 1 + 100);
+        if( MoveOrStop ==0 )   ////Static
+            glCallList(iframe % Npat + 1 + 100);
+//        else                   ////Moving
+//            glCallList(iframe % Npat + 1);
+        glBegin(GL_QUAD_STRIP);
+            glTexCoord2f(0.0,  0.0);  glVertex3f(0.0, 0.0, -39.9);
+            glTexCoord2f(0.0,  tmax); glVertex3f(0.0, 1.0, -39.9);
+            glTexCoord2f(tmax, 0.0);  glVertex3f(1.0, 0.0, -39.9);
+            glTexCoord2f(tmax, tmax); glVertex3f(1.0, 1.0, -39.9);
+        glEnd();
+        glDepthFunc(GL_LESS);
+        glDisable(GL_BLEND);
 
-//        //glReadBuffer(GL_BACK);
-//        glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, b_tex);
+        //glReadBuffer(GL_BACK);
+        glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, b_tex);
 
-//        //blend two images
+        //blend two images
 
-//        for(int x = 0; x < NPIX; x++)
-//        {
-//            for(int y = 0; y < NPIX; y++)
-//            {
-//                /**/
-//                int temp_color = (int)(f_tex[x][y][0] + b_tex[x][y][0])/2.;
-//                applied_tex[x][y][0] = (int)(f_tex[x][y][0] + b_tex[x][y][0])/2;
-//                applied_tex[x][y][1] = (int)(f_tex[x][y][1] + b_tex[x][y][1])/2;
-//                applied_tex[x][y][2] = (int)(f_tex[x][y][2] + b_tex[x][y][2])/2;
-//            }
-//        }
+        for(int x = 0; x < NPIX; x++)
+        {
+            for(int y = 0; y < NPIX; y++)
+            {
+                /**/
+                int temp_color = (int)(f_tex[x][y][0] + b_tex[x][y][0])/2.;
+                applied_tex[x][y][0] = (int)(f_tex[x][y][0] + b_tex[x][y][0])/2;
+                applied_tex[x][y][1] = (int)(f_tex[x][y][1] + b_tex[x][y][1])/2;
+                applied_tex[x][y][2] = (int)(f_tex[x][y][2] + b_tex[x][y][2])/2;
+            }
+        }
     }
-
 
     ///////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
     ////Blending shading here 12/1
 
-//    /*  First, draw the background  */
-//    if (!DisableLighting && !DisableBackground)
-//    {
-//        glClearColor (0.0, 0.0, 0.0, 1.0);  // background for rendering color coding and lighting
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-//        glDisable(GL_DEPTH_TEST);
-//        glDisable(GL_LIGHTING);
-//        glDisable(GL_TEXTURE_2D);
-//        glShadeModel(GL_SMOOTH);
 
-//        glMatrixMode(GL_PROJECTION);
-//        glPushMatrix();
-//        glLoadIdentity();
-//        gluOrtho2D(-1., 1., -1., 1.);
-
-//        glMatrixMode(GL_MODELVIEW);
-//        glPushMatrix();
-//        glLoadIdentity();
-
-//        glBegin(GL_QUADS);
-//        //red color
-//        //glColor3f(0.4,0.4,0.3);
-//        glColor3f(0.1,0.1,0.3);
-//        glVertex2f(-1.0,-1.0);
-//        glVertex2f(1.0,-1.0);
-//        //blue color
-//        glColor3f(1.,1.,1.);
-//        glVertex2f(1.0, 1.0);
-//        glVertex2f(-1.0, 1.0);
-//        glEnd();
-
-//        glMatrixMode(GL_PROJECTION);
-//        glPopMatrix();
-//        glMatrixMode(GL_MODELVIEW);
-//        glPopMatrix();
-//    }
-//    ////////////////////////////////////////////
+    ////////////////////////////////////////////
 
     glEnable(GL_DEPTH_TEST);
 
@@ -738,9 +738,9 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
                      GL_RGB, GL_UNSIGNED_BYTE, applied_tex);
     }
-//    else
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
-//                     GL_RGB, GL_UNSIGNED_BYTE, f_tex);
+    else
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
+                     GL_RGB, GL_UNSIGNED_BYTE, f_tex);
 
 
     glEnable(GL_COLOR_MATERIAL);
@@ -751,30 +751,29 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
     //glMaterialf(GL_FRONT, GL_SHININESS, (GLfloat)shiny);
     glMateriali(GL_FRONT_AND_BACK/*GL_FRONT*/, GL_SHININESS, 80);
 
-//    for (i=0; i<object->tlist.ntris; i++) {
-//        if (mode == GL_SELECT)
-//            glLoadName(i+1);
+   for (i=0; i<object->tlist.ntris; i++) {
+       if (mode == GL_SELECT)
+           glLoadName(i+1);
 
-//        face = object->tlist.tris[i];
+       face = object->tlist.tris[i];
 
-//        /*
-//            Do not display the texture if it is part of the in/outlets of the data
-//        */
-//        if (face->verts[0]->in_out_let || face->verts[1]->in_out_let || face->verts[2]->in_out_let)
-//            continue;
+       /*
+            Do not display the texture if it is part of the in/outlets of the data
+        */
+       if (face->verts[0]->in_out_let || face->verts[1]->in_out_let || face->verts[2]->in_out_let)
+           continue;
 
-//        glBegin(GL_POLYGON);
-//        for (j=0; j<face->nverts; j++) {
-//            v = face->verts[j];
-//            glNormal3d(v->normal.entry[0],
-//                       v->normal.entry[1],
-//                       v->normal.entry[2]);
-//            glTexCoord2f(v->texture_coord.entry[0], v->texture_coord.entry[1]);
-//            glVertex3f(v->x, v->y, v->z);
-//        }
-//        glEnd();
+       glBegin(GL_POLYGON);
+       for (j=0; j<face->nverts; j++) {          v = face->verts[j];
+            glNormal3d(v->normal.entry[0],
+                       v->normal.entry[1],
+                       v->normal.entry[2]);
+            glTexCoord2f(v->texture_coord.entry[0], v->texture_coord.entry[1]);
+            glVertex3f(v->x, v->y, v->z);
+       }
+       glEnd();
 
-//    }
+   }
 
     glDisable(GL_TEXTURE_2D);
     qInfo() << "IBFVEFFECT Error2: " << glGetError();
