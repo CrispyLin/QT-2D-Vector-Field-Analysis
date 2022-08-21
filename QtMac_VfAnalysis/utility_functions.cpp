@@ -1,4 +1,4 @@
-#include "VectorFieldWindow.h"
+#include "Windows/VectorFieldWindow.h"
 
 extern Polyhedron* object;
 

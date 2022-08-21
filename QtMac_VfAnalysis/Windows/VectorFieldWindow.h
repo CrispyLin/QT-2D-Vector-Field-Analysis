@@ -38,6 +38,10 @@ typedef float Matrix[4][4];
 class VectorFieldWindow : public QOpenGLWidget, public QOpenGLFunctions
 {
     Q_OBJECT
+public:
+    // constructor and desctuctor
+    VectorFieldWindow(QWidget *parent = nullptr);
+    ~VectorFieldWindow();
 
 protected:
     void    initializeGL() override;
@@ -46,7 +50,7 @@ protected:
 
 public:
     // public member variables
-    QSurfaceFormat format;
+    //QSurfaceFormat format;
 
     int     MoveOrStop;
     int     ShowFixedPtOn;
@@ -69,22 +73,14 @@ public:
     int     ShowBoundary;
     bool    FlipNormalOn;
     bool    IBFVOff;
-    int     ShowMCGOn;
-    int     ShowConleyCircle;
 
     icVector3   rot_center;
     double  zoom_factor;
     float   rotmat[4][4]; //storing rotation parameters
     float   ObjXmat[16]; //Storing current modelview transformation
 
-
-    // public member functions
-    MainWindow* mainWindow = nullptr;
+    MainWindow* mainWindowPtr = nullptr;
     Polyhedron* polyhedron = nullptr;
-
-    // constructor and desctuctor
-    VectorFieldWindow(QWidget *parent = nullptr);
-    ~VectorFieldWindow();
 
     // public member functions
     void    set_up_MainWindow_ptr(MainWindow* MW_ptr);
@@ -107,6 +103,8 @@ public:
     void    multmatrix(const Matrix m);
     void    mat_ident(Matrix m);
 
+    void    detect_FixedPts();
+
     void    display_MCG_connections(void);
     void    display_SCCs(GLenum mode);
     void    display_color_VFMag();
@@ -118,6 +116,8 @@ public:
     void    display_tau_distribution();
     void    display_diff_ECG_MCG();
     void    display_diff_MCGs();
+
+    int    get_num_fixedPts();
 };
 
 

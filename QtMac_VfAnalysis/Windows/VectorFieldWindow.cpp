@@ -38,6 +38,7 @@ bool ShowTDistribution = false;
 bool ShowDiffECGMCG = false;
 bool ShowMCGDiff = false;
 bool ShowRotSumOn = false;
+bool showrealindex = false;
 const int DebugOn = 1;
 
 GLuint Textures[2];
@@ -80,18 +81,17 @@ VectorFieldWindow::VectorFieldWindow(QWidget *parent) : QOpenGLWidget(parent)
 //    format.setProfile(QSurfaceFormat::CoreProfile);
 //    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
 //    QSurfaceFormat::setDefaultFormat(format);
-    qInfo() << "OpenGLWindow Default Constructor has finished";
+    qInfo() << "VF Window Default Constructor has finished";
     //qDebug() << QDir::currentPath();
 }
 
 
 VectorFieldWindow::~VectorFieldWindow() {
-    qInfo() << "OpenGLWindow Desctuctor called";
+    qInfo() << "VF Window Destructor called";
 }
 
 
 void VectorFieldWindow::initializeGL(){
-    this->makeCurrent();
     this->mat_ident(rotmat);
     for(int i = 0; i < 16; i++)
         this->ObjXmat[i]=0.;
@@ -133,29 +133,26 @@ void VectorFieldWindow::initializeGL(){
     this->DrawGLScene(GL_RENDER);
     this->ReCalTexcoord();
 
-
-    qInfo() << "init gl Error: " << glGetError();
-    qInfo() << "OpenGLWindow has been initialized";
+    qInfo() << "VF Window has been initialized";
 }
 
 
 void VectorFieldWindow::paintGL(){
     this->DrawGLScene(GL_RENDER);
-    //this->draw();
     this->update();
-    qInfo() << "paintGL is Done";
+    //qInfo() << "VF Window has been painted";
 }
 
 
 void VectorFieldWindow::resizeGL(int w, int h){
-    qInfo() << "Resize w" << w << "  h" <<h;
+    qInfo() << "VF Window has beed resized";
     glViewport(0, 0, w, h);
 }
 
 
 void VectorFieldWindow::set_up_MainWindow_ptr(MainWindow *MW_ptr)
 {
-    this->mainWindow = MW_ptr;
+    this->mainWindowPtr = MW_ptr;
 }
 
 
@@ -193,8 +190,11 @@ int VectorFieldWindow::InitGL( )
 
 void VectorFieldWindow::init_flags()
 {
-    this->ShowMCGOn = 0;
-    this->ShowConleyCircle=0;
+    this->mainWindowPtr->set_MCGOn(false);
+    this->mainWindowPtr->set_ECGOn(false);
+
+    this->mainWindowPtr->set_ShowConleyCircle(false);
+
 
     this->MoveOrStop = 0;
     this->ShowFixedPtOn = 0;
@@ -336,7 +336,7 @@ void VectorFieldWindow::makePatterns()
             glEndList();
         }
     }
-    qInfo() << "makePatterns gl Error: " << glGetError();
+    //qInfo() << "makePatterns gl Error: " << glGetError();
 }
 
 
@@ -517,7 +517,6 @@ void VectorFieldWindow::ReCalTexcoord()
 
 void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 {
-    qInfo() << "IBFVEFFECT Error1: " << glGetError();
     int i, j;
     Triangle *face;
     Vertex *v;
@@ -770,7 +769,6 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
    }
 
     glDisable(GL_TEXTURE_2D);
-    qInfo() << "IBFVEFFECT Error2: " << glGetError();
 
     iframe = iframe + 1;
 
@@ -875,7 +873,7 @@ void    VectorFieldWindow::without_antialiasing(GLenum mode)
     glEnable(GL_LIGHT2);
 
     /* Display the legends for the objects in the vector field */
-    if(ShowFixedPtOn == 1)
+    if(this->ShowFixedPtOn == 1)
         display_FixedPtsIcon(mode);
 }
 
@@ -1004,16 +1002,15 @@ void    VectorFieldWindow::draw_ASolidSphere(double x, double y, double z, doubl
 {
     glPushMatrix();
     glTranslatef(x, y, z);
-    //glutSolidSphere(r, 80, 80 );
 
     // a replacement of glutSolidSphere
     GLUquadric* quadric = gluNewQuadric();
 
-    glTranslated(x, y, z);
     //glColor3f(R, G, B);
     gluSphere(quadric, r, 16, 16);
-    glPopMatrix();
+
     gluDeleteQuadric(quadric);
+    glPopMatrix();
 }
 
 
@@ -1042,6 +1039,11 @@ void    VectorFieldWindow::mat_ident(Matrix m)
         m[i][3] = 0.0;
         m[i][i] = 1.0;
     }
+}
+
+void VectorFieldWindow::detect_FixedPts()
+{
+    object->capture_Singularities();
 }
 
 
@@ -1530,7 +1532,6 @@ void    VectorFieldWindow::display_even_streamlines(GLenum mode)
 void    VectorFieldWindow::display_FixedPtsIcon(GLenum mode)
 {
     int i;
-
     ////set the surface property
     GLfloat ambient[] = { 0.8, 0.8, 0.8, 1.0 };
     GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -1543,14 +1544,12 @@ void    VectorFieldWindow::display_FixedPtsIcon(GLenum mode)
     glMaterialf(GL_FRONT, GL_SHININESS, (GLfloat)shiny);
 
     glEnable(GL_COLOR_MATERIAL);
-
     for(i = 0; i < object->slist.nsingularities; i++)
     {
         if(mode == GL_SELECT)
             glLoadName(NAMEOFSINGULARITY+i);
 
         set_ColorByType(object->slist.slist[i]->type);
-
         draw_ASolidSphere(object->slist.slist[i]->gpos.entry[0],
                           object->slist.slist[i]->gpos.entry[1],
                           object->slist.slist[i]->gpos.entry[2], singsize/zoom_factor);
@@ -1787,4 +1786,10 @@ void VectorFieldWindow::display_diff_MCGs()
         }
         glEnd();
     }
+}
+
+
+int VectorFieldWindow::get_num_fixedPts()
+{
+    return object->slist.nsingularities;
 }

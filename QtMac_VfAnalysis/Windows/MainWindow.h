@@ -21,6 +21,15 @@ public:
     // public member functions
     void init();
     void print_debug_message(QString message);
+
+    void set_MCGOn(bool);
+    void set_ECGOn(bool);
+    void set_ShowConleyCircle(bool);
+private slots:
+    void on_display_fixed_points_clicked(bool checked);
+
+    void on_display_separatrices_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
 };

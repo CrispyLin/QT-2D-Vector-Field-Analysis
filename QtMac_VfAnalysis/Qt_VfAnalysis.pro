@@ -21,18 +21,20 @@ SOURCES += \
     BuildGeom/Geometry.cpp \
     ConleyIndex.cpp \
     Contour_2D.cpp \
+    Windows/ECGWindow.cpp \
     EdgeSamplePts.cpp \
     FileLoader/PlyLoader.cpp \
     FileLoader/vfply_io.cpp \
+    Windows/MCGWindow.cpp \
     Numerical.cpp \
     Others/TraceBall.cpp \
     Others/common_routines.cpp \
     RegionTauMap.cpp \
     StreamlineCalculate/EvenStreamlines.cpp \
     StreamlineCalculate/Streamline_cal.cpp \
-    VectorFieldWindow.cpp \
+    Windows/VectorFieldWindow.cpp \
     main.cpp \
-    MainWindow.cpp \
+    Windows/MainWindow.cpp \
     utility_functions.cpp
 
 HEADERS += \
@@ -41,6 +43,7 @@ HEADERS += \
     BuildGeom/Geometry.h \
     BuildGeom/Point.h \
     ConleyIndex.h \
+    Windows/ECGWindow.h \
     Edit/RotateReflectField.h \
     ExternalDependencies/icMatrix.h \
     ExternalDependencies/icVector.h \
@@ -51,6 +54,7 @@ HEADERS += \
     FileLoader/vfply_io.h \
     GL_LIB/glut.h \
     Graph2D.h \
+    Windows/MCGWindow.h \
     Numerical.h \
     Others/TraceBall.h \
     Others/common_routines.h \
@@ -59,15 +63,15 @@ HEADERS += \
     RotateReflectField.h \
     StreamlineCalculate/EvenStreamlines.h \
     VField.h \
-    MainWindow.h \
+    Windows/MainWindow.h \
     Predefined.h \
     GL_LIB/glew.h \
-    VectorFieldWindow.h
+    Windows/VectorFieldWindow.h
 
 FORMS += \
     MainWindow.ui
 
-LIBS
+mac: LIBS += -framework GLUT
 
 
 # Default rules for deployment.
