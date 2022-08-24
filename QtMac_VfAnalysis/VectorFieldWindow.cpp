@@ -5,7 +5,9 @@ double SCALE = 3.0;
 
 
 // GLOBAL VARIABLES
+QString dataset_folder = QString("/Users/linxinw/Public/GitHub/QT-2D-Vector-Field-Analysis/QtMac_VfAnalysis/Datasets/");
 const char filePath [] = "/Users/linxinw/Public/GitHub/QT-2D-Vector-Field-Analysis/QtMac_VfAnalysis/Datasets/simple_fld2.ply";
+
 int picked_node = -1;
 double g_zoom_factor = 1.0;
 
@@ -20,7 +22,6 @@ double  dmax   = 1.8/NPIX;
 
 int Cal_Regions=0;
 int ndisplay_trajs;
-bool RemoveDisconnMSOn = false;
 int Integrator_opt = 0;
 int ndisplay_POs;
 clock_t g_start, g_finish;
@@ -38,8 +39,12 @@ bool ShowTDistribution = false;
 bool ShowDiffECGMCG = false;
 bool ShowMCGDiff = false;
 bool ShowRotSumOn = false;
-bool showrealindex = false;
+bool showRealIndex = false;
+bool RemoveDisconnMSOn = false;
+RegionTauMap *regiontau = NULL;
+
 const int DebugOn = 1;
+double global_tau;
 
 GLuint Textures[2];
 GLubyte f_tex[NPIX][NPIX][3], b_tex[NPIX][NPIX][3], applied_tex[NPIX][NPIX][3];
@@ -68,19 +73,13 @@ extern MorseDecomp *L1_morse;
 extern MorseDecomp *L2_morse;
 extern ECG_Graph *ecg;
 extern MCG_Graph *mcg;
-
+extern double edge_sample_error;
+extern int investigate_tri;
 
 
 VectorFieldWindow::VectorFieldWindow(QWidget *parent) : QOpenGLWidget(parent)
 {
-    // set surfaceFormat
-//    format.setDepthBufferSize(32);
-//    format.setStencilBufferSize(8);
-//    //format.setAlphaBufferSize(8);
-//    format.setVersion(3,2);
-//    format.setProfile(QSurfaceFormat::CoreProfile);
-//    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
-//    QSurfaceFormat::setDefaultFormat(format);
+    regiontau = new RegionTauMap();
     qInfo() << "VF Window Default Constructor has finished";
     //qDebug() << QDir::currentPath();
 }
@@ -136,11 +135,71 @@ void VectorFieldWindow::initializeGL(){
     qInfo() << "VF Window has been initialized";
 }
 
+void VectorFieldWindow::initializeGL2(QString file){
+    QByteArray file_byte = file.toLocal8Bit();
+    const char *fileName = file_byte.data();
+    qInfo() << fileName;
+
+    this->mat_ident(rotmat);
+    for(int i = 0; i < 16; i++)
+        this->ObjXmat[i]=0.;
+    this->ObjXmat[0] = this->ObjXmat[5] = this->ObjXmat[10] = this->ObjXmat[15] = 1;
+
+    this->init_flags();
+
+    this->initializeOpenGLFunctions();
+
+    // read file
+    FILE *this_file = fopen(fileName, "r");
+    if(this_file == 0){
+        qInfo() << "Cannot open file: " << fileName;
+        exit(-1);
+    }
+    QString str = "Reading file: " + QString(fileName);
+    qInfo() << str;
+
+    // build polyhedron
+    if(object)
+        delete object;
+    object = new Polyhedron(this_file, 1);
+    object->initialize();
+    this->rot_center = object->rot_center;  ////set the rotation center!
+
+    object->cal_TexCoord();
+
+    if(morse_decomp)
+        delete morse_decomp;
+    morse_decomp = new MorseDecomp(); /*initialize the Morse Decomposition component*/
+
+    if(L1_morse)
+        delete L1_morse;
+    L1_morse = new MorseDecomp();
+
+    if(L2_morse)
+        delete L2_morse;
+    L2_morse = new MorseDecomp();
+
+    this->InitGL(); // no drawing
+
+    //construct the MCG here
+    if(mcg)
+        delete mcg;
+    mcg = new MCG_Graph(); // create a new MCG
+    mcg->init_MCG(); // init MCG
+
+    //IBFV visualization initialization
+    this->makePatterns();
+    this->DrawGLScene(GL_RENDER);
+    this->ReCalTexcoord();
+
+    qInfo() << "VF Window has been initialized";
+}
+
 
 void VectorFieldWindow::paintGL(){
     this->DrawGLScene(GL_RENDER);
     this->update();
-    //qInfo() << "VF Window has been painted";
+//    this->draw();
 }
 
 
@@ -149,6 +208,173 @@ void VectorFieldWindow::resizeGL(int w, int h){
     glViewport(0, 0, w, h);
 }
 
+const int win_width = 400;
+const int win_height = 400;
+bool LeftButtonDown = false;
+bool MiddleButtonDown = false;
+
+void VectorFieldWindow::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton){
+        LeftButtonDown = true;
+        QPointF p = event->pos();
+        double s = (2.0 * p.x() - win_width) / win_height;
+        double t = (2.0 * ( win_height - p.y() ) - win_height) / win_width;
+
+        s_old = s;
+        t_old = t;
+        last_x = p.x();
+        last_y = p.y();
+    }
+    else if(event->button() == Qt::MiddleButton){
+        middleButtonDown(event);
+    }
+
+}
+
+
+void VectorFieldWindow::mouseReleaseEvent(QMouseEvent * event)
+{
+    LeftButtonDown = false;
+    MiddleButtonDown = false;
+    // if it is right button, it is selecting triangle operation
+    if(event->button() == Qt::RightButton){
+        this->rightButtonUp(event);
+    }
+    // if it is left button...
+    else if(event->button() == Qt::LeftButton){
+        this->ReCalTexcoord();
+    }
+    // if it is middle button...
+    else if(event->button() == Qt::MiddleButton){
+        this->ReCalTexcoord();
+    }
+}
+
+void VectorFieldWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if(LeftButtonDown == true){
+        leftButtonMoved(event);
+    }
+    else if (MiddleButtonDown == true){
+        middleButtonMoved(event);
+    }
+}
+
+void VectorFieldWindow::leftButtonMoved(QMouseEvent *event)
+{
+    float r[4];
+    QPointF p = event->pos();
+    double s = (2.0 * p.x() - win_width) / win_width;
+    double t = (2.0 * (win_height - p.y())-win_height)/win_height;
+
+    if((s==s_old) && (t==t_old))
+        return;
+
+    traceball.mat_to_quat(this->rotmat, this->rvec);
+    traceball.trackball(r, this->s_old, this->t_old, s, t);
+    traceball.add_quats(r, this->rvec, this->rvec);
+    traceball.quat_to_mat(this->rvec, this->rotmat);
+    s_old = s;
+    t_old = t;
+    this->DrawGLScene(GL_RENDER);
+    return;
+}
+
+
+void VectorFieldWindow::rightButtonUp(QMouseEvent * event){
+    double position[3];
+
+    int firstwin_leftbottom_x = 0;
+    int firstwin_leftbottom_y = 400;
+    int firstwin_rightx = 400;
+    int firstwin_bottomy = 400;
+    ScreenToSecondWin(event->pos().x(), event->pos().y(), firstwin_leftbottom_x, firstwin_leftbottom_y,
+                      firstwin_rightx, firstwin_bottomy, 0, 0, 1, 1, position[0], position[1]);
+    HitProcess(position[0], position[1]);
+
+    if(selected_triangle >= 0){
+        investigate_tri = this->selected_triangle;
+    }
+}
+
+
+void VectorFieldWindow::middleButtonDown(QMouseEvent *event){
+    double s, t;
+    double position[3];
+
+    int firstwin_leftbottom_x = 0;
+    int firstwin_leftbottom_y = 400;
+    int firstwin_rightx = 400;
+    int firstwin_bottomy = 400;
+    ScreenToSecondWin(event->pos().x(), event->pos().y(), firstwin_leftbottom_x, firstwin_leftbottom_y,
+                      firstwin_rightx, firstwin_bottomy, 0, 0, 1, 1, position[0], position[1]);
+    s = position[0];
+    t = position[1];
+
+    s_old = s;
+    t_old = t;
+
+    MiddleButtonDown = true;
+}
+
+void VectorFieldWindow::middleButtonMoved(QMouseEvent *event){
+    double s, t;
+    double position [3];
+
+
+    int firstwin_leftbottom_x = 0;
+    int firstwin_leftbottom_y = 400;
+    int firstwin_rightx = 400;
+    int firstwin_bottomy = 400;
+
+    QPointF p = event->pos();
+
+    ScreenToSecondWin(p.x(), p.y(), firstwin_leftbottom_x, firstwin_leftbottom_y,
+                    firstwin_rightx, firstwin_bottomy, 0, 0, 1, 1, position[0], position[1]);
+    s = position[0];
+    t = position[1];
+
+    if (fabs(s - s_old)<1.e-7 && fabs(t - t_old)<1.e-7)
+        return;
+
+    double dx = s-s_old;
+    double dy = t-t_old;
+
+    trans_x += dx;
+    trans_y += dy;
+
+    s_old = s;
+    t_old = t;
+
+    this->DrawGLScene(GL_RENDER);
+}
+
+void VectorFieldWindow::wheelEvent(QWheelEvent * event){
+    QPoint numDegrees = event->angleDelta() / 8;
+    if (numDegrees.y() > 0) // zoom out
+    {
+        if(this->zoom_factor > 0.05){
+            this->zoom_factor -= 0.05;
+            if(SCALE > 1){
+                dmax = 1.8/NPIX/this->zoom_factor;
+                this->makePatterns();
+            }
+        }
+    }
+    else // zoom in
+    {
+        this->zoom_factor += 0.05;
+        if(SCALE > 1){
+            dmax = 1.8/NPIX/this->zoom_factor;
+            this->makePatterns();
+        }
+    }
+
+    this->ReCalTexcoord();
+    g_zoom_factor = this->zoom_factor;
+    this->DrawGLScene(GL_RENDERER);
+}
 
 void VectorFieldWindow::set_up_MainWindow_ptr(MainWindow *MW_ptr)
 {
@@ -157,21 +383,33 @@ void VectorFieldWindow::set_up_MainWindow_ptr(MainWindow *MW_ptr)
 
 
 void VectorFieldWindow::draw(){
-    float r = 1.0f, g = 0.0f, b = 0.0f;
-    glColor3f(r, g, b);
-    glLoadIdentity();
-    glTranslatef(-0.5, -0.5, 0);
+//    float r = 1.0f, g = 0.0f, b = 0.0f;
+//    glColor3f(r, g, b);
+//    glLoadIdentity();
+//    glTranslatef(-0.5, -0.5, 0);
+//    glBegin(GL_TRIANGLES);
+//    for(int i = 0; i < object->tlist.ntris; i++){
+//        const Triangle * t1 = object->tlist.tris[i];
+//        const Vertex* v1 = t1->verts[0];
+//        const Vertex* v2 = t1->verts[1];
+//        const Vertex* v3 = t1->verts[2];
+//        glVertex3f(v1->x, v1->y, v1->z);
+//        glVertex3f(v2->x, v2->y, v2->z);
+//        glVertex3f(v3->x, v3->y, v3->z);
+//    }
+//    glEnd();
+
+    glColor3f(1, 1, 1);
     glBegin(GL_TRIANGLES);
-    for(int i = 0; i < object->tlist.ntris; i++){
-        const Triangle * t1 = object->tlist.tris[i];
-        const Vertex* v1 = t1->verts[0];
-        const Vertex* v2 = t1->verts[1];
-        const Vertex* v3 = t1->verts[2];
-        glVertex3f(v1->x, v1->y, v1->z);
-        glVertex3f(v2->x, v2->y, v2->z);
-        glVertex3f(v3->x, v3->y, v3->z);
-    }
+    glVertex3f(1, 1, 0);
+    glVertex3f(-1, 1, 0);
+    glVertex3f(0, 0, 0);
+
+    glVertex3f(-1, -1, 0);
+    glVertex3f(1, -1, 0);
+    glVertex3f(0, 0, 0);
     glEnd();
+
 }
 
 
@@ -196,13 +434,13 @@ void VectorFieldWindow::init_flags()
     this->mainWindowPtr->set_ShowConleyCircle(false);
 
 
-    this->MoveOrStop = 0;
+    this->MoveOrStop = false;
     this->ShowFixedPtOn = 0;
     this->ShowSeparatricesOn = 0;
     this->ShowSCCsOn = 0;
     this->ShowPeriodicOrbitsOn = 0;
-    this->EvenStreamlinePlacement = 0;
-    this->ShowColorVFMagOn = 0;
+    this->EvenStreamlinePlacement = false;
+    this->ShowColorVFMagOn = false;
 
     this->zoom_factor = 1;
 
@@ -217,7 +455,7 @@ void VectorFieldWindow::init_flags()
     this->ShowTriMappingOn = false;
     this->selected_triangle = -1;  // 02/10/2010
 
-    this->ShowBackward=0;//0=forward, 1=backward
+    this->ShowBackward=false;//false=forward, true=backward
     this->sampling_edge=0;
 
     this->ShowConnectionRegion=0;
@@ -319,16 +557,11 @@ void VectorFieldWindow::makePatterns()
                     spat[i][j][3] = alpha;
                 }
 
-//            glNewList(k + 1, GL_COMPILE);
-//            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
-//                         GL_RGBA, GL_UNSIGNED_BYTE, pat);
-//            glEndList();
+            glNewList(k + 1, GL_COMPILE);
+            glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, pat);
+            glEndList();
 
-
-//            if(k == 1){
-//                output_pattern_to_file(spat, "spat");
-//                exit(-5);
-//            }
 
             glNewList(k + 1 + 100, GL_COMPILE);       //This is for static image
             glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0,
@@ -376,17 +609,6 @@ int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Dr
     glEnable(GL_BLEND);
 
 
-    //show the rotational sum
-
-    glEnable(GL_BLEND);
-    if (ShowRotSumOn)
-    {
-        vis_rot_sum();
-    }
-    glDisable(GL_BLEND);
-
-    without_antialiasing(mode);
-
 
     /*************************************************************
     /*
@@ -397,14 +619,17 @@ int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Dr
     if (ShowEdgeSamplesOn)
     {
         if (edge_samples != NULL)
+        {
             //edge_samples->display(); display_sel_edges
             edge_samples->display_sel_edges(selected_triangle,ShowBackward,sampling_edge);
+        }
     }
 
     if (ShowTriMappingOn)
     {
         morse_decomp->show_tri_mapping(selected_triangle);
     }
+
 
     /**************************************************************
     /*
@@ -414,6 +639,17 @@ int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Dr
     {
         display_sel_tri(selected_triangle);
     }
+
+
+    //show the rotational sum
+    if (ShowRotSumOn)
+    {
+        vis_rot_sum();
+    }
+
+    without_antialiasing(mode);
+
+
 
     glDepthFunc(GL_LESS);
 
@@ -566,14 +802,12 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 
 
     glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glShadeModel(GL_FLAT);
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_LIGHTING);
     glDisable(GL_LIGHT0);
-
-
-    glShadeModel(GL_FLAT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -605,17 +839,19 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 
     glPopMatrix();
 
+    iframe = iframe +1;
 
     ////Adding the depth judgement here!
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthFunc(GL_GREATER);
 
-    if( MoveOrStop ==0 )   ////Static
+    if( MoveOrStop == false )   ////Static
         glCallList(iframe % Npat + 1 + 100);
 
-//    else                   ////Moving
-//        glCallList(iframe % Npat + 1);
+    else                   ////Moving
+        glCallList(iframe % Npat + 1);
+
     glBegin(GL_QUAD_STRIP);
         glTexCoord2f(0.0,  0.0);  glVertex3f(0.0, 0.0, -39.9);
         glTexCoord2f(0.0,  tmax); glVertex3f(0.0, 1.0, -39.9);
@@ -635,7 +871,7 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
 
     glReadPixels(0, 0, NPIX, NPIX, GL_RGB, GL_UNSIGNED_BYTE, f_tex);
 
-    if(MoveOrStop == 0)
+    if(MoveOrStop == false)
     {
         /* Calculate backward texture */
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
@@ -666,12 +902,10 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthFunc(GL_GREATER);
-        //if( MoveOrStop ==0 )   ////Static
-        glCallList(iframe % Npat + 1 + 100);
-        if( MoveOrStop ==0 )   ////Static
+        //if( MoveOrStop == false )   ////Static
             glCallList(iframe % Npat + 1 + 100);
-//        else                   ////Moving
-//            glCallList(iframe % Npat + 1);
+        //else                   ////Moving
+            //glCallList(iframe % Npat + 1);
         glBegin(GL_QUAD_STRIP);
             glTexCoord2f(0.0,  0.0);  glVertex3f(0.0, 0.0, -39.9);
             glTexCoord2f(0.0,  tmax); glVertex3f(0.0, 1.0, -39.9);
@@ -726,7 +960,7 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     //glDisable(GL_COLOR_MATERIAL);
 
-    if (MoveOrStop == 0)
+    if (MoveOrStop == false)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
                      GL_RGB, GL_UNSIGNED_BYTE, applied_tex);
@@ -734,7 +968,6 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
     else
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, NPIX, NPIX, 0,
                      GL_RGB, GL_UNSIGNED_BYTE, f_tex);
-
 
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
@@ -769,9 +1002,6 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
    }
 
     glDisable(GL_TEXTURE_2D);
-
-    iframe = iframe + 1;
-
 }
 
 
@@ -836,7 +1066,7 @@ void    VectorFieldWindow::without_antialiasing(GLenum mode)
 
 
 
-    if(ShowColorVFMagOn == 1)
+    if(ShowColorVFMagOn == true)
     {
         display_color_VFMag();
     }
@@ -863,7 +1093,7 @@ void    VectorFieldWindow::without_antialiasing(GLenum mode)
 
 
     //glDisable(GL_COLOR_MATERIAL);
-    if(EvenStreamlinePlacement == 1)
+    if(EvenStreamlinePlacement == true)
     {
         display_even_streamlines(mode); /*display the calculated evenly placed streamlines*/
     }
@@ -952,7 +1182,7 @@ void    VectorFieldWindow::set_scene(GLenum mode)
                  this->rot_center.entry[2]);
 
 
-    //multmatrix( this->rotmat );
+    multmatrix( this->rotmat );
 
     glScalef(this->zoom_factor, this->zoom_factor, this->zoom_factor);
 
@@ -1173,25 +1403,24 @@ void    VectorFieldWindow::display_SCCs(GLenum mode)
             if (morse_decomp->scclist->scccomponents[i]->node_index < 0)
                 continue;
 
-            float alpha_channel = 0.4;
+            float alpha = 0.5;
             float color_rgb[3];
 
             switch(mcg->nlist->mnodes[morse_decomp->scclist->scccomponents[i]->node_index]->type)
             {
-            case 0:glColor4f(0, 1, 0, 0.4);//0-source_like, 1-sink_like, 2-saddle_like
+            case 0:glColor4f(0, 1, 0, alpha);//0-source_like, 1-sink_like, 2-saddle_like
                 color_rgb[0]=0; color_rgb[1]=1; color_rgb[2]=0;
                 break;
-            case 1:glColor4f(1, 0, 0, 0.4);
+            case 1:glColor4f(1, 0, 0, alpha);
                 color_rgb[0]=1; color_rgb[1]=0; color_rgb[2]=0;
                 break;
-            case 2:glColor4f(0, 0, 1, 0.4);
+            case 2:glColor4f(0, 0, 1, alpha);
                 color_rgb[0]=0; color_rgb[1]=0; color_rgb[2]=1;
                 break;
 
-            case 3: glColor4f (0, 0, 1, 0.4); // trivial index
+            case 3: glColor4f (0, 0, 1, alpha); // trivial index
                 color_rgb[0]=0; color_rgb[1]=0; color_rgb[2]=1;
                 break;
-
             }
 
             if (mcg->nlist->mnodes[morse_decomp->scclist->scccomponents[i]->node_index]->conley[0]==0
@@ -1233,7 +1462,7 @@ void    VectorFieldWindow::display_SCCs(GLenum mode)
                 glDepthFunc(GL_LEQUAL);
                 glColor4f(0,0,0,0.6);
                 glBegin(GL_LINES);
-                glLineWidth(10.);
+                glLineWidth(15.);
                 int morse_index=morse_decomp->scclist->scccomponents[i]->node_index;
                 int EN=mcg->nlist->mnodes[morse_index]->boundaryN;
                 for(j=0;j<EN;j++)
@@ -1420,7 +1649,7 @@ void    VectorFieldWindow::display_periodicorbits(GLenum mode)
 
     glDepthFunc(GL_LEQUAL);
     glLineWidth(3.0);
-    for(i = 0; i < ndisplay_POs/*periodic_orbits->nporbits*/; i++)
+    for(i = 0; i < periodic_orbits->nporbits; i++)
     {
         if(periodic_orbits->polist == NULL || periodic_orbits->polist[i] == NULL)
             return;
@@ -1792,4 +2021,97 @@ void VectorFieldWindow::display_diff_MCGs()
 int VectorFieldWindow::get_num_fixedPts()
 {
     return object->slist.nsingularities;
+}
+
+
+void VectorFieldWindow::HitProcess(double ss, double st)
+{
+    GLuint  selectBuffer[128];
+    GLint	vp[4] = {0, 0 ,1, 1};
+    int hits;
+
+    //glGetIntegerv(GL_VIEWPORT, vp);
+
+    ////Build the selection buffer here
+    glSelectBuffer(128, selectBuffer);
+
+    //glMatrixMode(GL_MODELVIEW);
+    //glPushMatrix();
+
+
+    (void)glRenderMode(GL_SELECT);
+    glInitNames();
+    glPushName(0);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    //gluPickMatrix(ss, st, 0.005, 0.005, vp );  ////set smaller pick window for triangle selection
+    gluPickMatrix(ss, st, 1.e-6, 1.e-6, vp );  ////set smaller pick window for triangle selection
+
+    glMatrixMode( GL_MODELVIEW );
+
+    glPushMatrix ();
+    set_view(GL_SELECT);
+    set_scene(GL_SELECT);
+
+    display_Obj(GL_SELECT);
+    glPopMatrix();
+
+
+    ////If one of the element has been selected for being edited
+    hits = glRenderMode(GL_RENDER);
+
+    if(hits > 0)
+    {
+        selected_triangle = SelecteObj(hits, selectBuffer) - 1;
+
+    }
+
+    else
+        selected_triangle = -1;
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glMatrixMode( GL_MODELVIEW );
+}
+
+
+int VectorFieldWindow::SelecteObj(int hits, GLuint buffer[])
+{
+    unsigned int i, j;
+    GLuint names, *ptr;
+    double smallest_depth=1.0e+30, current_depth;
+    int seed_id=-1;
+    unsigned char need_to_update;
+
+    printf("hits = %d\n", hits);
+    ptr = (GLuint *) buffer;
+    for (i = 0; i < hits; i++) {  /* for each hit  */
+        need_to_update = 0;
+        names = *ptr;
+        ptr++;
+
+        current_depth = (double) *ptr/0x7fffffff;
+        if (current_depth < smallest_depth) {
+            smallest_depth = current_depth;
+            need_to_update = 1;
+        }
+        ptr++;
+        current_depth = (double) *ptr/0x7fffffff;
+        if (current_depth < smallest_depth) {
+            smallest_depth = current_depth;
+            need_to_update = 1;
+        }
+        ptr++;
+        for (j = 0; j < names; j++) {  /* for each name */
+            if (need_to_update == 1)
+                seed_id = *ptr;
+            ptr++;
+        }
+    }
+
+    return seed_id;
 }

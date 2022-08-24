@@ -21,20 +21,20 @@ SOURCES += \
     BuildGeom/Geometry.cpp \
     ConleyIndex.cpp \
     Contour_2D.cpp \
-    Windows/ECGWindow.cpp \
+    ECGWindow.cpp \
     EdgeSamplePts.cpp \
     FileLoader/PlyLoader.cpp \
     FileLoader/vfply_io.cpp \
-    Windows/MCGWindow.cpp \
+    MCGWindow.cpp \
     Numerical.cpp \
     Others/TraceBall.cpp \
     Others/common_routines.cpp \
     RegionTauMap.cpp \
     StreamlineCalculate/EvenStreamlines.cpp \
     StreamlineCalculate/Streamline_cal.cpp \
-    Windows/VectorFieldWindow.cpp \
+    VectorFieldWindow.cpp \
     main.cpp \
-    Windows/MainWindow.cpp \
+    MainWindow.cpp \
     utility_functions.cpp
 
 HEADERS += \
@@ -43,7 +43,7 @@ HEADERS += \
     BuildGeom/Geometry.h \
     BuildGeom/Point.h \
     ConleyIndex.h \
-    Windows/ECGWindow.h \
+    ECGWindow.h \
     Edit/RotateReflectField.h \
     ExternalDependencies/icMatrix.h \
     ExternalDependencies/icVector.h \
@@ -54,7 +54,7 @@ HEADERS += \
     FileLoader/vfply_io.h \
     GL_LIB/glut.h \
     Graph2D.h \
-    Windows/MCGWindow.h \
+    MCGWindow.h \
     Numerical.h \
     Others/TraceBall.h \
     Others/common_routines.h \
@@ -63,10 +63,11 @@ HEADERS += \
     RotateReflectField.h \
     StreamlineCalculate/EvenStreamlines.h \
     VField.h \
-    Windows/MainWindow.h \
+    MainWindow.h \
     Predefined.h \
     GL_LIB/glew.h \
-    Windows/VectorFieldWindow.h
+    VectorFieldWindow.h \
+    utility_functions.h
 
 FORMS += \
     MainWindow.ui

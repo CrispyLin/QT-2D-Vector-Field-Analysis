@@ -1,6 +1,8 @@
 #pragma once
+
 #ifndef OPENGLWINDOW_H
 #define OPENGLWINDOW_H
+
 
 #include "GL_LIB/glew.h"
 
@@ -17,6 +19,7 @@
 #include <fstream>
 #include <string>
 #include <stdlib.h>
+#include <QMouseEvent>
 
 #include "MainWindow.h"
 #include "Predefined.h"
@@ -24,13 +27,14 @@
 #include "Analysis/MorseDecomp.h"
 #include "VField.h"
 #include "StreamlineCalculate/EvenStreamlines.h"
-
+#include "RegionTauMap.h"
+#include "utility_functions.h"
+#include "Others/TraceBall.h"
 
 #define	NPN 64
 #define NMESH  100
 #define DM  ((double) (1.0/(NMESH-1.0)))
 #define NPIX  800 // number of pixels
-#define SELECTBUFFERSIZE 128
 
 
 typedef float Matrix[4][4];
@@ -45,20 +49,40 @@ public:
 
 protected:
     void    initializeGL() override;
+
     void	paintGL() override;
     void	resizeGL(int w, int h) override;
 
+private:
+    // for mouse events
+    QPoint pos;
+    double s_old = -1, t_old = -1;
+    double last_x = -1, last_y = -1;
+
+    void mousePressEvent(QMouseEvent * event) override ;
+    void mouseReleaseEvent(QMouseEvent * event) override ;
+    void mouseMoveEvent(QMouseEvent * event) override ;
+
+
+    void rightButtonUp(QMouseEvent * event);
+    void leftButtonMoved(QMouseEvent *event);
+    void middleButtonDown(QMouseEvent *event);
+    void middleButtonMoved(QMouseEvent *event);
+
+    void wheelEvent(QWheelEvent * event) override;
+
 public:
     // public member variables
-    //QSurfaceFormat format;
+    CTraceBall traceball;
+    Quaternion rvec;
 
-    int     MoveOrStop;
+    bool    MoveOrStop;
     int     ShowFixedPtOn;
     int     ShowSeparatricesOn;
     int     ShowSCCsOn;
     int     ShowPeriodicOrbitsOn;
-    int     EvenStreamlinePlacement;
-    int     ShowColorVFMagOn;
+    bool    EvenStreamlinePlacement;
+    bool    ShowColorVFMagOn;
     int     ShowMorseConn;
     int     ShowTriangleConn;
     int     morseC;
@@ -67,12 +91,17 @@ public:
     bool    ShowEdgeSamplesOn;
     bool    ShowTriMappingOn;
     int     selected_triangle;
-    int     ShowBackward;
+    bool    ShowBackward;
     int     sampling_edge;
     int     ShowConnectionRegion;
     int     ShowBoundary;
     bool    FlipNormalOn;
     bool    IBFVOff;
+    double  min_pri = 0;
+    int    iter_max = 0;
+    double  init_tau = 0;
+    double  tau_max = 0;
+
 
     icVector3   rot_center;
     double  zoom_factor;
@@ -83,6 +112,8 @@ public:
     Polyhedron* polyhedron = nullptr;
 
     // public member functions
+    void    initializeGL2(QString file);
+
     void    set_up_MainWindow_ptr(MainWindow* MW_ptr);
     void    draw();
     int     InitGL();
@@ -118,13 +149,10 @@ public:
     void    display_diff_MCGs();
 
     int    get_num_fixedPts();
+    void   HitProcess(double ss, double st);
+    int    SelecteObj(int hits, GLuint buffer[]);
 };
 
 
-
-void    display_sel_tri(int tri);
-void    matrix_ident( float m[4][4]);
-void    output_tex_to_file(GLubyte tex[NPIX][NPIX][3], string tex_name);
-void    output_pattern_to_file(GLubyte pattern[NPN][NPN][4], string pattern_name);
 
 #endif // OPENGLWINDOW_H

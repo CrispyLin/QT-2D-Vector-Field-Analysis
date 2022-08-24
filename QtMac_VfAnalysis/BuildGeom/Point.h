@@ -177,7 +177,7 @@ public:
 
     void display();
 
-    void display_sel_edges(int,int,int);
+    void display_sel_edges(int,bool,int);
 
     void create_display_list();
 

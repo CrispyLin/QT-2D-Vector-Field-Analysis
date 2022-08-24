@@ -15,7 +15,7 @@ Created and modified by Guoning Chen
 #include "Edit/RotateReflectField.h"
 #include "GlView.h"
 #include "CGraphView.h"
-#include "Windows/MainWindow.h"
+#include "MainWindow.h"
 
 extern const int DebugOn;
 

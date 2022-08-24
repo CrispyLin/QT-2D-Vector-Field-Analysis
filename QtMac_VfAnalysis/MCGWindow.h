@@ -1,6 +1,8 @@
 #ifndef MCGWINDOW_H
 #define MCGWINDOW_H
 
+#define SELECTBUFFERSIZE 128
+
 #include "GL_LIB/glew.h"
 
 #include <QOpenGLWidget>
@@ -16,12 +18,14 @@
 #include <fstream>
 #include <string>
 #include <stdlib.h>
+#include <QMouseEvent>
 
 #include "Predefined.h"
 #include "BuildGeom/Geometry.h"
 #include "Analysis/MorseDecomp.h"
 #include "VField.h"
 #include "StreamlineCalculate/EvenStreamlines.h"
+#include "utility_functions.h"
 
 class MCGWindow : public QOpenGLWidget, public QOpenGLFunctions
 {
@@ -33,9 +37,9 @@ public:
 
 
     // public member variables
+    double s2_old = -1, t2_old = -1;
     bool ShowMCGOn = false;
-    int ShowConleyCircle = 0;
-    int picked_node = -1;
+    bool ShowConleyCircle = false;
 
     // public member functions
     void draw_nodes(GLenum mode);
@@ -49,10 +53,16 @@ public:
     void draw_highlights();
     void draw_circle(double cx, double cy, double radius, int type);
     void update_scene();
+
+    void HitProcessforGraph(double ss, double tt);
+
 protected:
     void    initializeGL() override;
     void	paintGL() override;
     void	resizeGL(int w, int h) override;
+
+private:
+    void mouseMoveEvent(QMouseEvent * event) override;
 };
 
 #endif // MCGWINDOW_H

@@ -1,6 +1,11 @@
-#include "Others/traceball.h"
+#include "Others/TraceBall.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+const int X = 0;
+const int Y = 1;
+const int Z = 2;
+const int W = 3;
 
 Matrix idmatrix =
 {

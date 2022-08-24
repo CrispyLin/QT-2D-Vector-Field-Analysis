@@ -7,10 +7,7 @@
 
 #define RENORMCOUNT 97
 #define TRACKBALLSIZE  (0.8)
-#define X 0
-#define Y 1
-#define Z 2
-#define W 3
+
 
 typedef float Quaternion[4];
 typedef float Matrix[4][4];

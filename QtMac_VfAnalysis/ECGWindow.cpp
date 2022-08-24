@@ -1,6 +1,5 @@
-#include "Windows/ECGWindow.h"
+#include "ECGWindow.h"
 #include <GLUT/glut.h>
-#include <QPainter>
 
 extern Polyhedron *object; // declared in geometry.cpp
 
@@ -30,7 +29,7 @@ ECGWindow::~ECGWindow()
 void ECGWindow::draw_nodes(GLenum mode)
 {
     int i;
-    if( !ShowECGOn )
+    if( !ShowECGOn || ecg == nullptr )
         return;
 
     for(i = 0; i < ecg->cur_ecgnode_index; i++)
@@ -95,7 +94,7 @@ void ECGWindow::draw_edges()
 
     glLineWidth(1.5);
 
-    if( !ShowECGOn )
+    if( !ShowECGOn || ecg == nullptr )
         return;
 
     for(i = 0; i < ecg->cur_ecgedge_index; i++)
@@ -157,11 +156,6 @@ void ECGWindow::display_label(int x, int y, char* string)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, string[i]);
     }
 
-//    QPainter painter(this);
-//    painter.setPen(Qt::black);
-//    painter.setFont(QFont("Arial", 10));
-//    painter.drawText(x, y, QString(string));
-
 }
 
 void ECGWindow::draw_labels()
@@ -183,7 +177,7 @@ void ECGWindow::draw_labels()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    if( ! ShowECGOn )
+    if( !ShowECGOn || ecg == nullptr )
         return;
 
     for(i = 0; i < ecg->cur_ecgnode_index; i++)

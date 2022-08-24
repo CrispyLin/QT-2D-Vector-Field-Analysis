@@ -1346,111 +1346,48 @@ void MorseDecomp::cal_sepsandatts_valid_SCCs()
 }
 
 
-
+// geometry based
 void MorseDecomp::morse_decomp()
 {
-    //FILE *fp;
-    //fp = fopen("detect_porbit.txt", "w");
-    //fprintf(fp, "Start initializing Directed Graph...\n");
-    //fclose(fp);
-
     init_graph();
 
-    //fp = fopen("detect_porbit.txt", "a");
-    ////fp = fopen("detect_porbit_swirl.txt", "a");
-    //fprintf(fp, "Start constructing Directed Graph...\n");
-    //fclose(fp);
 
     //build_direted_graph();
     build_direted_graph_2();
     used_tau = 0;
 
-    //fp = fopen("detect_porbit_cooling.txt", "a");
-    //fp = fopen("detect_porbit.txt", "a");
-    //fprintf(fp, "Finish constructing Directed Graph...\n");
-    //fprintf(fp, "Start finding SCC...\n");
-    ////fprintf(fp, "current date and time are :  %s. \n", ctime (&g_rawtime) );
-    //fclose(fp);
-
     dg->find_SCCS();
 
-    //fp = fopen("detect_porbit_cooling.txt", "a");
-    //fp = fopen("detect_porbit.txt", "a");
-    //fprintf(fp, "Finish finding SCC...\n");
-    ////fprintf(fp, "current date and time are :  %s. \n", ctime (&g_rawtime) );
-    //fprintf(fp, "Start building SCC List...\n");
-    //fclose(fp);
 
     build_SCCElemList();
 
-    //fp = fopen("detect_porbit.txt", "a");
-    //fprintf(fp, "Finish finding SCC...\n");
-    ////fprintf(fp, "current date and time are :  %s. \n", ctime (&g_rawtime) );
-    //fprintf(fp, "finish building SCC List...\n");
-    //fprintf(fp, "marking the valid SCCs...\n");
-    //fprintf(fp, "the obtained SCCs %d\n", scclist->nsccs);
-    //fclose(fp);
-
     mark_all_valid_SCCS();
 
-    //fp = fopen("detect_porbit.txt", "a");
-    //fprintf(fp, "finish building SCC List...\n");
-    //fprintf(fp, "finish marking the valid SCCs...\n");
-    //fclose(fp);
 }
 
 
-
+// tau-map based
 /*use the idea of \tau maps*/
 void MorseDecomp::morse_decomp_tau(double tau)
 {
-    FILE *fp;
-    clock_t start, finish;
-
-    start = clock();
-
     init_graph();
 
     used_tau = tau;
 
     if(fabs(tau)<1.e-8)
-        //build_direted_graph();
         build_direted_graph_2();   //geometric based
 
     else
         build_multivalued_graph(tau);   // tau-map based
 
-    finish = clock();
-
-    fp = fopen("tvcg_performance.txt", "w");
-    fprintf(fp, "time for constructing FG is %f. \n",(double)(finish - start)/CLOCKS_PER_SEC);
-    fclose(fp);
-
-    start = clock();
     dg->find_SCCS();
 
 
-    finish = clock();
-
-    fp = fopen("tvcg_performance.txt", "a");
-    fprintf(fp, "time for extracting SCC is %f. \n",(double)(finish - start)/CLOCKS_PER_SEC);
-    fclose(fp);
-
-    //FILE *fp1=fopen("cooling_test.txt", "a");
-    //fprintf(fp1, "finish finding SCCs.\n");
-    //fclose(fp1);
-
     build_SCCElemList();
 
-    //fp1=fopen("cooling_test.txt", "a");
-    //fprintf(fp1, "finish building the SCC list.\n");
-    //fclose(fp1);
 
     mark_all_valid_SCCS();
 
-    //fp1=fopen("cooling_test.txt", "a");
-    //fprintf(fp1, "finish marking the valid SCCs.\n");
-    //fclose(fp1);
 }
 
 

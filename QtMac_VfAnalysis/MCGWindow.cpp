@@ -1,5 +1,5 @@
-#include "Windows/MCGWindow.h"
-#include <QPainter>
+#include "MCGWindow.h"
+#include <GLUT/glut.h>
 
 extern Polyhedron *object; // declared in geometry.cpp
 
@@ -14,11 +14,10 @@ extern MorseDecomp *L2_morse;
 extern ECG_Graph *ecg;
 extern MCG_Graph *mcg;
 
-extern bool showrealindex;
+extern bool showRealIndex;
 
 MCGWindow::MCGWindow(QWidget *parent) : QOpenGLWidget(parent)
 {
-    this->makeCurrent();
     qInfo() << "MCG Window Default Constructor has finished";
 }
 
@@ -31,7 +30,7 @@ MCGWindow::~MCGWindow()
 void MCGWindow::draw_nodes(GLenum mode)
 {
     int i;
-    if( !ShowMCGOn )
+    if( !this->ShowMCGOn || mcg == nullptr )
         return;
 
     for(i = 0; i < mcg->cur_mcgnode_index; i++)
@@ -51,7 +50,7 @@ void MCGWindow::draw_nodes(GLenum mode)
             mcg->nlist->mnodes[i]->pos.entry[1], 0.04);
 
         //draw the new conley index out circle
-        if(ShowConleyCircle==1)
+        if(ShowConleyCircle==true)
         {
             double incR=0.025;
             double R=0.041; // only for planar case example 03/07/2010 original value = 0.05
@@ -80,7 +79,6 @@ void MCGWindow::draw_nodes(GLenum mode)
 void MCGWindow::draw_solid_circle(double cx, double cy, double R)
 {
     int i;
-    //double R = 0.06;
     double theta, deta ;
     deta = 2 * M_PI/80.;
     double x, y;
@@ -115,7 +113,7 @@ void MCGWindow::draw_edges()
 
     glLineWidth(1.5);
 
-    if( !ShowMCGOn )
+    if( !ShowMCGOn || mcg == nullptr)
         return;
 
     for(i = 0; i < mcg->cur_mcgedge_index; i++)
@@ -170,10 +168,13 @@ void MCGWindow::draw_wings(double head[], icVector2 direct)
 
 void MCGWindow::display_label(int x, int y, char *string)
 {
-    QPainter painter(this);
-    painter.setPen(Qt::blue);
-    painter.setFont(QFont("Arial", 30));
-    painter.drawText(x, y, QString(string));
+    int len, i;
+    glRasterPos2f(x, y);
+    len = (int) strlen(string);
+    for (i = 0; i < len; i++)
+    {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, string[i]);
+    }
 }
 
 void MCGWindow::draw_labels()
@@ -195,7 +196,7 @@ void MCGWindow::draw_labels()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    if( !ShowMCGOn )
+    if( !ShowMCGOn || mcg == nullptr )
         return;
 
     for(i = 0; i < mcg->cur_mcgnode_index; i++)
@@ -249,7 +250,7 @@ void MCGWindow::draw_labels()
             strings[2] = '\0';
         }
 
-        if(showrealindex)
+        if(showRealIndex)
         {
             int hundred = floor((mcg->nlist->mnodes[i]->node_index)/100.);
             int ten = floor((mcg->nlist->mnodes[i]->node_index  - hundred * 100)/10.);
@@ -272,6 +273,7 @@ void MCGWindow::draw_labels()
     glOrtho(0.0f,4.0f,0.0f,2.0f,0.0f,50.0f);
 }
 
+extern int picked_node;
 void MCGWindow::DrawGLScene(GLenum mode)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
@@ -282,10 +284,11 @@ void MCGWindow::DrawGLScene(GLenum mode)
 
     if(picked_node >= 0)
         draw_highlights();     //Draw highlighted objects if exist
-    draw_edges();          //Draw edges first
+    draw_edges();   //Draw edges first
     draw_nodes(mode);          //Draw nodes
     draw_labels();
 }
+
 
 void MCGWindow::draw_highlights()
 {
@@ -323,6 +326,45 @@ void MCGWindow::update_scene()
     this->update();
 }
 
+void MCGWindow::HitProcessforGraph(double ss, double tt)
+{
+    GLuint  selectBuffer[SELECTBUFFERSIZE];
+    GLint	vp[4] = {0, 0 ,4, 2};
+    int hits;
+
+    ////Build the selection buffer here
+    glSelectBuffer(SELECTBUFFERSIZE, selectBuffer);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glRenderMode(GL_SELECT);
+    glInitNames();
+    glPushName(0);
+
+    // 0.01 is better than 0.005
+    gluPickMatrix(ss, tt, 0.01, 0.01, vp );  ////set a larger pick window for element selection
+    glOrtho(0, 4,  0, 2,  0, 50);
+
+    draw_nodes(GL_SELECT);
+
+    hits = glRenderMode(GL_RENDER);
+
+    if(hits>0)
+    {
+        picked_node = selectBuffer[3]-1;
+    }
+    else{
+        picked_node = -1;
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glMatrixMode( GL_MODELVIEW );
+}
+
 
 void MCGWindow::initializeGL()
 {
@@ -336,34 +378,32 @@ void MCGWindow::paintGL()
 {
     glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//    float r = 1.0f, g = 0.0f, b = 0.0f;
-//    glColor3f(r, g, b);
-//    glLoadIdentity();
-//    glTranslatef(-0.5, -0.5, 0);
-//    glBegin(GL_TRIANGLES);
-//    for(int i = 0; i < object->tlist.ntris; i++){
-//        const Triangle * t1 = object->tlist.tris[i];
-//        const Vertex* v1 = t1->verts[0];
-//        const Vertex* v2 = t1->verts[1];
-//        const Vertex* v3 = t1->verts[2];
-//        glVertex3f(v1->x, v1->y, v1->z);
-//        glVertex3f(v2->x, v2->y, v2->z);
-//        glVertex3f(v3->x, v3->y, v3->z);
-//    }
-//    glEnd();
-
-    QPainter painter(this);
-    painter.setPen(Qt::black);
-    painter.setFont(QFont("Helvetica", 20));
-    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-    painter.drawText(125, 125, "hello"); // z = pointT4.z + distOverOp / 4
-    painter.end();
-    //this->DrawGLScene(GL_RENDER);
+    this->DrawGLScene(GL_RENDER);
+    this->update();
 }
 
 
 void MCGWindow::resizeGL(int w, int h)
 {
     qInfo() << "MCG Window has been resized";
+}
+
+void MCGWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    double s, t;
+
+    int firstwin_leftbottom_x = 0;
+    int firstwin_leftbottom_y = 150;
+    int firstwin_rightx = 400;
+    int firstwin_bottomy = 150;
+
+    QPointF p = event->pos();
+
+    ScreenToSecondWin(p.x(), p.y(), firstwin_leftbottom_x, firstwin_leftbottom_y,
+                    firstwin_rightx, firstwin_bottomy, 0, 0, 4, 2, s, t);
+
+    if( (s<0) || (s > 4) || (t < 0) || (t > 2)){
+        return;
+    }
+    this->HitProcessforGraph(s, t);
 }

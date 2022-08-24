@@ -38,12 +38,6 @@ bool RemRedundantMCGEdges = false;
 
 void MCG_Graph::build_mcg()
 {
-    FILE *fp;
-    //
-    //fp=fopen("detect_porbit.txt", "a");
-    //fprintf(fp, "start assigning the nodes in MCG\n");
-    //fclose(fp);
-
     /*initialize all the triangle*/
     for(int i=0; i<object->tlist.ntris; i++)
     {
@@ -53,11 +47,6 @@ void MCG_Graph::build_mcg()
 
     assign_mcgnodes();
 
-
-    //fp=fopen("detect_porbit.txt", "a");
-    //fprintf(fp, "There are %d nodes in this MCG.\n", nlist->nmnodes);
-    //fprintf(fp, "start computing the edges in MCG\n");
-    //fclose(fp);
 
     build_mcg_edges_graph();
     layout_mcg();

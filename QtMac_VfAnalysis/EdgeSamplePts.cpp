@@ -1,10 +1,12 @@
 /*
+ *
     EdgeSamplePts.cpp
 */
-#include "BuildGeom/geometry.h"
-#include "Others/Traceball.h"
-
 #include "GL_LIB/glew.h"
+#include "BuildGeom/Geometry.h"
+#include "Others/TraceBall.h"
+
+
 
 extern Polyhedron *object;
 extern double g_zoom_factor;
@@ -85,7 +87,7 @@ get_rot_between_two_vecs(double vec1[3], double vec2[3], float rot_mat[4][4])
     z = cross_vec[2];
     w = sqrt(sq_len1)*sqrt(sq_len2) + dot_rs;
 
-    Quaternion convert_quat;
+    float convert_quat[4];
     convert_quat[0] = x;
     convert_quat[1] = y;
     convert_quat[2] = z;
@@ -208,7 +210,7 @@ EdgeSamplePt_List::display()
 
 
 void
-EdgeSamplePt_List::display_sel_edges(int tri, int backward,int sampling_edge)
+EdgeSamplePt_List::display_sel_edges(int tri, bool backward,int sampling_edge)
 {
     if (samples == NULL) return;
 
@@ -219,7 +221,6 @@ EdgeSamplePt_List::display_sel_edges(int tri, int backward,int sampling_edge)
     int i, j;
 
     float hsv[3], rgb[3];
-
     glDisable(GL_LIGHTING);
 
     glDepthFunc(GL_LEQUAL);
@@ -241,18 +242,6 @@ EdgeSamplePt_List::display_sel_edges(int tri, int backward,int sampling_edge)
     icVector3 z(0, 0, 1);
     float rot_mat[4][4];
 
-
-    FILE* tt=fopen("sampletris.txt","w");
-    for(int i=0;i<num;i++)
-    {
-        EdgeSamplePt *cur_p = samples[i];
-        Edge *e = object->elist.edges[cur_p->which_edge];
-        if (e!=t->edges[0] && e!=t->edges[1] && e!=t->edges[2])
-            continue;
-
-        fprintf(tt,"%d\t%d\n",i,cur_p->end_tri);
-    }
-    fclose(tt);
 
     glBegin(GL_POINTS);
     for (i=0; i<num; i++)
@@ -276,7 +265,8 @@ EdgeSamplePt_List::display_sel_edges(int tri, int backward,int sampling_edge)
 
         HsvRgb(hsv, rgb);
         //glColor3fv(rgb);
-        glColor4f(rgb[0],rgb[1],rgb[2],0.4);
+        qInfo() << "displaying edges";
+        glColor4f(rgb[0],rgb[1],rgb[2],1.);
         /*if(cur_p->backward)glColor3f(1,0,1);
         else glColor3f(1,1,0);*/
 
