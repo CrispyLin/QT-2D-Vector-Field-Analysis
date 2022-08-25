@@ -1051,16 +1051,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="compute_conley_index">
-           <property name="text">
-            <string>Compute Conley index</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QCheckBox" name="construct_minimal_MCG">
            <property name="text">
             <string>Construct minimal MCG</string>

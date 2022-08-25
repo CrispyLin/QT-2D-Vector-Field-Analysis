@@ -263,32 +263,19 @@ void MainWindow::on_Refine_button_clicked()
 
 void MainWindow::on_Euler_1_clicked(bool checked)
 {
-    this->set_MCGOn(false);
-    this->set_ECGOn(false);
     Integrator_opt = 0;
-    this->set_MCGOn(true);
-    this->set_ECGOn(true);
 }
 
 
 void MainWindow::on_RK2_clicked(bool checked)
 {
-    this->set_MCGOn(false);
-    this->set_ECGOn(false);
     Integrator_opt = 1;
-    this->set_MCGOn(true);
-    this->set_ECGOn(true);
 }
 
 
 void MainWindow::on_RK4_clicked(bool checked)
 {
-
-    this->set_MCGOn(false);
-    this->set_ECGOn(false);
     Integrator_opt = 2;
-    this->set_MCGOn(true);
-    this->set_ECGOn(true);
 }
 
 
@@ -721,7 +708,70 @@ void MainWindow::on_Browsers_Button_clicked()
     this->set_MCGOn(false);
     this->set_ECGOn(false);
 
-    ui->setupUi(this);
+    // restore ui and flags
+    this->on_display_connection_region_clicked(false);
+    this->ui->display_connection_region->setChecked(false);
+
+    this->on_No_T_MAX_clicked(false);
+    this->ui->No_T_MAX->setChecked(false);
+
+    this->on_visualize_sample_points_clicked(false);
+    this->ui->visualize_sample_points->setChecked(false);
+
+    this->on_show_triangle_mapping_clicked(false);
+    this->ui->show_triangle_mapping->setChecked(false);
+
+    this->on_show_backward_clicked(false);
+    this->ui->show_backward->setChecked(false);
+
+    this->on_Flip_normal_clicked(false);
+    this->ui->Flip_normal->setChecked(false);
+
+    this->on_Grey_texture_clicked(false);
+    this->ui->Grey_texture->setChecked(false);
+
+    this->on_Disable_lighting_clicked(false);
+    this->ui->Disable_lighting->setChecked(false);
+
+    this->on_Animate_clicked(false);
+    this->ui->Animate->setChecked(false);
+
+    this->on_Color_map_of_VF_magnitude_clicked(false);
+    this->ui->Color_map_of_VF_magnitude->setChecked(false);
+
+    this->on_IBFV_off_clicked(false);
+    this->ui->IBFV_off->setChecked(false);
+
+    this->on_display_streamlines_clicked(false);
+    this->ui->display_streamlines->setChecked(false);
+
+    this->on_display_fixed_points_clicked(false);
+    this->ui->display_fixed_points->setChecked(false);
+
+    this->on_display_separatrices_clicked(false);
+    this->ui->display_separatrices->setChecked(false);
+
+    this->on_display_periodic_orbits_clicked(false);
+    this->ui->display_periodic_orbits->setChecked(false);
+
+    this->on_show_morse_sets_clicked(false);
+    this->ui->show_morse_sets->setChecked(false);
+
+    this->on_show_real_ID_clicked(false);
+    this->ui->show_real_ID->setChecked(false);
+
+    this->on_Show_Conley_MCG_clicked(false);
+    this->ui->Show_Conley_MCG->setChecked(false);
+
+    this->on_construct_minimal_MCG_clicked(false);
+    this->ui->construct_minimal_MCG->setChecked(false);
+
+    this->on_remove_diconnected_clicked(false);
+    this->ui->remove_diconnected->setChecked(false);
+
+    this->on_Euler_1_clicked(true);
+    this->ui->Euler_1->setChecked(true);
+
     ui->VF_Window->initializeGL2(fileName);
 
 

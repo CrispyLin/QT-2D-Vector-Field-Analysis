@@ -278,6 +278,9 @@ void MCGWindow::DrawGLScene(GLenum mode)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 
+    if(this->ShowMCGOn == false || object == nullptr || mcg == nullptr)
+        return;
+
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
