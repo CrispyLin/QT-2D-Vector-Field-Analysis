@@ -11,8 +11,3 @@ Note, I am currently using Qt 6.3.1. If you do not see the right version, you ma
 
 
 #Issues
-1. Cannot use glut.h.
-2. Since glew.h has to be defined before gl.h, everytime you build (newly) the project, you need to modify the ui_MainWindow.h as follow:
-    Move 
-    '#include <VectorFieldWindow.h>' 
-    to the top of the include section (anywhere before the QOpenGLWidget).
