@@ -76,6 +76,7 @@ public:
     CTraceBall traceball;
     Quaternion rvec;
 
+    bool    display = false;
     bool    MoveOrStop;
     int     ShowFixedPtOn;
     int     ShowSeparatricesOn;

@@ -25,6 +25,7 @@ public:
     void set_MCGOn(bool);
     void set_ECGOn(bool);
     void set_ShowConleyCircle(bool);
+    void set_VFDisplayOn(bool flag);
 private slots:
     void on_display_fixed_points_clicked(bool checked);
 

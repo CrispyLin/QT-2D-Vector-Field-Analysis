@@ -199,7 +199,6 @@ void VectorFieldWindow::initializeGL2(QString file){
 void VectorFieldWindow::paintGL(){
     this->DrawGLScene(GL_RENDER);
     this->update();
-//    this->draw();
 }
 
 
@@ -311,7 +310,6 @@ void VectorFieldWindow::middleButtonDown(QMouseEvent *event){
                       firstwin_rightx, firstwin_bottomy, 0, 0, 1, 1, position[0], position[1]);
     s = position[0];
     t = position[1];
-
     s_old = s;
     t_old = t;
 
@@ -383,22 +381,6 @@ void VectorFieldWindow::set_up_MainWindow_ptr(MainWindow *MW_ptr)
 
 
 void VectorFieldWindow::draw(){
-//    float r = 1.0f, g = 0.0f, b = 0.0f;
-//    glColor3f(r, g, b);
-//    glLoadIdentity();
-//    glTranslatef(-0.5, -0.5, 0);
-//    glBegin(GL_TRIANGLES);
-//    for(int i = 0; i < object->tlist.ntris; i++){
-//        const Triangle * t1 = object->tlist.tris[i];
-//        const Vertex* v1 = t1->verts[0];
-//        const Vertex* v2 = t1->verts[1];
-//        const Vertex* v3 = t1->verts[2];
-//        glVertex3f(v1->x, v1->y, v1->z);
-//        glVertex3f(v2->x, v2->y, v2->z);
-//        glVertex3f(v3->x, v3->y, v3->z);
-//    }
-//    glEnd();
-
     glColor3f(1, 1, 1);
     glBegin(GL_TRIANGLES);
     glVertex3f(1, 1, 0);
@@ -428,6 +410,7 @@ int VectorFieldWindow::InitGL( )
 
 void VectorFieldWindow::init_flags()
 {
+    this->display = false;
     this->mainWindowPtr->set_MCGOn(false);
     this->mainWindowPtr->set_ECGOn(false);
 
@@ -576,13 +559,10 @@ void VectorFieldWindow::makePatterns()
 int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Drawing
 {
     if (!IBFVOff) {
-        //printf("IBFVOFF!");
-
         this->IBFVSEffect(mode);
     }
     else
     {
-        //printf("IBFVON!");
         glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         draw_shadedObj(mode);
@@ -615,21 +595,6 @@ int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Dr
        Display the stored sample points along edges 02/09/2010
     */
     glDisable(GL_LIGHTING);
-    extern EdgeSamplePt_List *edge_samples;
-    if (ShowEdgeSamplesOn)
-    {
-        if (edge_samples != NULL)
-        {
-            //edge_samples->display(); display_sel_edges
-            edge_samples->display_sel_edges(selected_triangle,ShowBackward,sampling_edge);
-        }
-    }
-
-    if (ShowTriMappingOn)
-    {
-        morse_decomp->show_tri_mapping(selected_triangle);
-    }
-
 
     /**************************************************************
     /*
@@ -637,7 +602,24 @@ int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Dr
     */
     if (selected_triangle >=0 && selected_triangle < object->tlist.ntris)
     {
-        display_sel_tri(selected_triangle);
+        if(this->display)
+            display_sel_tri(selected_triangle);
+    }
+
+    if (ShowTriMappingOn)
+    {
+        if(this->display)
+            morse_decomp->show_tri_mapping(selected_triangle);
+    }
+
+    extern EdgeSamplePt_List *edge_samples;
+    if (ShowEdgeSamplesOn)
+    {
+        if (edge_samples != NULL)
+        {
+            if(this->display)
+                edge_samples->display_sel_edges(selected_triangle,ShowBackward,sampling_edge);
+        }
     }
 
 
@@ -654,7 +636,6 @@ int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Dr
     glDepthFunc(GL_LESS);
 
     glColor3f (1, 1, 1);
-
 
     glDisable(GL_COLOR_MATERIAL);
 
@@ -1054,48 +1035,53 @@ void    VectorFieldWindow::draw_shadedObj(GLenum mode)
 
 void    VectorFieldWindow::without_antialiasing(GLenum mode)
 {
-    if(ShowConnectionRegion==1)
-    {
-        display_MCG_connections();
+    if(this->display){
+        if(ShowConnectionRegion==1)
+        {
+            display_MCG_connections();
+        }
+
+        if(ShowSCCsOn == 1)
+        {
+            display_SCCs(mode);
+        }
+
+
+
+        if(ShowColorVFMagOn == true)
+        {
+            display_color_VFMag();
+        }
+
+        if (ShowTDistribution)
+            display_tau_distribution();
+
+        if (ShowDiffECGMCG)
+            display_diff_ECG_MCG();
+
+        if (ShowMCGDiff)
+            display_diff_MCGs();
     }
 
-    if(ShowSCCsOn == 1)
-    {
-        display_SCCs(mode);
-    }
-
-
-
-    if(ShowColorVFMagOn == true)
-    {
-        display_color_VFMag();
-    }
-
-    if (ShowTDistribution)
-        display_tau_distribution();
-
-    if (ShowDiffECGMCG)
-        display_diff_ECG_MCG();
-
-    if (ShowMCGDiff)
-        display_diff_MCGs();
 
     glDisable(GL_BLEND);
 
-    ////show separatrices
-    if(ShowSeparatricesOn == 1)
-        display_separatrices(mode);
+    if(this->display){
+        ////show separatrices
+        if(ShowSeparatricesOn == 1)
+            display_separatrices(mode);
 
 
-    //////Display all the detected limit cycles
-    if(ShowPeriodicOrbitsOn == 1)
-        display_periodicorbits(mode);
+        //////Display all the detected limit cycles
+        if(ShowPeriodicOrbitsOn == 1)
+            display_periodicorbits(mode);
 
 
-    //glDisable(GL_COLOR_MATERIAL);
-    if(EvenStreamlinePlacement == true)
-    {
-        display_even_streamlines(mode); /*display the calculated evenly placed streamlines*/
+        //glDisable(GL_COLOR_MATERIAL);
+        if(EvenStreamlinePlacement == true)
+        {
+            display_even_streamlines(mode); /*display the calculated evenly placed streamlines*/
+        }
     }
 
     glEnable(GL_LIGHTING);
@@ -1103,8 +1089,10 @@ void    VectorFieldWindow::without_antialiasing(GLenum mode)
     glEnable(GL_LIGHT2);
 
     /* Display the legends for the objects in the vector field */
-    if(this->ShowFixedPtOn == 1)
-        display_FixedPtsIcon(mode);
+    if(this->display){
+        if(this->ShowFixedPtOn == 1)
+            display_FixedPtsIcon(mode);
+    }
 }
 
 
@@ -1541,6 +1529,7 @@ void    VectorFieldWindow::display_SCCs(GLenum mode)
             //glColor4f(0, 0, 0, 1);//black
             int gSCC=local_decomp->scclist->scccomponents[i]->global_SCC;
             int mcgID=morse_decomp->scclist->scccomponents[gSCC]->node_index;
+            if(mcgID < 0) continue;
             switch(mcg->nlist->mnodes[mcgID]->type)
             {
             case 0:glColor4f(0, 1, 0, 0.4);//0-source_like, 1-sink_like, 2-saddle_like
@@ -2030,14 +2019,8 @@ void VectorFieldWindow::HitProcess(double ss, double st)
     GLint	vp[4] = {0, 0 ,1, 1};
     int hits;
 
-    //glGetIntegerv(GL_VIEWPORT, vp);
-
     ////Build the selection buffer here
     glSelectBuffer(128, selectBuffer);
-
-    //glMatrixMode(GL_MODELVIEW);
-    //glPushMatrix();
-
 
     (void)glRenderMode(GL_SELECT);
     glInitNames();

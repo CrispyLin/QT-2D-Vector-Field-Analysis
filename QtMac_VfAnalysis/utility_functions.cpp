@@ -47,6 +47,7 @@ void ScreenToSecondWin(
     t = (double) world_bottomy + ratioy * win_world_sizey;
 }
 
+
 void display_Obj(GLenum mode)
 {
     int i, j;

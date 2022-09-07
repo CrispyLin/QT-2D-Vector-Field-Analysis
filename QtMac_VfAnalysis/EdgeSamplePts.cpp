@@ -4,6 +4,7 @@
 */
 #include "GL_LIB/glew.h"
 #include "BuildGeom/Geometry.h"
+#include "GL_LIB/glut.h"
 #include "Others/TraceBall.h"
 
 
@@ -39,9 +40,6 @@ cal_rot_mat(icVector3 vec1, icVector3 vec2, float rotmat[4][4])
 
     icVector3 vt((1.-ca)*v);
 
-    //rotM.M11 = vt.x * v.x + ca;
-    //rotM.M22 = vt.y * v.y + ca;
-    //rotM.M33 = vt.z * v.z + ca;
 
     rotmat[0][0] = vt.entry[0]*v.entry[0]+ca;
     rotmat[1][1] = vt.entry[1]*v.entry[1]+ca;
@@ -51,12 +49,6 @@ cal_rot_mat(icVector3 vec1, icVector3 vec2, float rotmat[4][4])
     vt.entry[2] *= v.entry[0];
     vt.entry[1] *= v.entry[2];
 
-    //rotM.M12 = vt.x - vs.z;
-    //rotM.M13 = vt.z + vs.y;
-    //rotM.M21 = vt.x + vs.z;
-    //rotM.M23 = vt.y - vs.x;
-    //rotM.M31 = vt.z - vs.y;
-    //rotM.M32 = vt.y + vs.x;
 
     rotmat[0][1] = vt.entry[0] - vs.entry[2];
     rotmat[0][2] = vt.entry[2] + vs.entry[1];
@@ -218,32 +210,29 @@ EdgeSamplePt_List::display_sel_edges(int tri, bool backward,int sampling_edge)
 
     Triangle *t = object->tlist.tris[tri];
 
-    int i, j;
+    int i;
 
-    float hsv[3], rgb[3];
+    // hightlight the selected edge with black
     glDisable(GL_LIGHTING);
 
     glDepthFunc(GL_LEQUAL);
     glBegin(GL_LINES);
-    glLineWidth(0.5);
-    glColor3f(0.3, 0.3, 0.3);
+    glColor3f(0, 0, 0);
+    glLineWidth(2.);
     for (i=0; i<t->nverts; i++)
     {
+        if (i != sampling_edge) continue;
         Edge *cur_e = t->edges[i];
         glVertex3f(cur_e->verts[0]->x, cur_e->verts[0]->y, cur_e->verts[0]->z);
         glVertex3f(cur_e->verts[1]->x, cur_e->verts[1]->y, cur_e->verts[1]->z);
     }
     glEnd();
-    glLineWidth(1.);
 
-    GLUquadricObj *q;
-    q = gluNewQuadric();
 
     icVector3 z(0, 0, 1);
     float rot_mat[4][4];
 
 
-    glBegin(GL_POINTS);
     for (i=0; i<num; i++)
     {
         EdgeSamplePt *cur_p = samples[i];
@@ -256,30 +245,20 @@ EdgeSamplePt_List::display_sel_edges(int tri, bool backward,int sampling_edge)
 
         icVector3 ave_norm = 0.5*(e->verts[0]->normal+e->verts[1]->normal);
         normalize (ave_norm);
-        double x[3]={0.};
-        cur_p->get_sample_coords(x);
+        double x[3] = { cur_p->point.p[0], cur_p->point.p[1], cur_p->point.p[2] };
+        //cur_p->get_sample_coords(x);
 
-        hsv[1]=0.8;
-        hsv[2]=1;
-        hsv[0]=360.-360.*cur_p->alpha_;
 
-        HsvRgb(hsv, rgb);
-        //glColor3fv(rgb);
-        qInfo() << "displaying edges";
-        glColor4f(rgb[0],rgb[1],rgb[2],1.);
-        /*if(cur_p->backward)glColor3f(1,0,1);
-        else glColor3f(1,1,0);*/
-
-        if(backward)
+        if(backward == 0) // forward
         {
             if(!cur_p->backward)continue;
+            glColor3f(0, 1, 0); // green
         }
-        else
+        else // backward
         {
             if(cur_p->backward)continue;
-
+            glColor3f(1, 0, 0); // red
         }
-
 
         cal_rot_mat(z, ave_norm, rot_mat);
 
@@ -287,44 +266,9 @@ EdgeSamplePt_List::display_sel_edges(int tri, bool backward,int sampling_edge)
         glTranslatef(x[0]+0.002*ave_norm.entry[0], x[1]+0.002*ave_norm.entry[1], x[2]+0.002*ave_norm.entry[2]);
         // we need to define a rotation here
         multmatrix(rot_mat);
-        gluDisk (q, 0.0, 0.008/g_zoom_factor, 20, 1);
+        glutSolidSphere(0.002, 20, 20);
         glPopMatrix();
-
-        //gluDisk(
-
-        /*
-           Draw the mapping triangle now
-        */
-
-        Triangle *map_t = object->tlist.tris[cur_p->end_tri];
-        if (cur_p->end_tri < 0 || cur_p->end_tri >= object->tlist.ntris) continue;
-
-        float center[3];
-        center[0]=(map_t->verts[0]->x+map_t->verts[1]->x+map_t->verts[2]->x)/3;
-        center[1]=(map_t->verts[0]->y+map_t->verts[1]->y+map_t->verts[2]->y)/3;
-        center[2]=(map_t->verts[0]->z+map_t->verts[1]->z+map_t->verts[2]->z)/3;
-        float h[3];
-        h[0]=map_t->verts[0]->normal.entry[0];
-        h[1]=map_t->verts[0]->normal.entry[1];
-        h[2]=map_t->verts[0]->normal.entry[2];
-
-
-        glBegin(GL_LINES);
-
-        glVertex3f(x[0]+h[0]*0.003,x[1]+h[1]*0.003,x[2]+h[2]*0.003);
-        glVertex3f(center[0]+h[0]*0.003,center[1]+h[1]*0.003,center[2]+h[2]*0.003);
-        glEnd();
-
-
-        glBegin(GL_TRIANGLES);
-        glVertex3f(map_t->verts[0]->x, map_t->verts[0]->y, map_t->verts[0]->z);
-        glVertex3f(map_t->verts[1]->x, map_t->verts[1]->y, map_t->verts[1]->z);
-        glVertex3f(map_t->verts[2]->x, map_t->verts[2]->y, map_t->verts[2]->z);
-        glEnd();
     }
-    glEnd();
-
-    gluDeleteQuadric (q);
 
     glDepthFunc(GL_LESS);
 }

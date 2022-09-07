@@ -72,14 +72,16 @@ void MainWindow::print_debug_message(QString message)
 void MainWindow::set_MCGOn(bool flag)
 {
     this->ui->MCG_Window->ShowMCGOn = flag;
-    //this->ui->MCG_Window->update_scene();
 }
 
 // should only be called when you  done updating ECG
 void MainWindow::set_ECGOn(bool flag)
 {
     this->ui->ECG_Window->ShowECGOn = flag;
-    //this->ui->ECG_Window->update_scene();
+}
+
+void MainWindow::set_VFDisplayOn(bool flag){
+    this->ui->VF_Window->display = flag;
 }
 
 // should only be called when you done updating MCG
@@ -158,6 +160,7 @@ void MainWindow::on_Show_Conley_MCG_clicked(bool checked)
 void MainWindow::on_ComputeButton_clicked()
 {
     this->set_MCGOn(false);
+    this->set_VFDisplayOn(false);
 
     g_start = clock();
 
@@ -208,6 +211,7 @@ void MainWindow::on_ComputeButton_clicked()
 
 
     this->set_MCGOn(true);
+    this->set_VFDisplayOn(true);
     this->ui->VF_Window->ShowSCCsOn = 1;
     this->ui->show_morse_sets->setChecked(true);
 }
@@ -258,6 +262,7 @@ void MainWindow::on_Refine_button_clicked()
     print_debug_message(str);
 
     this->set_MCGOn(true);
+    this->set_VFDisplayOn(true);
 }
 
 
@@ -313,6 +318,8 @@ void MainWindow::on_IBFV_off_clicked(bool checked)
 
 void MainWindow::on_Place_Streamlines_Button_clicked()
 {
+    this->set_VFDisplayOn(false);
+
     print_debug_message( "----------------" );
     print_debug_message( "Start placing streamlines..." );
     g_start = clock();
@@ -350,6 +357,7 @@ void MainWindow::on_Place_Streamlines_Button_clicked()
     print_debug_message( "----------------" );
     this->ui->VF_Window->EvenStreamlinePlacement = true;
     this->ui->display_streamlines->setChecked(true);
+    this->set_VFDisplayOn(true);
 }
 
 
@@ -398,6 +406,8 @@ void MainWindow::on_display_connection_region_clicked(bool checked)
 
 void MainWindow::on_Detect_FixedPts_clicked()
 {
+    this->set_VFDisplayOn(false);
+
     QString str = "----------------\n";
     g_start = clock();
     str.append("Start detecting fixed points...\n");
@@ -412,6 +422,7 @@ void MainWindow::on_Detect_FixedPts_clicked()
     this->print_debug_message(str);
 
     this->on_display_fixed_points_clicked(true);
+    this->set_VFDisplayOn(true);
     this->ui->display_fixed_points->setChecked(true);
 }
 
@@ -419,7 +430,7 @@ void MainWindow::on_Detect_FixedPts_clicked()
 void MainWindow::on_Compute_sep_clicked()
 {
     this->set_ECGOn(false);
-
+    this->set_VFDisplayOn(false);
 
     g_start = clock();
     QString str = "----------------\n";
@@ -461,6 +472,7 @@ void MainWindow::on_Compute_sep_clicked()
     this->set_ECGOn(true);
 
     this->on_display_separatrices_clicked(true);
+    this->set_VFDisplayOn(true);
     this->ui->display_separatrices->setChecked(true);
 }
 
@@ -468,9 +480,10 @@ void MainWindow::on_Compute_sep_clicked()
 void MainWindow::on_Extract_POs_clicked()
 {
     // disable ECG
-    set_ECGOn(false);
+    this->set_ECGOn(false);
     // disable MCG
     this->set_MCGOn(false);
+    this->set_VFDisplayOn(false);
 
 
     g_start = clock();
@@ -521,6 +534,7 @@ void MainWindow::on_Extract_POs_clicked()
     set_ECGOn(true);
 
     this->on_display_periodic_orbits_clicked(true);
+    this->set_VFDisplayOn(true);
     this->ui->display_periodic_orbits->setChecked(true);
 }
 
@@ -528,6 +542,7 @@ void MainWindow::on_Extract_POs_clicked()
 void MainWindow::on_Morse_Decomp_clicked()
 {
     this->set_MCGOn(false);
+    this->set_VFDisplayOn(false);
 
     if(object->slist.nsingularities == 0)
         object->capture_Singularities();
@@ -562,6 +577,7 @@ void MainWindow::on_Morse_Decomp_clicked()
     this->print_debug_message(str);
 
     this->set_MCGOn(true);
+    this->set_VFDisplayOn(true);
 
     this->on_show_morse_sets_clicked(true);
     this->ui->show_morse_sets->setChecked(true);
@@ -579,6 +595,7 @@ void MainWindow::on_compute_region_clicked()
 
     // disable mcg
     this->set_MCGOn(false);
+    this->set_VFDisplayOn(false);
 
     if(Cal_Regions == true){
         /*compute the MCG*/
@@ -595,6 +612,7 @@ void MainWindow::on_compute_region_clicked()
 
     this->on_display_connection_region_clicked(true);
     this->ui->display_connection_region->setChecked(true);
+    this->set_VFDisplayOn(true);
 }
 
 
@@ -607,6 +625,7 @@ void MainWindow::on_No_T_MAX_clicked(bool checked)
 void MainWindow::on_Auto_Refine_Btn_clicked()
 {
     this->set_MCGOn(false);
+    this->set_VFDisplayOn(false);
 
     QString min_pri_str = this->ui->min_priority_LineEdit->text();
     this->ui->VF_Window->min_pri = min_pri_str.toInt();
@@ -688,6 +707,7 @@ void MainWindow::on_Auto_Refine_Btn_clicked()
 
     // enable MCG and show the morse sets
     this->set_MCGOn(true);
+    this->set_VFDisplayOn(true);
     this->on_show_morse_sets_clicked(true);
     this->ui->show_morse_sets->setChecked(true);
 }
@@ -707,6 +727,7 @@ void MainWindow::on_Browsers_Button_clicked()
 
     this->set_MCGOn(false);
     this->set_ECGOn(false);
+    this->set_VFDisplayOn(false);
 
     // restore ui and flags
     this->on_display_connection_region_clicked(false);
@@ -773,6 +794,4 @@ void MainWindow::on_Browsers_Button_clicked()
     this->ui->Euler_1->setChecked(true);
 
     ui->VF_Window->initializeGL2(fileName);
-
-
 }

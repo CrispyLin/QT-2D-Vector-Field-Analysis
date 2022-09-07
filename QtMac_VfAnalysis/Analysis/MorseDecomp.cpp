@@ -2098,7 +2098,7 @@ void MorseDecomp::trace_all_edges_build_di_edges_adp(double tau, int backward)
 
             else
                 adp_edge_sampling(st1, st2, v1->imgtri, v2->imgtri, i, neighbor_tri,
-                                  tau, backward);
+                                  tau, backward, e->index);
 
         }
     }
@@ -2173,14 +2173,13 @@ void MorseDecomp::trace_an_edge_build_di_edges_adp(double st1[3], double st2[3],
 /****************************************************************/
 /*  02/10/2010
 */
-void
-MorseDecomp::adp_edge_sampling(double st1[3],
-                               double st2[3],
-                               int t1, int t2,
-                               int tri,
-                               int neighbor_tri,
-                               double tau,
-                               int backward)
+void MorseDecomp::adp_edge_sampling(double st1[3],
+                                double st2[3],
+                                int t1, int t2,
+                                int tri,
+                                int neighbor_tri,
+                                double tau,
+                                int backward, int edge_id)
 {
     if (tri < 0 || neighbor_tri < 0) return;
 
@@ -2204,12 +2203,15 @@ MorseDecomp::adp_edge_sampling(double st1[3],
 
     // trace from the first point
     double v1_end[3]={0.};
-    //trace_Ver(tri, st1, v1_end, t1, tau, backward);
 
     if(backward == 0)
         trace_Ver_f(tri, st1, v1_end, t1, tau);
     else
         trace_Ver_b(tri, st1, v1_end, t1, tau);
+
+    //add the edge to the edge_samples
+    EdgeSamplePt* p = new EdgeSamplePt(edge_id, 0., v1_end, backward);
+    edge_samples->append(p);
 
     while(!stack_pts.empty())
     {
@@ -2229,21 +2231,8 @@ MorseDecomp::adp_edge_sampling(double st1[3],
         else
             trace_Ver_b(tri, st2, v2_end, t2, tau);
 
-        /************************************************************/
-        /*
-          Add a sample point here  02/09/2010
-        */
-        //if (save_edge_samples)
-        //{
-        //	Edge *cur_e = object->elist.edges[current_sample_edge];
-        //	icVector3 len_dir(st2[0]-cur_e->verts[0]->x,
-        //		st2[1]-cur_e->verts[0]->y, st2[2]-cur_e->verts[0]->z);
-        //	double alpha = length(len_dir)/cur_e->length;
-        //	EdgeSamplePt *oneSample = new EdgeSamplePt(current_sample_edge, alpha);
-        //	oneSample->end_tri = t2;   // modified at 02/10/2010
-        ////	oneSample->backward=backward;
-        //	edge_samples->append(oneSample);
-        //}
+        p = new EdgeSamplePt(edge_id, 0., v2_end, backward);
+        edge_samples->append(p);
 
         icVector3 dis;
         dis.entry[0] = st1[0]-st2[0];
@@ -2327,8 +2316,6 @@ MorseDecomp::adp_edge_sampling(double st1[3],
     }
 
 }
-
-
 
 void MorseDecomp::trace_recursive_an_edge(double v1[3],
                                           double v2[3],

@@ -48,7 +48,6 @@ void MCGWindow::draw_nodes(GLenum mode)
 
         draw_solid_circle(mcg->nlist->mnodes[i]->pos.entry[0],
             mcg->nlist->mnodes[i]->pos.entry[1], 0.04);
-
         //draw the new conley index out circle
         if(ShowConleyCircle==true)
         {
@@ -338,16 +337,17 @@ void MCGWindow::HitProcessforGraph(double ss, double tt)
     ////Build the selection buffer here
     glSelectBuffer(SELECTBUFFERSIZE, selectBuffer);
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-
     glRenderMode(GL_SELECT);
     glInitNames();
     glPushName(0);
 
-    // 0.01 is better than 0.005
-    gluPickMatrix(ss, tt, 0.01, 0.01, vp );  ////set a larger pick window for element selection
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    gluPickMatrix(ss, tt, 0.1, 0.1, vp );  ////set a larger pick window for element selection
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
     glOrtho(0, 4,  0, 2,  0, 50);
 
     draw_nodes(GL_SELECT);
@@ -396,17 +396,19 @@ void MCGWindow::mouseMoveEvent(QMouseEvent *event)
     double s, t;
 
     int firstwin_leftbottom_x = 0;
-    int firstwin_leftbottom_y = 150;
+    int firstwin_leftbottom_y = 200;
     int firstwin_rightx = 400;
-    int firstwin_bottomy = 150;
+    int firstwin_bottomy = 200;
 
     QPointF p = event->pos();
 
     ScreenToSecondWin(p.x(), p.y(), firstwin_leftbottom_x, firstwin_leftbottom_y,
                     firstwin_rightx, firstwin_bottomy, 0, 0, 4, 2, s, t);
-
     if( (s<0) || (s > 4) || (t < 0) || (t > 2)){
         return;
     }
+
     this->HitProcessforGraph(s, t);
+    this->s2_old = s;
+    this->t2_old = t;
 }

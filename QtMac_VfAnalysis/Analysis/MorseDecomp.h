@@ -87,7 +87,7 @@ public:
     /*   non-recursive edge sampling  */
     void adp_edge_sampling(double st1[3], double st2[3],
                            int t1, int t2, int tri,
-                           int neighbor_tri, double tau, int backward);
+                           int neighbor_tri, double tau, int backward, int edge_id);
     void show_tri_mapping (int);
 
     bool obtain_connected_imgs(int);     // judge whether the image and preimage of a given triangle is connected  02/18/2010

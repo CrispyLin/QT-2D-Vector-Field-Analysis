@@ -55,8 +55,23 @@ public:
     double alpha_;   // the alpha value along the edge
     int end_tri;     // the end triangle containing the image of the sample
     int backward;//0=forward, 1=backward
+    point3 point;
 
-    EdgeSamplePt(int edgeid, double alpha) { which_edge = edgeid; alpha_ = alpha; }
+    EdgeSamplePt(int edgeid, double alpha, point3 in_p, int backward) {
+        which_edge = edgeid; alpha_ = alpha;
+        this->point.p[0] = in_p.p[0];
+        this->point.p[1] = in_p.p[1];
+        this->point.p[2] = in_p.p[2];
+        this->backward = backward;
+    }
+
+    EdgeSamplePt(int edgeid, double alpha, double in_p[3], int backward) {
+        which_edge = edgeid; alpha_ = alpha;
+        this->point.p[0] = in_p[0];
+        this->point.p[1] = in_p[1];
+        this->point.p[2] = in_p[2];
+        this->backward = backward;
+    }
 
     void get_sample_coords(double x[3]);  // compute the actual 3D coordinates of this sample point
 };
