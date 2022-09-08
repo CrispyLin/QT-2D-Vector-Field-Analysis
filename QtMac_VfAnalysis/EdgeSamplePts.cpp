@@ -218,7 +218,7 @@ EdgeSamplePt_List::display_sel_edges(int tri, bool backward,int sampling_edge)
     glDepthFunc(GL_LEQUAL);
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glLineWidth(2.);
+    glLineWidth(3.);
     for (i=0; i<t->nverts; i++)
     {
         if (i != sampling_edge) continue;
@@ -237,7 +237,6 @@ EdgeSamplePt_List::display_sel_edges(int tri, bool backward,int sampling_edge)
     {
         EdgeSamplePt *cur_p = samples[i];
         Edge *e = object->elist.edges[cur_p->which_edge];
-        //Edge *e = object->elist.edges[ sampling_edge];
 
         if (e!=t->edges[0] && e!=t->edges[1] && e!=t->edges[2])
             continue;

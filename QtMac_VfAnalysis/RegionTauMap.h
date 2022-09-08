@@ -31,13 +31,13 @@ private:
 
     typedef struct TempEdge
     {
-        int edge_index;                   //Edge index (unique)
-        int node_index1, node_index2;     //Indices of the two nodes this edge connects
-        unsigned char visited;                      //For graph searching
-        //int trajID;                       //the trajetory index of the corresponding separatrix 2/23/06
-        //double flow_length;               //store the flow length of the corresponding separatrix 08/10/06
-        ////double geo_length;				  //store the geometry length of the two nodes 08/10/06
-        bool cancelled;
+    int edge_index;                   //Edge index (unique)
+    int node_index1, node_index2;     //Indices of the two nodes this edge connects
+    unsigned char visited;                      //For graph searching
+    //int trajID;                       //the trajetory index of the corresponding separatrix 2/23/06
+    //double flow_length;               //store the flow length of the corresponding separatrix 08/10/06
+    ////double geo_length;				  //store the geometry length of the two nodes 08/10/06
+    bool cancelled;
     } TempEdge;
 
     TempEdge *tedges;
@@ -66,16 +66,16 @@ private:
     void Region_AddToEdge(int node1, int node2, int& cur_index);
     void trace_center_tris_build_edge(int tri, double tau, int backward);
     void init_local_Edges(void);
-    void trace_an_edge_build_di_edges_adp(double st1[3], double st2[3], int t1, int t2, int tri, int neighbor_tri, double tau, int backward);
-    void trace_recursive_an_edge(double v1[3], double v2[3], int& t1, int tri, int neighbor_tri, double tau, int backward, int& level);
+    void trace_an_edge_build_di_edges_adp(double st1[3], double st2[3], int t1, int t2, int tri, int neighbor_tri, double tau, int backward, int edge_id);
+    void trace_recursive_an_edge(double v1[3], double v2[3], int& t1, int tri, int neighbor_tri, double tau, int backward, int& level, int edge_id);
     /*   non-recursive edge sampling  */
     stack <point3> stack_pts;
     void adp_edge_sampling(double st1[3], double st2[3],
-                           int t1, int t2, int tri,
-                           int neighbor_tri, double tau, int backward);
+                            int t1, int t2, int tri,
+                            int neighbor_tri, double tau, int backward, int edge_id);
     void adp_edge_sampling_2(double st1[3], double st2[3],
-                             int t1, int t2, int tri,
-                             int neighbor_tri, double tau, int backward);
+                            int t1, int t2, int tri,
+                            int neighbor_tri, double tau, int backward, int edge_id);
 
     void BuildLocalRegion(void);
     void init_local_graph(void);
@@ -189,17 +189,18 @@ public:
     void trace_local_Verts_f2(double tau);
     void trace_local_Verts_b2(double tau);
 
-    void trace_recursive_an_edge_f(double v1[3], double v2[3], int& t1, int tri, int neighbor_tri, double tau, int& level);
-    void trace_recursive_an_edge_b(double v1[3], double v2[3], int& t1, int tri, int neighbor_tri, double tau, int& level);
+    void trace_recursive_an_edge_f(double v1[3], double v2[3], int& t1, int tri, int neighbor_tri, double tau, int& level, int edge_id);
+    void trace_recursive_an_edge_b(double v1[3], double v2[3], int& t1, int tri, int neighbor_tri, double tau, int& level, int edge_id);
     void trace_all_edges_build_di_edges_adp_f(double tau);
     void trace_all_edges_build_di_edges_adp_b(double tau);
     //void trace_recursive_an_edge_f(double v1[3], double v2[3], int& t1, int tri, int neighbor_tri, double tau, int& level);
     //void trace_recursive_an_edge_b(double v1[3], double v2[3], int& t1, int tri, int neighbor_tri, double tau, int& level);
-    void trace_an_edge_build_di_edges_adp_f(double st1[3], double st2[3], int t1, int t2, int tri, int neighbor_tri, double tau);
-    void trace_an_edge_build_di_edges_adp_b(double st1[3], double st2[3], int t1, int t2, int tri, int neighbor_tri, double tau);
+    void trace_an_edge_build_di_edges_adp_f(double st1[3], double st2[3], int t1, int t2, int tri, int neighbor_tri, double tau, int edge_id);
+    void trace_an_edge_build_di_edges_adp_b(double st1[3], double st2[3], int t1, int t2, int tri, int neighbor_tri, double tau, int edge_id);
 
-    double TriangleTau(int tri);
+double TriangleTau(int tri);
 
-    double ConnectionTau();
+double ConnectionTau();
 };
-#endif // REGIONTAUMAP_H
+
+#endif

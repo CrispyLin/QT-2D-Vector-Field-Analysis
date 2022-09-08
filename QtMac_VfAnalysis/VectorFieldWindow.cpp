@@ -602,8 +602,7 @@ int VectorFieldWindow::DrawGLScene(GLenum mode) // Here's Where We Do All The Dr
     */
     if (selected_triangle >=0 && selected_triangle < object->tlist.ntris)
     {
-        if(this->display)
-            display_sel_tri(selected_triangle);
+        display_sel_tri(selected_triangle);
     }
 
     if (ShowTriMappingOn)

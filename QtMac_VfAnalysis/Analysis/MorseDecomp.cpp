@@ -1487,30 +1487,8 @@ void MorseDecomp::trace_all_Verts(double tau, int backward)
     {
         v = object->vlist.verts[i];
 
-        /*   removed by Guoning 07/22/2010 */
-        //if(length(v->t_vec) < 1e-10)
-        //{
-        //	v->imgtri = -1;
-        //	continue;   //probably no vector value on it
-        //}
-
-        // we current ignore the non-magnifold vertex
-        //if (v->ncorners + 1 != v->nedges) continue;
-
-        //_cprintf ("Processing vertex %d\n", i);
-
-        //if (i==222)
-        //{
-        //	int stop = 0;
-        //}
-
         /* we can choose the triangle that the flow will lead the vertex go into */
         temp->pass_vertex(v->index, tri_id, backward);
-
-        //
-        //FILE *fp=fopen("tracing_tris.txt", "a");
-        //fprintf(fp, "%d\n", tri_id);
-        //fclose(fp);
 
         if(tri_id < 0)
         {
@@ -1520,30 +1498,14 @@ void MorseDecomp::trace_all_Verts(double tau, int backward)
         stP.entry[0] = v->x;
         stP.entry[1] = v->y;
         stP.entry[2] = v->z;
-        //face = object->tlist.tris[tri_id];
-        //for(k = 0; k < 3; k++)
-        //{
-        //	if(i == face->verts[k]->index)
-        //		break;
-        //}
 
-        //alpha[k] = 1-0.00001;
-        //alpha[(k+1)%3]=alpha[(k+2)%3]=0.000005;
-
-        //lp[0] = alpha[1]*face->x1+alpha[2]*face->x2;
-        //lp[1] = alpha[2]*face->y2;
-
-        //icVector3 glv = lp[0]*face->LX + lp[1]*face->LY;
-        //stP.entry[0] = face->verts[0]->x+glv.entry[0];
-        //stP.entry[1] = face->verts[0]->y+glv.entry[1];
-        //stP.entry[2] = face->verts[0]->z+glv.entry[2];
-
-        //trace_Ver(tri_id, stP.entry, newP.entry, end_tris, tau, backward);
 
         if (backward == 0)
             trace_Ver_f(tri_id, stP.entry, newP.entry, end_tris, tau);
         else
             trace_Ver_b(tri_id, stP.entry, newP.entry, end_tris, tau);
+
+
 
         if (end_tris > -1)
         {
@@ -1555,17 +1517,6 @@ void MorseDecomp::trace_all_Verts(double tau, int backward)
         v->img_tau[2] = newP.entry[2];
 
         v->imgtri = end_tris;
-
-        //if(backward == 0)
-        //	v->end_tri[0] = end_tris;
-        //else
-        //	v->end_tri[1] = end_tris;
-
-        /*save the information for this vertex*/
-        //if(backward == 0)
-        //	v->tau[0] = trace_time;
-        //else
-        //	v->tau[1] = trace_time;
 
     }
 
@@ -1691,19 +1642,7 @@ MorseDecomp::trace_Ver_f(int tri,
             return;
         }
 
-        //if (object->tlist.tris[cur_face]->has_zero_vec)
-        //{
-        //	en[0] = globalp[0];
-        //	en[1] = globalp[1];
-        //	en[2] = globalp[2];
-        //	en_tri = cur_face;
-
-        //	delete temp;
-        //	return;
-        //}
-
         pre_face = cur_face;
-        //cur_face = temp->trace_in_triangle_tau(cur_face, globalp, backward, tau, gt_tau, flag);
 
         cur_face = temp->trace_in_triangle_tau_f(cur_face, globalp, tau, gt_tau, flag);
 
@@ -1769,17 +1708,6 @@ MorseDecomp::trace_Ver_b(int tri,
             return;
         }
 
-        //if (object->tlist.tris[cur_face]->has_zero_vec)
-        //{
-        //	en[0] = globalp[0];
-        //	en[1] = globalp[1];
-        //	en[2] = globalp[2];
-        //	en_tri = cur_face;
-
-        //	delete temp;
-        //	return;
-        //}
-
         pre_face = cur_face;
         //cur_face = temp->trace_in_triangle_tau(cur_face, globalp, backward, tau, gt_tau, flag);
 
@@ -1841,17 +1769,6 @@ MorseDecomp::trace_Ver_local(int tri, double st[3], double en[3], int &en_tri, d
             delete temp;
             return;
         }
-
-        //if (object->tlist.tris[cur_face]->has_zero_vec)
-        //{
-        //	en[0] = globalp[0];
-        //	en[1] = globalp[1];
-        //	en[2] = globalp[2];
-        //	en_tri = cur_face;
-
-        //	delete temp;
-        //	return;
-        //}
 
         if(dg->nlist->dirnodes[cur_face]->sscomp_index != scc_id)
         {
@@ -1962,7 +1879,6 @@ void MorseDecomp::trace_center_tri_build_edge(int tri, double tau, int backward)
     center[2] /= 3.;
 
     /*start tracing here*/
-    //trace_Ver(tri, center, center, endtri, tau, backward);
 
     if (backward == 0)
         trace_Ver_f(tri, center, center, endtri, tau);
@@ -2094,7 +2010,7 @@ void MorseDecomp::trace_all_edges_build_di_edges_adp(double tau, int backward)
 
             if (enFastRefinement)
                 trace_an_edge_build_di_edges_adp(st1, st2, v1->imgtri, v2->imgtri, i, neighbor_tri,
-                                                 tau, backward);
+                                                 tau, backward, e->index);
 
             else
                 adp_edge_sampling(st1, st2, v1->imgtri, v2->imgtri, i, neighbor_tri,
@@ -2149,7 +2065,7 @@ bool MorseDecomp::are_close_neighbors(int t1, int t2)
 
 void MorseDecomp::trace_an_edge_build_di_edges_adp(double st1[3], double st2[3],
                                                    int t1, int t2, int tri,
-                                                   int neighbor_tri, double tau, int backward)
+                                                   int neighbor_tri, double tau, int backward, int edge_id)
 {
     /*do one more recursive here*/
     int level = 1;
@@ -2164,10 +2080,10 @@ void MorseDecomp::trace_an_edge_build_di_edges_adp(double st1[3], double st2[3],
     level = 1;
 
     /*call the recursive adaptive edge sampling for the first half of the edge*/
-    trace_recursive_an_edge(st1, st2, t1, tri, neighbor_tri, tau, backward, level);
+    trace_recursive_an_edge(st1, st2, t1, tri, neighbor_tri, tau, backward, level, edge_id);
 
     /*call the recursive adaptive edge sampling for the second half of the edge*/
-    trace_recursive_an_edge(stack_st, middle_p, t2, tri, neighbor_tri, tau, backward, level);
+    trace_recursive_an_edge(stack_st, middle_p, t2, tri, neighbor_tri, tau, backward, level, edge_id);
 }
 
 /****************************************************************/
@@ -2324,7 +2240,7 @@ void MorseDecomp::trace_recursive_an_edge(double v1[3],
                                           int neighbor_tri,
                                           double tau,
                                           int backward,
-                                          int &level)
+                                          int &level, int edge_id)
 {
     double stack_v[3];  /*this could only have one element in one level*/
     int top = 0;
@@ -2345,23 +2261,13 @@ void MorseDecomp::trace_recursive_an_edge(double v1[3],
     else
         trace_Ver_b(tri, v2, v2_end, t2, tau);
 
-    /************************************************************/
-    /*
-      Add a sample point here  02/09/2010
-    */
-    //Edge *cur_e = object->elist.edges[current_sample_edge];
-    //icVector3 len_dir(v2[0]-cur_e->verts[0]->x,
-    //	v2[1]-cur_e->verts[0]->y, v2[2]-cur_e->verts[0]->z);
-    //double alpha = length(len_dir)/cur_e->length;
-    //EdgeSamplePt *oneSample = new EdgeSamplePt(current_sample_edge, alpha);
-    //oneSample->end_tri = t2;   // modified at 02/10/2010
-    //edge_samples->append(oneSample);
-
-    ///////////////////////////////////////////////////////////////
-
     /*boundary!!*/
     if(t2 < 0)
         return;
+
+    //add the edge to the edge_samples
+    EdgeSamplePt* p = new EdgeSamplePt(edge_id, 0., v2_end, backward);
+    edge_samples->append(p);
 
     icVector3 dis;
     dis.entry[0] = v1[0]-v2[0];
@@ -2503,7 +2409,7 @@ void MorseDecomp::trace_recursive_an_edge(double v1[3],
         v2[2] = (v1[2]+v2[2])/2.;
 
         /*recursively call the routine itself*/
-        trace_recursive_an_edge(v1, v2, t1, tri, neighbor_tri, tau, backward, level);
+        trace_recursive_an_edge(v1, v2, t1, tri, neighbor_tri, tau, backward, level, edge_id);
         level --;
     }
 
@@ -2517,7 +2423,7 @@ void MorseDecomp::trace_recursive_an_edge(double v1[3],
 
         top--;
         /*recursively call the routine itself*/
-        trace_recursive_an_edge(v1, v2, t1, tri, neighbor_tri, tau, backward, level);
+        trace_recursive_an_edge(v1, v2, t1, tri, neighbor_tri, tau, backward, level, edge_id);
         level--;
     }
 }

@@ -396,9 +396,9 @@ void MCGWindow::mouseMoveEvent(QMouseEvent *event)
     double s, t;
 
     int firstwin_leftbottom_x = 0;
-    int firstwin_leftbottom_y = 200;
+    int firstwin_leftbottom_y = 150;
     int firstwin_rightx = 400;
-    int firstwin_bottomy = 200;
+    int firstwin_bottomy = 150;
 
     QPointF p = event->pos();
 

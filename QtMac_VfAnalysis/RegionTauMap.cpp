@@ -969,24 +969,10 @@ void RegionTauMap::trace_all_edges_build_di_edges_adp(double tau, int backward)
             //trace_an_edge_build_di_edges_adp(st1, st2, v1->imgtri, v2->imgtri, /*conley->*/morse_nlist[i], neighbor_tri,tau, backward);
 
             if (enFastRefinement)
-                trace_an_edge_build_di_edges_adp(st1, st2, v1->imgtri, v2->imgtri, /*conley->*/morse_nlist[i], neighbor_tri,tau, backward);
+                trace_an_edge_build_di_edges_adp(st1, st2, v1->imgtri, v2->imgtri, /*conley->*/morse_nlist[i], neighbor_tri,tau, backward, e->index);
             else
                 adp_edge_sampling(st1, st2, v1->imgtri, v2->imgtri, morse_nlist[i], neighbor_tri,
-                                  tau, backward);
-            //adp_edge_sampling_2(st1, st2, v1->imgtri, v2->imgtri, morse_nlist[i], neighbor_tri,
-            //	tau, backward);
-
-            /*
-                modified by Guoning 07/22/2010
-            */
-            //if (enFastRefinement)
-            //	morse_decomp->trace_an_edge_build_di_edges_adp(st1, st2, v1->imgtri, v2->imgtri, i, neighbor_tri,
-            //		tau, backward);
-
-            //else
-            //	morse_decomp->adp_edge_sampling(st1, st2, v1->imgtri, v2->imgtri, i, neighbor_tri,
-            //		tau, backward);
-
+                                  tau, backward, e->index);
         }
     }
 }
@@ -1049,12 +1035,10 @@ RegionTauMap::trace_all_edges_build_di_edges_adp_f(double tau)
 
 
             if (enFastRefinement)
-                trace_an_edge_build_di_edges_adp_f(st1, st2, v1->imgtri, v2->imgtri, /*conley->*/morse_nlist[i], neighbor_tri,tau);
+                trace_an_edge_build_di_edges_adp_f(st1, st2, v1->imgtri, v2->imgtri, /*conley->*/morse_nlist[i], neighbor_tri,tau, e->index);
             else
                 adp_edge_sampling(st1, st2, v1->imgtri, v2->imgtri, morse_nlist[i], neighbor_tri,
-                                  tau, 0);
-            //adp_edge_sampling_2(st1, st2, v1->imgtri, v2->imgtri, morse_nlist[i], neighbor_tri,
-            //	tau, 0);
+                                  tau, 0, e->index);
 
         }
     }
@@ -1118,10 +1102,10 @@ RegionTauMap::trace_all_edges_build_di_edges_adp_b(double tau)
 
 
             if (enFastRefinement)
-                trace_an_edge_build_di_edges_adp_b(st1, st2, v1->imgtri, v2->imgtri, morse_nlist[i], neighbor_tri,tau);
+                trace_an_edge_build_di_edges_adp_b(st1, st2, v1->imgtri, v2->imgtri, morse_nlist[i], neighbor_tri,tau, e->index);
             else
                 adp_edge_sampling(st1, st2, v1->imgtri, v2->imgtri, morse_nlist[i], neighbor_tri,
-                                  tau, 1);
+                                  tau, 1, e->index);
             //adp_edge_sampling_2(st1, st2, v1->imgtri, v2->imgtri, morse_nlist[i], neighbor_tri,
             //	tau, 1);
 
@@ -1310,7 +1294,7 @@ void RegionTauMap::init_local_Edges(void)
     }
 }
 
-void RegionTauMap::trace_an_edge_build_di_edges_adp(double st1[3], double st2[3], int t1, int t2, int tri, int neighbor_tri, double tau, int backward)
+void RegionTauMap::trace_an_edge_build_di_edges_adp(double st1[3], double st2[3], int t1, int t2, int tri, int neighbor_tri, double tau, int backward, int edge_id)
 {
     /*do one more recursive here*/
     int level = 1;
@@ -1325,10 +1309,10 @@ void RegionTauMap::trace_an_edge_build_di_edges_adp(double st1[3], double st2[3]
     level = 1;
 
     /*call the recursive adaptive edge sampling for the first half of the edge*/
-    trace_recursive_an_edge(st1, st2, t1, tri, neighbor_tri, tau, backward, level);
+    trace_recursive_an_edge(st1, st2, t1, tri, neighbor_tri, tau, backward, level, edge_id);
 
     /*call the recursive adaptive edge sampling for the second half of the edge*/
-    trace_recursive_an_edge(stack_st, middle_p, t2, tri, neighbor_tri, tau, backward, level);
+    trace_recursive_an_edge(stack_st, middle_p, t2, tri, neighbor_tri, tau, backward, level, edge_id);
 }
 
 
@@ -1340,7 +1324,7 @@ RegionTauMap::trace_an_edge_build_di_edges_adp_f(double st1[3],
                                                  int t2,
                                                  int tri,
                                                  int neighbor_tri,
-                                                 double tau)
+                                                 double tau, int edge_id)
 {
     /*do one more recursive here*/
     int level = 1;
@@ -1355,10 +1339,10 @@ RegionTauMap::trace_an_edge_build_di_edges_adp_f(double st1[3],
     level = 1;
 
     /*call the recursive adaptive edge sampling for the first half of the edge*/
-    trace_recursive_an_edge_f(st1, st2, t1, tri, neighbor_tri, tau, level);
+    trace_recursive_an_edge_f(st1, st2, t1, tri, neighbor_tri, tau, level, edge_id);
 
     /*call the recursive adaptive edge sampling for the second half of the edge*/
-    trace_recursive_an_edge_f(stack_st, middle_p, t2, tri, neighbor_tri, tau, level);
+    trace_recursive_an_edge_f(stack_st, middle_p, t2, tri, neighbor_tri, tau, level, edge_id);
 }
 
 void
@@ -1368,7 +1352,7 @@ RegionTauMap::trace_an_edge_build_di_edges_adp_b(double st1[3],
                                                  int t2,
                                                  int tri,
                                                  int neighbor_tri,
-                                                 double tau)
+                                                 double tau, int edge_id)
 {
     /*do one more recursive here*/
     int level = 1;
@@ -1383,10 +1367,10 @@ RegionTauMap::trace_an_edge_build_di_edges_adp_b(double st1[3],
     level = 1;
 
     /*call the recursive adaptive edge sampling for the first half of the edge*/
-    trace_recursive_an_edge_b(st1, st2, t1, tri, neighbor_tri, tau, level);
+    trace_recursive_an_edge_b(st1, st2, t1, tri, neighbor_tri, tau, level, edge_id);
 
     /*call the recursive adaptive edge sampling for the second half of the edge*/
-    trace_recursive_an_edge_b(stack_st, middle_p, t2, tri, neighbor_tri, tau, level);
+    trace_recursive_an_edge_b(stack_st, middle_p, t2, tri, neighbor_tri, tau, level, edge_id);
 }
 
 
@@ -1398,7 +1382,8 @@ void RegionTauMap::trace_recursive_an_edge(double v1[3],
                                            int neighbor_tri,
                                            double tau,
                                            int backward,
-                                           int& level)
+                                           int& level,
+                                           int edge_id)
 {
     double stack_v[3];  /*this could only have one element in one level*/
     int top = 0;
@@ -1418,11 +1403,14 @@ void RegionTauMap::trace_recursive_an_edge(double v1[3],
     else
         morse_decomp->trace_Ver_b(tri, v2, v2_end, t2, tau);
 
-    //morse_decomp->trace_Ver(tri, v2, v2_end, t2, tau, backward);
-
     /*boundary!!*/
     if(t2 < 0)
         return;
+
+    //add the edge to the edge_samples
+    extern EdgeSamplePt_List* edge_samples;
+    EdgeSamplePt* p = new EdgeSamplePt(edge_id, 0., v2_end, backward);
+    edge_samples->append(p);
 
     icVector3 dis;
     dis.entry[0] = v1[0]-v2[0];
@@ -1524,7 +1512,7 @@ void RegionTauMap::trace_recursive_an_edge(double v1[3],
         v2[2] = (v1[2]+v2[2])/2.;
 
         /*recursively call the routine itself*/
-        trace_recursive_an_edge(v1, v2, t1, tri, neighbor_tri, tau, backward, level);
+        trace_recursive_an_edge(v1, v2, t1, tri, neighbor_tri, tau, backward, level, edge_id);
         level --;
     }
 
@@ -1538,7 +1526,7 @@ void RegionTauMap::trace_recursive_an_edge(double v1[3],
 
         top--;
         /*recursively call the routine itself*/
-        trace_recursive_an_edge(v1, v2, t1, tri, neighbor_tri, tau, backward, level);
+        trace_recursive_an_edge(v1, v2, t1, tri, neighbor_tri, tau, backward, level, edge_id);
         level--;
     }
 }
@@ -1550,7 +1538,7 @@ void RegionTauMap::trace_recursive_an_edge_f(double v1[3],
                                              int tri,
                                              int neighbor_tri,
                                              double tau,
-                                             int& level)
+                                             int& level, int edge_id)
 {
     double stack_v[3];  /*this could only have one element in one level*/
     int top = 0;
@@ -1567,11 +1555,14 @@ void RegionTauMap::trace_recursive_an_edge_f(double v1[3],
 
     morse_decomp->trace_Ver_f(tri, v2, v2_end, t2, tau);
 
-    //morse_decomp->trace_Ver(tri, v2, v2_end, t2, tau, backward);
-
     /*boundary!!*/
     if(t2 < 0)
         return;
+
+    //add the edge to the edge_samples
+    extern EdgeSamplePt_List* edge_samples;
+    EdgeSamplePt* p = new EdgeSamplePt(edge_id, 0., v2_end, 0);
+    edge_samples->append(p);
 
     icVector3 dis;
     dis.entry[0] = v1[0]-v2[0];
@@ -1640,7 +1631,7 @@ void RegionTauMap::trace_recursive_an_edge_f(double v1[3],
         v2[2] = (v1[2]+v2[2])/2.;
 
         /*recursively call the routine itself*/
-        trace_recursive_an_edge_f(v1, v2, t1, tri, neighbor_tri, tau, level);
+        trace_recursive_an_edge_f(v1, v2, t1, tri, neighbor_tri, tau, level, edge_id);
         level --;
     }
 
@@ -1654,7 +1645,7 @@ void RegionTauMap::trace_recursive_an_edge_f(double v1[3],
 
         top--;
         /*recursively call the routine itself*/
-        trace_recursive_an_edge_f(v1, v2, t1, tri, neighbor_tri, tau, level);
+        trace_recursive_an_edge_f(v1, v2, t1, tri, neighbor_tri, tau, level, edge_id);
         level--;
     }
 }
@@ -1671,7 +1662,7 @@ void RegionTauMap::trace_recursive_an_edge_b(double v1[3],
                                              int tri,
                                              int neighbor_tri,
                                              double tau,
-                                             int& level)
+                                             int& level, int edge_id)
 {
     double stack_v[3];  /*this could only have one element in one level*/
     int top = 0;
@@ -1688,11 +1679,15 @@ void RegionTauMap::trace_recursive_an_edge_b(double v1[3],
 
     morse_decomp->trace_Ver_b(tri, v2, v2_end, t2, tau);
 
-    //morse_decomp->trace_Ver(tri, v2, v2_end, t2, tau, backward);
 
     /*boundary!!*/
     if(t2 < 0)
         return;
+
+    //add the edge to the edge_samples
+    extern EdgeSamplePt_List* edge_samples;
+    EdgeSamplePt* p = new EdgeSamplePt(edge_id, 0., v2_end, 1);
+    edge_samples->append(p);
 
     icVector3 dis;
     dis.entry[0] = v1[0]-v2[0];
@@ -1761,7 +1756,7 @@ void RegionTauMap::trace_recursive_an_edge_b(double v1[3],
         v2[2] = (v1[2]+v2[2])/2.;
 
         /*recursively call the routine itself*/
-        trace_recursive_an_edge_b(v1, v2, t1, tri, neighbor_tri, tau, level);
+        trace_recursive_an_edge_b(v1, v2, t1, tri, neighbor_tri, tau, level, edge_id);
         level --;
     }
 
@@ -1775,7 +1770,7 @@ void RegionTauMap::trace_recursive_an_edge_b(double v1[3],
 
         top--;
         /*recursively call the routine itself*/
-        trace_recursive_an_edge_b(v1, v2, t1, tri, neighbor_tri, tau, level);
+        trace_recursive_an_edge_b(v1, v2, t1, tri, neighbor_tri, tau, level, edge_id);
         level--;
     }
 }
@@ -1792,7 +1787,7 @@ RegionTauMap::adp_edge_sampling(double st1[3],
                                 int tri,
                                 int neighbor_tri,
                                 double tau,
-                                int backward)
+                                int backward, int edge_id)
 {
     /*do one more recursive here*/
     int level = 1;
@@ -1815,12 +1810,15 @@ RegionTauMap::adp_edge_sampling(double st1[3],
 
     // trace from the first point
     double v1_end[3]={0.};
-    //morse_decomp->trace_Ver(tri, st1, v1_end, t1, tau, backward);
 
     if (backward == 0)
         morse_decomp->trace_Ver_f(tri, st1, v1_end, t1, tau);
     else
         morse_decomp->trace_Ver_b(tri, st1, v1_end, t1, tau);
+
+    extern EdgeSamplePt_List* edge_samples;
+    EdgeSamplePt* p = new EdgeSamplePt(edge_id, 0., v1_end, 0);
+    edge_samples->append(p);
 
     while(!stack_pts.empty())
     {
@@ -1840,24 +1838,8 @@ RegionTauMap::adp_edge_sampling(double st1[3],
         else
             morse_decomp->trace_Ver_b(tri, st2, v2_end, t2, tau);
 
-        //if (t2 < 0 || t1 < 0)
-        //	continue;
-
-        /************************************************************/
-        /*
-          Add a sample point here  02/09/2010
-        */
-        //if (save_edge_samples)
-        //{
-        //	Edge *cur_e = object->elist.edges[current_sample_edge];
-        //	icVector3 len_dir(st2[0]-cur_e->verts[0]->x,
-        //		st2[1]-cur_e->verts[0]->y, st2[2]-cur_e->verts[0]->z);
-        //	double alpha = length(len_dir)/cur_e->length;
-        //	EdgeSamplePt *oneSample = new EdgeSamplePt(current_sample_edge, alpha);
-        //	oneSample->end_tri = t2;   // modified at 02/10/2010
-        ////	oneSample->backward=backward;
-        //	edge_samples->append(oneSample);
-        //}
+        p = new EdgeSamplePt(edge_id, 0., v1_end, 0);
+        edge_samples->append(p);
 
         icVector3 dis;
         dis.entry[0] = st1[0]-st2[0];
@@ -1951,7 +1933,7 @@ RegionTauMap::adp_edge_sampling_2(double st1[3],
                                   int tri,
                                   int neighbor_tri,
                                   double tau,
-                                  int backward)
+                                  int backward, int edge_id)
 {
     /*do one more recursive here*/
     int level = 1;
@@ -1974,7 +1956,6 @@ RegionTauMap::adp_edge_sampling_2(double st1[3],
 
     // trace from the first point
     double v1_end[3]={0.};
-    //morse_decomp->trace_Ver(tri, st1, v1_end, t1, tau, backward);
     morse_decomp->trace_Ver_local(tri, st1, v1_end, t1, tau, backward, cur_SCC_id);
 
     while(!stack_pts.empty())
@@ -1995,20 +1976,6 @@ RegionTauMap::adp_edge_sampling_2(double st1[3],
         //	continue;
 
         /************************************************************/
-        /*
-          Add a sample point here  02/09/2010
-        */
-        //if (save_edge_samples)
-        //{
-        //	Edge *cur_e = object->elist.edges[current_sample_edge];
-        //	icVector3 len_dir(st2[0]-cur_e->verts[0]->x,
-        //		st2[1]-cur_e->verts[0]->y, st2[2]-cur_e->verts[0]->z);
-        //	double alpha = length(len_dir)/cur_e->length;
-        //	EdgeSamplePt *oneSample = new EdgeSamplePt(current_sample_edge, alpha);
-        //	oneSample->end_tri = t2;   // modified at 02/10/2010
-        ////	oneSample->backward=backward;
-        //	edge_samples->append(oneSample);
-        //}
 
         icVector3 dis;
         dis.entry[0] = st1[0]-st2[0];

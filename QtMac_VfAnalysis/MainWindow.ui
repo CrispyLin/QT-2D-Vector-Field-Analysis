@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1407</width>
-    <height>739</height>
+    <height>789</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -35,7 +35,7 @@
       <item>
        <widget class="VectorFieldWindow" name="VF_Window">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>80</horstretch>
           <verstretch>80</verstretch>
          </sizepolicy>
@@ -55,20 +55,26 @@
         <property name="mouseTracking">
          <bool>true</bool>
         </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QGroupBox" name="MCG_GB">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>400</width>
-          <height>16777215</height>
+          <width>410</width>
+          <height>300</height>
          </size>
         </property>
         <property name="title">
@@ -90,7 +96,7 @@
          <item>
           <widget class="MCGWindow" name="MCG_Window">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -98,13 +104,13 @@
            <property name="minimumSize">
             <size>
              <width>400</width>
-             <height>200</height>
+             <height>150</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>400</width>
-             <height>200</height>
+             <height>150</height>
             </size>
            </property>
            <property name="mouseTracking">
@@ -118,15 +124,15 @@
       <item>
        <widget class="QGroupBox" name="ECG_GB">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>400</width>
-          <height>150</height>
+          <width>410</width>
+          <height>300</height>
          </size>
         </property>
         <property name="title">
@@ -148,7 +154,7 @@
          <item>
           <widget class="ECGWindow" name="ECG_Window">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -156,13 +162,13 @@
            <property name="minimumSize">
             <size>
              <width>400</width>
-             <height>200</height>
+             <height>150</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>400</width>
-             <height>200</height>
+             <height>150</height>
             </size>
            </property>
           </widget>
@@ -173,65 +179,12 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_9">
+     <layout class="QVBoxLayout" name="first_column_layout">
       <property name="spacing">
-       <number>5</number>
+       <number>20</number>
       </property>
       <item>
-       <widget class="QGroupBox" name="Connection_Region_GB">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>280</width>
-          <height>100</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Connection Region</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
-         <property name="spacing">
-          <number>20</number>
-         </property>
-         <property name="sizeConstraint">
-          <enum>QLayout::SetMinimumSize</enum>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QCheckBox" name="display_connection_region">
-           <property name="text">
-            <string>Display Connection Region</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="compute_region">
-           <property name="text">
-            <string>Compute Connection Region</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="Refine_Morese_set_GB">
+       <widget class="QGroupBox" name="Analysis_GB">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -240,14 +193,14 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>280</width>
+          <width>200</width>
           <height>16777215</height>
          </size>
         </property>
         <property name="title">
-         <string>Refine Morse Set</string>
+         <string>Analysis</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -257,189 +210,93 @@
          <property name="rightMargin">
           <number>0</number>
          </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetMinimumSize</enum>
+          <widget class="QCheckBox" name="display_fixed_points">
+           <property name="text">
+            <string>Display fixed points</string>
            </property>
-           <item>
-            <widget class="QLabel" name="ID_label">
-             <property name="text">
-              <string>ID</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="local_refine_ID_LineEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QLabel" name="tau_label">
-             <property name="text">
-              <string>tau</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="local_refine_tau_LineEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QPushButton" name="Detect_FixedPts">
+           <property name="text">
+            <string>Detect fixed points</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="Refine_button">
+          <widget class="QCheckBox" name="display_separatrices">
+           <property name="text">
+            <string>Display separatrices</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="Compute_sep">
+           <property name="text">
+            <string>Compute separatrices</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="display_periodic_orbits">
+           <property name="text">
+            <string>Display periodic orbits</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="Extract_POs">
+           <property name="text">
+            <string>Extract periodic orbits</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="show_morse_sets">
+           <property name="text">
+            <string>Show Morse sets</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="Morse_Decomp">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Refine</string>
+            <string>Morse Decomp</string>
            </property>
           </widget>
          </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="Auto_Refine_GB">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>280</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Auto Refine</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
          <item>
-          <layout class="QHBoxLayout" name="min_priority">
-           <item>
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>Min Priority</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="min_priority_LineEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QCheckBox" name="show_real_ID">
+           <property name="text">
+            <string>Show real ID</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="tau_max">
-           <item>
-            <widget class="QLabel" name="label_11">
-             <property name="text">
-              <string>tau_max</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="tau_max_LineEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QCheckBox" name="Show_Conley_MCG">
+           <property name="text">
+            <string>Show Conley MCG</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="Iter_max">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
-            <widget class="QLabel" name="label_12">
+            <widget class="QLabel" name="use_a_tau_label">
              <property name="text">
-              <string>Iter_max</string>
+              <string>use a tau</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="Iter_max_LineEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="Initial">
-           <item>
-            <widget class="QLabel" name="label_13">
-             <property name="text">
-              <string>Initial</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="Inital_LineEdit">
+            <widget class="QLineEdit" name="use_a_tau_LineEdit">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -454,21 +311,187 @@
           </layout>
          </item>
          <item>
-          <widget class="QCheckBox" name="No_T_MAX">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="error_threshold">
+             <property name="text">
+              <string>Error threshold</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="error_threshold_LineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>1e-15</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ComputeButton">
+           <property name="maximumSize">
+            <size>
+             <width>1000000</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
-            <string>No t_max</string>
+            <string>Compute</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="Auto_Refine_Btn">
+          <widget class="QCheckBox" name="construct_minimal_MCG">
            <property name="text">
-            <string>Auto Refine</string>
+            <string>Construct minimal MCG</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="remove_diconnected">
+           <property name="text">
+            <string>Remove disconnected</string>
            </property>
           </widget>
          </item>
         </layout>
        </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_10">
+        <item>
+         <widget class="QGroupBox" name="File_Operations_GB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>File Operations</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="load_a_ply_file_label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Load a .ply file</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="Browsers_Button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Browsers...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="Integrators_GB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Integrators</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="Euler_1">
+             <property name="text">
+              <string>Euler 1</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">Integrators_BG</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="RK2">
+             <property name="text">
+              <string>RK2</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">Integrators_BG</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="RK4">
+             <property name="text">
+              <string>RK4</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">Integrators_BG</string>
+             </attribute>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -882,28 +905,34 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="third_layout">
+     <layout class="QVBoxLayout" name="verticalLayout_9">
       <property name="spacing">
-       <number>20</number>
+       <number>5</number>
       </property>
       <item>
-       <widget class="QGroupBox" name="Analysis_GB">
+       <widget class="QGroupBox" name="Connection_Region_GB">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>200</width>
-          <height>16777215</height>
+          <width>280</width>
+          <height>100</height>
          </size>
         </property>
         <property name="title">
-         <string>Analysis</string>
+         <string>Connection Region</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <property name="spacing">
+          <number>20</number>
+         </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetMinimumSize</enum>
+         </property>
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -913,93 +942,70 @@
          <property name="rightMargin">
           <number>0</number>
          </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
-          <widget class="QCheckBox" name="display_fixed_points">
+          <widget class="QCheckBox" name="display_connection_region">
            <property name="text">
-            <string>Display fixed points</string>
+            <string>Display Connection Region</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="Detect_FixedPts">
+          <widget class="QPushButton" name="compute_region">
            <property name="text">
-            <string>Detect fixed points</string>
+            <string>Compute Connection Region</string>
            </property>
           </widget>
          </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="Refine_Morese_set_GB">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>280</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Refine Morse Set</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
-          <widget class="QCheckBox" name="display_separatrices">
-           <property name="text">
-            <string>Display separatrices</string>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetMinimumSize</enum>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="Compute_sep">
-           <property name="text">
-            <string>Compute separatrices</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="display_periodic_orbits">
-           <property name="text">
-            <string>Display periodic orbits</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="Extract_POs">
-           <property name="text">
-            <string>Extract periodic orbits</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="show_morse_sets">
-           <property name="text">
-            <string>Show Morse sets</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="Morse_Decomp">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Morse Decomp</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="show_real_ID">
-           <property name="text">
-            <string>Show real ID</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="Show_Conley_MCG">
-           <property name="text">
-            <string>Show Conley MCG</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
-            <widget class="QLabel" name="use_a_tau_label">
+            <widget class="QLabel" name="ID_label">
              <property name="text">
-              <string>use a tau</string>
+              <string>ID</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="use_a_tau_LineEdit">
+            <widget class="QLineEdit" name="local_refine_ID_LineEdit">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1014,16 +1020,16 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QLabel" name="error_threshold">
+            <widget class="QLabel" name="tau_label">
              <property name="text">
-              <string>Error threshold</string>
+              <string>tau</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="error_threshold_LineEdit">
+            <widget class="QLineEdit" name="local_refine_tau_LineEdit">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1031,36 +1037,22 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>1e-15</string>
+              <string>0</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
          <item>
-          <widget class="QPushButton" name="ComputeButton">
-           <property name="maximumSize">
-            <size>
-             <width>1000000</width>
-             <height>16777215</height>
-            </size>
+          <widget class="QPushButton" name="Refine_button">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="text">
-            <string>Compute</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="construct_minimal_MCG">
-           <property name="text">
-            <string>Construct minimal MCG</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="remove_diconnected">
-           <property name="text">
-            <string>Remove disconnected</string>
+            <string>Refine</string>
            </property>
           </widget>
          </item>
@@ -1068,133 +1060,147 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_10">
-        <item>
-         <widget class="QGroupBox" name="File_Operations_GB">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>File Operations</string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
+       <widget class="QGroupBox" name="Auto_Refine_GB">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>280</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Auto Refine</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="min_priority">
            <item>
-            <widget class="QLabel" name="load_a_ply_file_label">
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>Min Priority</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="min_priority_LineEdit">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Load a .ply file</string>
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="tau_max">
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>tau_max</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="Browsers_Button">
+            <widget class="QLineEdit" name="tau_max_LineEdit">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Browsers...</string>
+              <string>0</string>
              </property>
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="Integrators_GB">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Integrators</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="Iter_max">
            <item>
-            <widget class="QRadioButton" name="Euler_1">
+            <widget class="QLabel" name="label_12">
              <property name="text">
-              <string>Euler 1</string>
+              <string>Iter_max</string>
              </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">Integrators_BG</string>
-             </attribute>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="RK2">
-             <property name="text">
-              <string>RK2</string>
+            <widget class="QLineEdit" name="Iter_max_LineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">Integrators_BG</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="RK4">
              <property name="text">
-              <string>RK4</string>
+              <string>0</string>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">Integrators_BG</string>
-             </attribute>
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-       </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="Initial">
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Initial</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="Inital_LineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="No_T_MAX">
+           <property name="text">
+            <string>No t_max</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="Auto_Refine_Btn">
+           <property name="text">
+            <string>Auto Refine</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </item>

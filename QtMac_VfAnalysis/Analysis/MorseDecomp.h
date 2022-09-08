@@ -10,14 +10,8 @@ Created and Modified by Guoning Chen
 #ifndef __MORSEDECOMP_H__
 #define __MORSEDECOMP_H__
 
-#include <stack>
-
-#include "GL_LIB/glew.h"
-
 #include "VField.h"
-#include "Others/common_routines.h"
-
-
+#include <stack>
 using namespace std;
 
 class MorseDecomp{
@@ -31,20 +25,28 @@ public:
 
     double tau_max, tau_min;  // for the auto-refinement 03/03/2010
 
+
+
+//GraphEdge *sccedges;
+//int num_sccedges = 0;
+//int curMaxNumDirGraphEdges;
+//GraphNode2 *sccnodes;
+//int *cur_nodes_order;
+
     /*we need to build the directed graph*/
     MorseDecomp()
     {
-        dg = nullptr;
-        scclist = nullptr;
+        dg = NULL;
+        scclist = NULL;
 
         tau_max = tau_min = 0;
     }
 
     ~MorseDecomp()
     {
-        if(dg != nullptr)
+        if(dg != NULL)
             delete dg;
-        if(scclist != nullptr)
+        if(scclist != NULL)
             delete scclist;
     }
 
@@ -66,9 +68,9 @@ public:
     void init_all_edges();
     bool are_close_neighbors(int, int);
     void trace_an_edge_build_di_edges_adp(double st1[3], double st2[3], int t1, int t2, int tri,
-                                          int neighbor_tri, double tau, int backward);
+                                      int neighbor_tri, double tau, int backward, int edge_id);
     void trace_recursive_an_edge(double v1[3], double v2[3], int &t1, int tri, int neighbor_tri,
-                                 double tau, int backward, int &level);
+                             double tau, int backward, int &level, int edge_id);
     void morse_decomp_tau(double);
 
     double gt_tau;
@@ -86,8 +88,8 @@ public:
     /*************************************************************/
     /*   non-recursive edge sampling  */
     void adp_edge_sampling(double st1[3], double st2[3],
-                           int t1, int t2, int tri,
-                           int neighbor_tri, double tau, int backward, int edge_id);
+                            int t1, int t2, int tri,
+                            int neighbor_tri, double tau, int backward, int edge_id);
     void show_tri_mapping (int);
 
     bool obtain_connected_imgs(int);     // judge whether the image and preimage of a given triangle is connected  02/18/2010
@@ -128,8 +130,8 @@ public:
     /*  03/03/2010 for evaluation
     */
     void compare_with_ECG ();  // we verify to see whether the triangles containing the detected fixed points
-        // and periodic orbits are included in the Morse sets or not
-        // we can simply check a flag to see whether this is true or not
+                               // and periodic orbits are included in the Morse sets or not
+                               // we can simply check a flag to see whether this is true or not
     void mark_cur_MorseSets();
 
     //void compare_two_MCGs();   // we compare the difference of two MCGs in terms of the triangles included in these MCGs
@@ -161,34 +163,34 @@ public:
     void init_rot_sum();
     void trace_all_Verts_rot_sum(double tau, int backward);
     void trace_Ver_f_rot_sum(int tri,
-                             double st[3],
-                             double en[3],
-                             int &en_tri,
-                             double tau,
-                             float &rot_sum);
+                         double st[3],
+                         double en[3],
+                         int &en_tri,
+                         double tau,
+                         float &rot_sum);
 
     void trace_Ver_b_rot_sum(int tri,
-                             double st[3],
-                             double en[3],
-                             int &en_tri,
-                             double tau,
-                             float &rot_sum);
+                         double st[3],
+                         double en[3],
+                         int &en_tri,
+                         double tau,
+                         float &rot_sum);
 
     void trace_Ver_f_smooth(int tri,
-                            double st[3],
-                            double en[3],
-                            int &en_tri,
-                            double tau,
-                            float &rot_sum,
-                            int step);
+                         double st[3],
+                         double en[3],
+                         int &en_tri,
+                         double tau,
+                         float &rot_sum,
+                         int step);
 
     void trace_Ver_b_smooth(int tri,
-                            double st[3],
-                            double en[3],
-                            int &en_tri,
-                            double tau,
-                            float &rot_sum,
-                            int step);
+                         double st[3],
+                         double en[3],
+                         int &en_tri,
+                         double tau,
+                         float &rot_sum,
+                         int step);
 
     void trace_all_Verts_smooth(double tau, int backward, int step);
     void smooth_A_field();

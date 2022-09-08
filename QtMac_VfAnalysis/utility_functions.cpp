@@ -7,6 +7,7 @@ void    display_sel_tri(int tri)
     Triangle *t = object->tlist.tris[tri];
     int i;
     glDepthFunc(GL_LEQUAL);
+    glLineWidth( 3 );
     glBegin(GL_LINE_LOOP);
     glColor3f(1, 1, 1);
     for (i=0; i<t->nverts; i++)
@@ -14,7 +15,7 @@ void    display_sel_tri(int tri)
         glVertex3f(t->verts[i]->x, t->verts[i]->y, t->verts[i]->z);
     }
     glEnd();
-    glDepthFunc(GL_LESS);
+    glDepthFunc(GL_ALWAYS);
 }
 
 
