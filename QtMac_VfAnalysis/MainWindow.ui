@@ -953,7 +953,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="compute_region">
+          <widget class="QCheckBox" name="ComputeConnectionRegion">
            <property name="text">
             <string>Compute Connection Region</string>
            </property>

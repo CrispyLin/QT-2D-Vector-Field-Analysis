@@ -87,13 +87,13 @@ private slots:
 
     void on_display_streamlines_clicked(bool checked);
 
-    void on_compute_region_clicked();
-
     void on_No_T_MAX_clicked(bool checked);
 
     void on_Auto_Refine_Btn_clicked();
 
     void on_Browsers_Button_clicked();
+
+    void on_ComputeConnectionRegion_clicked(bool checked);
 
 private:
     Ui::MainWindow *ui;

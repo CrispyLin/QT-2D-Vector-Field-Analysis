@@ -589,31 +589,6 @@ void MainWindow::on_display_streamlines_clicked(bool checked)
     this->ui->VF_Window->EvenStreamlinePlacement = checked;
 }
 
-void MainWindow::on_compute_region_clicked()
-{
-    if(this->ui->MCG_Window->ShowMCGOn == false) return;
-
-    // disable mcg
-    this->set_MCGOn(false);
-    this->set_VFDisplayOn(false);
-
-    if(Cal_Regions == true){
-        /*compute the MCG*/
-        {
-            if(mcg != NULL)
-                delete mcg;
-            mcg = new MCG_Graph();
-            mcg->init_MCG();
-            mcg->build_mcg();
-        }
-    }
-
-    this->set_MCGOn(true);
-
-    this->on_display_connection_region_clicked(true);
-    this->ui->display_connection_region->setChecked(true);
-    this->set_VFDisplayOn(true);
-}
 
 
 void MainWindow::on_No_T_MAX_clicked(bool checked)
@@ -795,3 +770,13 @@ void MainWindow::on_Browsers_Button_clicked()
 
     ui->VF_Window->initializeGL2(fileName);
 }
+
+void MainWindow::on_ComputeConnectionRegion_clicked(bool checked)
+{
+    if(checked){
+        Cal_Regions = true;
+    }else{
+        Cal_Regions = false;
+    }
+}
+
