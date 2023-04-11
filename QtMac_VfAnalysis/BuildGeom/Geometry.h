@@ -375,7 +375,7 @@ public:
         c.entry[2] = (verts[0]->z+verts[1]->z+verts[2]->z)/3.;
     }
 
-    void cal_Jacobian();     //calculate Jacobian for teh triangle
+    void cal_Jacobian();     //calculate Jacobian for the triangle
 
     /*Given the input triangle neighborhood with the coordinates and vector values of the three vertices
     calculate the Jacobian inside it*/
