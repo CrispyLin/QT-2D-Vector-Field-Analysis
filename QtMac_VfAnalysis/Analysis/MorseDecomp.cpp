@@ -834,15 +834,6 @@ void MorseDecomp::build_SCCElemList()
         numtriangles_eachscc[dg->nlist->dirnodes[i]->sscomp_index] += 1;
     }
 
-    /*write the number of triangles in each SCC into a file 04/22/07*/
-    //FILE *fp = fopen("ntris_SCCs1.txt", "w");
-    //for(i = 0; i < dg->num_sccomps; i++)
-    //{
-    //	if(numtriangles_eachscc[i]>100)
-    //	fprintf(fp, "%d: %d\n", i, numtriangles_eachscc[i]);
-    //}
-    //fclose(fp);
-
     //allocate space for each scc
     for(i = 0; i < dg->num_sccomps; i++)
     {
@@ -1116,17 +1107,7 @@ bool MorseDecomp::is_valid_SCC(int scc_index)
     Region_Tri_Index *temp_region = new Region_Tri_Index(scclist->scccomponents[scc_index]->nodes,
                                                          scclist->scccomponents[scc_index]->nnodes, 0);
 
-    /*   check the connectivity of the Morse set 03/08/2010   */
-    //if (!is_connected_reg (temp_region->tris, temp_region->ntris))
-    //	return false;
-
-    //if (!is_connected_reg(temp_region->tris, temp_region->ntris))
-    //{
-    //	delete temp_region;
-    //	return false;
-    //}
     int Euler_num = temp_region->cal_euler_value();
-
 
     //scclist->scccomponents[scc_index]->num_boundaries = 1 + (2-Euler_num)/2;
 
@@ -1157,13 +1138,6 @@ void MorseDecomp::mark_all_valid_SCCS()
 
     for(int i = 0; i < scclist->nsccs; i++)
     {
-
-        //if(scclist->scccomponents[i]->nnodes < 0
-        //	|| scclist->scccomponents[i]->nnodes >= object->tlist.ntris)
-        //{
-        //	scclist->scccomponents[i]->valid = false;
-        //	continue;
-        //}
 
         if(scclist->scccomponents[i]->nnodes < 2)
         {
@@ -4672,12 +4646,6 @@ int Region_Tri_Index::cal_euler_value()
 
     for(i = 0; i < ntris; i++)
     {
-        //if(tris[i]<0)  // removed by Guoning on 07/07/2010 if everything is correct, we do not need this.
-        //{
-        //	num_tris --;
-        //	continue;
-        //}
-
         face = object->tlist.tris[tris[i]];
         ////count the number of the edges and vertices
         for(j = 0; j < 3; j++)
