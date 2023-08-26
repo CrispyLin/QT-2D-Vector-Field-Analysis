@@ -278,40 +278,11 @@ void DirGraph::find_SCCS()
 
     cur_sccnode_index = nlist->ndirnodes-1;
 
-    ///*Testing code here 04/22/07*/
-    //int count = 0;
-    //for(i = 0; i < nlist->ndirnodes; i++)
-    //{
-    //	count += nlist->dirnodes[i]->nedges;
-    //}
-    /*FILE *fp=fopen("cooling_test.txt", "a");
-    fprintf(fp, "nodes:%d; edges:%d.\n", nlist->ndirnodes, elist->nedges);
-    fclose(fp);*/
-
     DFS(0);
-
-    /*write the order of the nodes into a file*/
-    //FILE *fp = fopen("t_cur_node_order.txt", "w");
-    //for(i = 0; i < nlist->ndirnodes; i++)
-    //{
-    //	fprintf(fp, "%d \n", cur_nodes_order[i]);
-    //}
-    //fclose(fp);
-    /*fp=fopen("cooling_test.txt", "a");
-    fprintf(fp, "finish forward DFS in find_SCCS().\n");
-    fclose(fp);*/
 
     reverse_edges();
 
     DFS(1);
-
-    //build_SCCElemList();  /*this can be done in Morse Decomposition class, since it involves some
-    //feature analysis*/
-
-    /*fp=fopen("cooling_test.txt", "a");
-    fprintf(fp, "finish backward DFS in find_SCCS().\n");
-    fprintf(fp, "The number of SCCs is %d.\n", num_sccomps);
-    fclose(fp);*/
 
     reverse_edges();
 
