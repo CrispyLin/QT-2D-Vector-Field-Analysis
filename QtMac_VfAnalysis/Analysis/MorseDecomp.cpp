@@ -1361,7 +1361,6 @@ void MorseDecomp::morse_decomp_tau(double tau)
 
 
     mark_all_valid_SCCS();
-
 }
 
 
