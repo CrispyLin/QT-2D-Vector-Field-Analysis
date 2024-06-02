@@ -743,44 +743,6 @@ void    VectorFieldWindow::IBFVSEffect(GLenum mode)
     GLfloat specular[] = { 0.8, 0.8, 1.0, 1.0 };
 
 
-    /*  First, draw the background  */
-//    if (!DisableLighting && !DisableBackground)
-//    {
-//        glClearColor (0.0, 0.0, 0.0, 1.0);  // background for rendering color coding and lighting
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-//        glDisable(GL_DEPTH_TEST);
-//        glDisable(GL_LIGHTING);
-//        glDisable(GL_TEXTURE_2D);
-//        glShadeModel(GL_SMOOTH);
-
-//        glMatrixMode(GL_PROJECTION);
-//        glPushMatrix();
-//        glLoadIdentity();
-//        gluOrtho2D(-1., 1., -1., 1.);
-
-//        glMatrixMode(GL_MODELVIEW);
-//        glPushMatrix();
-//        glLoadIdentity();
-
-//        glBegin(GL_QUADS);
-//        //red color
-//        //glColor3f(0.4,0.4,0.3);
-//        glColor3f(0.1,0.1,0.3);
-//        glVertex2f(-1.0,-1.0);
-//        glVertex2f(1.0,-1.0);
-//        //blue color
-//        glColor3f(1.,1.,1.);
-//        glVertex2f(1.0, 1.0);
-//        glVertex2f(-1.0, 1.0);
-//        glEnd();
-
-//        glMatrixMode(GL_PROJECTION);
-//        glPopMatrix();
-//        glMatrixMode(GL_MODELVIEW);
-//        glPopMatrix();
-//    }
-
-
     glClearColor (1.0, 1.0, 1.0, 1.0);  // background for rendering color coding and lighting
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
